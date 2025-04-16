@@ -44,7 +44,7 @@ export default function Intro() {
   }, []);
 
   return (
-    <div className="min-h-1/2 bg-gray-50">
+    <div className="min-h-1/2 bg-gray-50 py-16">
       <div className="w-4/5 mx-auto px-4 py-12">
         <div className="flex flex-col md:flex-row gap-32 items-center">
           

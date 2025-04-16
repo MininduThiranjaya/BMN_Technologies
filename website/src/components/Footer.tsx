@@ -3,7 +3,7 @@ import { Mail, Phone, MapPin, Facebook, Twitter, Instagram, Linkedin } from 'luc
 export default function Footer() {
     return (
         <footer className="bg-gray-800 text-white py-8 w-full">
-            <div className="w-[75%] mx-auto px-4">
+            <div className="w-[80%] mx-auto px-4">
                 <div className="flex flex-wrap">
 
                     {/* Column 1: Contact & Social */}
