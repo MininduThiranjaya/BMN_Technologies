@@ -1,7 +1,16 @@
 import { Sun, Battery, Wind, Zap } from 'lucide-react';
 import ServiceCard from './ServiceCard';
+import BannerImages from './BannerImages';
+import Footer from './Footer';
+import { useEffect } from 'react';
+import { useLocation } from "react-router-dom";
 
 function AllProducts() {
+
+    const { pathname } = useLocation();
+    useEffect(() => {
+        window.scrollTo(0, 0); // scroll to top
+      }, [pathname]);
     // Sample data for products
     const products = [
         {
@@ -35,29 +44,33 @@ function AllProducts() {
     ];
 
     return (
-        <div className="bg-gray-50 min-h-screen py-16">
-            <div className="max-w-6xl mx-auto px-4">
-                <h1 className="text-4xl font-bold text-center text-gray-800 mb-16">Our Services</h1>
+        <div className="absolute left-0 right-0">
+            <BannerImages />
+            <div className="bg-gray-50 min-h-screen py-4 mx-4">
+                <div className="max-w-6xl mx-auto px-4 md-4">
+                    <h1 className="text-4xl font-bold text-center text-gray-800 mb-16">Our Services</h1>
 
-                {/* Products Section */}
-                <section className="mb-20">
-                    <div className="flex items-center mb-8">
-                        <div className="w-10 h-1 bg-green-500 mr-4"></div>
-                        <h2 className="text-3xl font-bold text-gray-700">Products We Have</h2>
-                    </div>
+                    {/* Products Section */}
+                    <section className="mb-20">
+                        <div className="flex items-center mb-8">
+                            <div className="w-10 h-1 bg-green-500 mr-4"></div>
+                            <h2 className="text-3xl font-bold text-gray-700">Products We Have</h2>
+                        </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                        {products.map(product => (
-                            <ServiceCard
-                                key={product.id}
-                                title={product.title}
-                                description={product.description}
-                                icon={product.icon}
-                                link={product.link}
-                            />
-                        ))}
-                    </div>
-                </section>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                            {products.map(product => (
+                                <ServiceCard
+                                    key={product.id}
+                                    title={product.title}
+                                    description={product.description}
+                                    icon={product.icon}
+                                    link={product.link}
+                                />
+                            ))}
+                        </div>
+                    </section>
+                </div>
+                <Footer />
             </div>
         </div>
     );

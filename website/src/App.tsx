@@ -4,6 +4,7 @@ import './index.css';
 import HomePage from './pages/HomePage';
 import AllProducts from './components/AllProducts';
 import AllProjects from './components/AllProjects';
+import ShowCase from './components/showCase';
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
           <Route path="/all-projects" element={<AllProjects />} />
         </Routes>
     </Router>
+    // <ShowCase/>
   )
 }
 

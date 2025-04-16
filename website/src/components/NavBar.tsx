@@ -61,3 +61,44 @@ function NavBar({ refs } : any) {
 }
 
 export default NavBar
+
+// function Header() {
+//     return (
+//       <header className="bg-white shadow-md">
+//         <div className="container mx-auto px-4">
+//           <div className="flex items-center justify-between h-16">
+//             {/* Logo */}
+//             <div className="flex items-center">
+//               <h1 className="text-xl font-bold text-blue-600">Showcase</h1>
+//             </div>
+            
+//             {/* Navigation */}
+//             <nav className="hidden md:flex space-x-8">
+//               <a href="#" className="text-gray-700 hover:text-blue-600">Home</a>
+//               <a href="#" className="text-gray-700 hover:text-blue-600">Products</a>
+//               <a href="#" className="text-gray-700 hover:text-blue-600">Categories</a>
+//               <a href="#" className="text-gray-700 hover:text-blue-600">About</a>
+//               <a href="#" className="text-gray-700 hover:text-blue-600">Contact</a>
+//             </nav>
+            
+//             {/* Icons */}
+//             <div className="flex items-center space-x-4">
+//               <button className="text-gray-700 hover:text-blue-600">
+//                 <Search size={20} />
+//               </button>
+//               <button className="text-gray-700 hover:text-blue-600">
+//                 <User size={20} />
+//               </button>
+//               <button className="text-gray-700 hover:text-blue-600 relative">
+//                 <ShoppingCart size={20} />
+//                 <span className="absolute -top-1 -right-1 bg-blue-600 text-white rounded-full w-4 h-4 flex items-center justify-center text-xs">3</span>
+//               </button>
+//               <button className="md:hidden text-gray-700 hover:text-blue-600">
+//                 <Menu size={20} />
+//               </button>
+//             </div>
+//           </div>
+//         </div>
+//       </header>
+//     );
+//   }

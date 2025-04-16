@@ -20,7 +20,7 @@ function HomePage() {
             <div className="absolute left-0 right-0" >
                 <NavBar refs={{ introRef, servicesRef, contactRef, aboutRef }} />
                 <BannerImages />
-                <div className="mx-4">
+                <div className="mx-4 mb-4">
                     <div ref={introRef}>
                         <Intro />
                     </div>
