@@ -1,20 +1,29 @@
-import { useState } from 'react';
-import { X, ChevronLeft, ChevronRight } from 'lucide-react';
+import { useRef, useState } from 'react';
+import { X, ChevronLeft, ChevronRight, ShoppingCart, Plus, Minus } from 'lucide-react';
 import BannerImages from './BannerImages';
 import Footer from './Footer';
 import banner1 from '../assets/bannerImages/banner1.jpg';
 import banner2 from '../assets/bannerImages/banner2.jpg';
+import { useCart, CartItem } from '../context/CartContext';
+import NavBar from './NavBar';
 
 interface ItemType {
     id: number,
     title: string,
     image: string,
-    additionalImages: [],
-    description: string
+    additionalImages: string[],
+    description: string,
+    price: number
 }
 
 // Main Showcase Component
 export default function ShowCase() {
+
+    const introRef = useRef(null);
+    const servicesRef = useRef(null);
+    const contactRef = useRef(null);
+    const aboutRef = useRef(null);
+
     // Sample data - replace with your actual items
     const allItems = Array.from({ length: 12 }, (_, i) => ({
         id: i + 1,
@@ -27,15 +36,32 @@ export default function ShowCase() {
             banner2,
             banner1
         ],
-        description: `This is a detailed description for item ${i + 1}. Here you can include all the information about this particular item that would be useful for users to know.`
+        description: `This is a detailed description for item ${i + 1}. Here you can include all the information about this particular item that would be useful for users to know.`,
+        price: 49.99 + (i * 10) // Generate different prices for items
     }));
 
     // State variables
     const [currentPage, setCurrentPage] = useState(1);
     const [selectedItem, setSelectedItem] = useState<ItemType | null>(null);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
+    const [itemQuantity, setItemQuantity] = useState(1);
     const itemsPerPage = 8; // 4x2 grid
     const totalPages = Math.ceil(allItems.length / itemsPerPage);
+
+    // Use cart context
+    const {
+        cartItems,
+        itemCount,
+        cartTotal,
+        isCartOpen,
+        toggleCart,
+        closeCart,
+        addToCart,
+        removeFromCart,
+        increaseQuantity,
+        decreaseQuantity,
+        clearCart
+    } = useCart();
 
     // Get current items
     const getCurrentItems = () => {
@@ -44,14 +70,15 @@ export default function ShowCase() {
     };
 
     // Handle page change
-    const handlePageChange = (pageNumber: any) => {
+    const handlePageChange = (pageNumber: number) => {
         setCurrentPage(pageNumber);
     };
 
     // Open modal with selected item
-    const openModal = (item: any) => {
+    const openModal = (item: ItemType) => {
         setSelectedItem(item);
         setCurrentImageIndex(0); // Reset to first image when opening modal
+        setItemQuantity(1); // Reset quantity when opening modal
     };
 
     // Close modal
@@ -75,7 +102,7 @@ export default function ShowCase() {
     };
 
     // Select specific image by index
-    const selectImage = (index: any) => {
+    const selectImage = (index: number) => {
         setCurrentImageIndex(index);
     };
 
@@ -86,16 +113,41 @@ export default function ShowCase() {
         return selectedItem.additionalImages[currentImageIndex - 1];
     };
 
-    // Handle submit
-    const handleSubmit = () => {
-        // Implement your submit logic here
-        console.log("Submitted item:", selectedItem);
+    // Increase quantity in modal
+    const handleIncreaseQuantity = () => {
+        setItemQuantity(prev => prev + 1);
+    };
+
+    // Decrease quantity in modal
+    const handleDecreaseQuantity = () => {
+        setItemQuantity(prev => (prev > 1 ? prev - 1 : 1));
+    };
+
+    // Add to cart with selected quantity
+    const handleAddToCart = () => {
+        if (!selectedItem) return;
+
+        // Format the item as expected by the cart context
+        const cartItem: Omit<CartItem, 'quantity'> = {
+            id: selectedItem.id,
+            name: selectedItem.title,
+            price: selectedItem.price,
+            image: selectedItem.image
+        };
+
+        // Add item to cart with the selected quantity
+        for (let i = 0; i < itemQuantity; i++) {
+            addToCart(cartItem);
+        }
+
         closeModal();
     };
 
     return (
         <div className="flex flex-col min-h-screen absolute left-0 right-0">
+            <NavBar refs={{ introRef, servicesRef, contactRef, aboutRef }}/>
             <BannerImages />
+
             <main className="flex-grow bg-gray-50 py-8">
                 <div className="container mx-auto px-4">
                     {/* Page Title */}
@@ -114,7 +166,10 @@ export default function ShowCase() {
                             >
                                 <img src={item.image} alt={item.title} className="w-full h-48 object-cover rounded-t-lg" />
                                 <div className="p-4">
-                                    <h3 className="font-semibold text-lg">{item.title}</h3>
+                                    <div className="flex justify-between items-center">
+                                        <h3 className="font-semibold text-lg">{item.title}</h3>
+                                        <span className="font-bold text-blue-600">${item.price.toFixed(2)}</span>
+                                    </div>
                                     <p className="text-gray-500 text-sm mt-1">Click to view details</p>
                                 </div>
                             </div>
@@ -143,7 +198,7 @@ export default function ShowCase() {
                 </div>
             </main>
 
-            <div className='mx-4 mb-4'>
+            <div className="mx-4 mb-4">
                 <Footer />
             </div>
 
@@ -219,8 +274,39 @@ export default function ShowCase() {
                             {/* Right side - Description */}
                             <div className="p-6 bg-gray-50 rounded-r-lg flex flex-col justify-between">
                                 <div>
-                                    <h2 className="text-2xl font-bold mb-4">{selectedItem.title}</h2>
-                                    <p className="text-gray-700">{selectedItem.description}</p>
+                                    <div className="flex justify-between items-center mb-4">
+                                        <h2 className="text-2xl font-bold">{selectedItem.title}</h2>
+                                        <span className="text-2xl font-bold text-blue-600">${selectedItem.price.toFixed(2)}</span>
+                                    </div>
+                                    <p className="text-gray-700 mb-8">{selectedItem.description}</p>
+
+                                    {/* Quantity selector */}
+                                    <div className="mt-6">
+                                        <label className="block text-gray-700 mb-2">Quantity:</label>
+                                        <div className="flex items-center">
+                                            <button
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    handleDecreaseQuantity();
+                                                }}
+                                                className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-l"
+                                            >
+                                                <Minus size={18} />
+                                            </button>
+                                            <span className="bg-gray-100 py-2 px-6 text-center">
+                                                {itemQuantity}
+                                            </span>
+                                            <button
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    handleIncreaseQuantity();
+                                                }}
+                                                className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-r"
+                                            >
+                                                <Plus size={18} />
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -234,10 +320,11 @@ export default function ShowCase() {
                                 Cancel
                             </button>
                             <button
-                                onClick={handleSubmit}
-                                className="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                                onClick={handleAddToCart}
+                                className="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 flex items-center"
                             >
-                                Submit
+                                <ShoppingCart size={18} className="mr-2" />
+                                Add to Cart - ${(selectedItem.price * itemQuantity).toFixed(2)}
                             </button>
                         </div>
                     </div>

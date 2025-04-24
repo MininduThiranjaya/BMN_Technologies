@@ -1,4 +1,4 @@
-import { useRef, useState } from "react"
+import { useRef } from "react"
 import AboutUs from "../components/AboutUs"
 import ContactUs from "../components/ContactUs"
 import Footer from "../components/Footer"
@@ -14,23 +14,22 @@ function HomePage() {
     const contactRef = useRef(null);
     const aboutRef = useRef(null);
 
-
     return (
         <>
             <div className="absolute left-0 right-0" >
                 <NavBar refs={{ introRef, servicesRef, contactRef, aboutRef }} />
                 <BannerImages />
                 <div className="mx-4 mb-4">
-                    <div ref={introRef}>
+                    <div ref={introRef} id="intro">
                         <Intro />
                     </div>
-                    <div ref={servicesRef}>
+                    <div ref={servicesRef} id="services">
                         <Services />
                     </div>
-                    <div ref={contactRef}>
+                    <div ref={contactRef} id="contactUs">
                         <ContactUs />
                     </div>
-                    <div ref={aboutRef}>
+                    <div ref={aboutRef} id="about">
                         <AboutUs />
                     </div>
                     <Footer />
