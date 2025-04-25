@@ -1,16 +1,22 @@
 import { Sun, Battery, Wind, Zap } from 'lucide-react';
-import ServiceCard from './ServiceCard';
-import BannerImages from './BannerImages';
-import Footer from './Footer';
-import { useEffect } from 'react';
+import ServiceCard from '../components/ServiceCard';
+import BannerImages from '../components/BannerImages';
+import Footer from '../components/Footer';
+import { useEffect, useRef } from 'react';
 import { useLocation } from "react-router-dom";
+import NavBar from '../components/NavBar';
 
 function AllProducts() {
+
+    const introRef = useRef(null);
+    const servicesRef = useRef(null);
+    const contactRef = useRef(null);
+    const aboutRef = useRef(null);
 
     const { pathname } = useLocation();
     useEffect(() => {
         window.scrollTo(0, 0); // scroll to top
-      }, [pathname]);
+    }, [pathname]);
     // Sample data for products
     const products = [
         {
@@ -18,33 +24,34 @@ function AllProducts() {
             title: "Solar Panels",
             description: "High-efficiency solar panels with extended warranty and optimal energy conversion.",
             icon: <Sun size={40} className="text-yellow-500" />,
-            link: "#solar-panels"
+            link: "/all-products/solar-panels"
         },
         {
             id: 2,
             title: "Battery Storage",
             description: "Advanced battery storage solutions for reliable power backup and energy management.",
             icon: <Battery size={40} className="text-green-500" />,
-            link: "#battery-storage"
+            link: "/all-products/battery-storage"
         },
         {
             id: 3,
             title: "Smart Energy Systems",
             description: "Intelligent energy monitoring and control systems for optimal energy usage.",
             icon: <Zap size={40} className="text-blue-500" />,
-            link: "#smart-energy"
+            link: "/all-products/smart-energy"
         },
         {
             id: 4,
             title: "Hybrid Inverters",
             description: "Versatile inverters that work with both grid and battery power sources.",
             icon: <Wind size={40} className="text-purple-500" />,
-            link: "#inverters"
+            link: "/all-products/inverters"
         }
     ];
 
     return (
         <div className="absolute left-0 right-0">
+            <NavBar refs={{ introRef, servicesRef, contactRef, aboutRef }} />
             <BannerImages />
             <div className="bg-gray-50 min-h-screen py-4 mx-4">
                 <div className="max-w-6xl mx-auto px-4 md-4">
