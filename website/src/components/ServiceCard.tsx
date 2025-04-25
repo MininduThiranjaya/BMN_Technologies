@@ -1,14 +1,20 @@
 import { useState } from 'react';
 import { ChevronRight } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 // Reusable card component with hover effect
 function ServiceCard({ title, description, icon, link }: any) {
     const [isHovered, setIsHovered] = useState(false);
+    const navigate = useNavigate()
+
+    function navigateTo(link: string) {
+        navigate(link)
+    }
 
     return (
-        <a
-            href={link}
+        <div
             className="block"
+            onClick={() => {navigateTo(link)}}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
         >
@@ -30,7 +36,7 @@ function ServiceCard({ title, description, icon, link }: any) {
                     </div>
                 </div>
             </div>
-        </a>
+        </div>
     );
 }
 

@@ -1,11 +1,13 @@
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { X, ChevronLeft, ChevronRight, ShoppingCart, Plus, Minus } from 'lucide-react';
-import BannerImages from './BannerImages';
-import Footer from './Footer';
+import BannerImages from '../components/BannerImages';
+import Footer from '../components/Footer';
 import banner1 from '../assets/bannerImages/banner1.jpg';
 import banner2 from '../assets/bannerImages/banner2.jpg';
 import { useCart, CartItem } from '../context/CartContext';
-import NavBar from './NavBar';
+import { useParams } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
+import NavBar from '../components/NavBar';
 
 interface ItemType {
     id: number,
@@ -17,8 +19,15 @@ interface ItemType {
 }
 
 // Main Showcase Component
-export default function ShowCase() {
+export default function ProductShowCasePage() {
 
+    const { pathname } = useLocation();
+
+    useEffect(() => {
+        window.scrollTo(0, 0); // scroll to top
+    }, [pathname]);
+
+    const { category } = useParams<{ category: string }>();
     const introRef = useRef(null);
     const servicesRef = useRef(null);
     const contactRef = useRef(null);

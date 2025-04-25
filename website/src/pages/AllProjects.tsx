@@ -1,16 +1,22 @@
 import { Home, Building, Factory } from 'lucide-react';
-import ServiceCard from './ServiceCard';
-import Footer from './Footer';
-import BannerImages from './BannerImages';
-import { useEffect } from 'react';
+import ServiceCard from '../components/ServiceCard';
+import Footer from '../components/Footer';
+import BannerImages from '../components/BannerImages';
+import { useEffect, useRef } from 'react';
 import { useLocation } from "react-router-dom";
+import NavBar from '../components/NavBar';
 
 function AllProjects() {
 
+  const introRef = useRef(null);
+  const servicesRef = useRef(null);
+  const contactRef = useRef(null);
+  const aboutRef = useRef(null);
+
   const { pathname } = useLocation();
-    useEffect(() => {
-        window.scrollTo(0, 0); // scroll to top
-      }, [pathname]);
+  useEffect(() => {
+    window.scrollTo(0, 0); // scroll to top
+  }, [pathname]);
   // Sample data for projects
   const projects = [
     {
@@ -18,26 +24,27 @@ function AllProjects() {
       title: "Residential Solar",
       description: "Complete home solar installations with custom designs for optimal energy production.",
       icon: <Home size={40} className="text-orange-500" />,
-      link: "#residential"
+      link: "/all-projects/residential"
     },
     {
       id: 2,
       title: "Commercial Buildings",
       description: "Large-scale solar solutions for office buildings and commercial properties.",
       icon: <Building size={40} className="text-blue-500" />,
-      link: "#commercial"
+      link: "/all-projects/commercial"
     },
     {
       id: 3,
       title: "Industrial Solutions",
       description: "Power solutions for factories and industrial complexes with high energy demands.",
       icon: <Factory size={40} className="text-gray-600" />,
-      link: "#industrial"
+      link: "/all-projects/industrial"
     }
   ];
 
   return (
     <div className="absolute left-0 right-0">
+      <NavBar refs={{ introRef, servicesRef, contactRef, aboutRef }} />
       <BannerImages />
       <div className="bg-gray-50 min-h-screen py-4 mx-4">
         <div className="max-w-6xl mx-auto px-4 md-4">
@@ -63,7 +70,7 @@ function AllProjects() {
             </div>
           </section>
         </div>
-      <Footer />
+        <Footer />
       </div>
 
     </div>
