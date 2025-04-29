@@ -69,44 +69,6 @@ export default function AboutUs() {
         return () => clearInterval(interval);
     }, [isAutoPlaying, testimonialData]);
 
-    // const testimonialData = [
-    //     {
-    //         id: 1,
-    //         name: "Alexandra Chen",
-    //         role: "CEO, TechVision",
-    //         content: "Working with this team has transformed our business. Their attention to detail and innovative solutions exceeded our expectations in every way.",
-    //         rating: 5
-    //     },
-    //     {
-    //         id: 2,
-    //         name: "Marcus Johnson",
-    //         role: "Marketing Director, GrowthLabs",
-    //         content: "The project was delivered on time and under budget. The quality of work was exceptional, and the team was responsive throughout the entire process.",
-    //         rating: 5
-    //     },
-    //     {
-    //         id: 3,
-    //         name: "Priya Sharma",
-    //         role: "Founder, InnovateCo",
-    //         content: "I've worked with many development teams, but none have matched the level of expertise and dedication that this team brings to the table.",
-    //         rating: 5
-    //     },
-    //     {
-    //         id: 4,
-    //         name: "David Miller",
-    //         role: "CTO, FutureTech",
-    //         content: "Their technical expertise is unmatched. They've helped us solve complex problems with elegant solutions that are both scalable and maintainable.",
-    //         rating: 5
-    //     },
-    //     {
-    //         id: 5,
-    //         name: "Sophia Rodriguez",
-    //         role: "Product Manager, LaunchPad",
-    //         content: "The attention to detail and user experience design made all the difference. Our users love the intuitive interface and powerful functionality.",
-    //         rating: 5
-    //     }
-    // ];
-
     const handlePrevious = () => {
         setIsAutoPlaying(false);
         setSlideDirection("prev");
