@@ -1,5 +1,18 @@
 import { useState, useEffect } from "react";
 import { Star, Quote, ChevronLeft, ChevronRight } from "lucide-react";
+import TestimonialForm from "./TestimonialForm";
+import axios from "axios";
+
+interface Testimonial {
+    id: number,
+    name: string,
+    company: string,
+    position: string,
+    email: string,
+    testimonial: string,
+    rating: number,
+    date: Date,
+}
 
 export default function AboutUs() {
     const [visibleSections, setVisibleSections] = useState({
@@ -12,75 +25,98 @@ export default function AboutUs() {
     const [activeIndex, setActiveIndex] = useState(0);
     const [isAutoPlaying, setIsAutoPlaying] = useState(true);
     const [slideDirection, setSlideDirection] = useState("next");
+    const [testimonialData, setTestimonialData] = useState<Testimonial[]>([])
+    const [loading, setLoading] = useState(true);
+
+    function getTestimonialData() {
+        axios.get('http://localhost:8080/api/user-testimonial/get')
+            .then(res => {
+                setTestimonialData(res.data?.object || []);
+                setLoading(false);
+            })
+            .catch(err => console.error(err));
+    }
+
+    useEffect(() => {
+        getTestimonialData();
+    }, []); // only run on mount
 
     // Text animations on mount
     useEffect(() => {
+
         setTimeout(() => setVisibleSections(prev => ({ ...prev, heading: true })), 300);
         setTimeout(() => setVisibleSections(prev => ({ ...prev, subheading: true })), 600);
         setTimeout(() => setVisibleSections(prev => ({ ...prev, desc1: true })), 900);
         setTimeout(() => setVisibleSections(prev => ({ ...prev, desc2: true })), 1200);
     }, []);
 
+
     // Carousel auto-play
     useEffect(() => {
-        if (!isAutoPlaying) return;
+        if (!isAutoPlaying || testimonialData.length === 0) {
+            return;
+        }
+        // if (testimonialData.length === 0) return;
 
         const interval = setInterval(() => {
-            setSlideDirection("next");
-            setActiveIndex(prevIndex => (prevIndex + 1) % testimonials.length);
+            if (testimonialData.length > 0) {
+                console.log(testimonialData?.length);
+                setSlideDirection("next");
+                setActiveIndex(prevIndex => (prevIndex + 1) % testimonialData.length);
+            }
         }, 5000);
 
         return () => clearInterval(interval);
-    }, [isAutoPlaying]);
+    }, [isAutoPlaying, testimonialData]);
 
-    const testimonials = [
-        {
-            id: 1,
-            name: "Alexandra Chen",
-            role: "CEO, TechVision",
-            content: "Working with this team has transformed our business. Their attention to detail and innovative solutions exceeded our expectations in every way.",
-            rating: 5
-        },
-        {
-            id: 2,
-            name: "Marcus Johnson",
-            role: "Marketing Director, GrowthLabs",
-            content: "The project was delivered on time and under budget. The quality of work was exceptional, and the team was responsive throughout the entire process.",
-            rating: 5
-        },
-        {
-            id: 3,
-            name: "Priya Sharma",
-            role: "Founder, InnovateCo",
-            content: "I've worked with many development teams, but none have matched the level of expertise and dedication that this team brings to the table.",
-            rating: 5
-        },
-        {
-            id: 4,
-            name: "David Miller",
-            role: "CTO, FutureTech",
-            content: "Their technical expertise is unmatched. They've helped us solve complex problems with elegant solutions that are both scalable and maintainable.",
-            rating: 5
-        },
-        {
-            id: 5,
-            name: "Sophia Rodriguez",
-            role: "Product Manager, LaunchPad",
-            content: "The attention to detail and user experience design made all the difference. Our users love the intuitive interface and powerful functionality.",
-            rating: 5
-        }
-    ];
+    // const testimonialData = [
+    //     {
+    //         id: 1,
+    //         name: "Alexandra Chen",
+    //         role: "CEO, TechVision",
+    //         content: "Working with this team has transformed our business. Their attention to detail and innovative solutions exceeded our expectations in every way.",
+    //         rating: 5
+    //     },
+    //     {
+    //         id: 2,
+    //         name: "Marcus Johnson",
+    //         role: "Marketing Director, GrowthLabs",
+    //         content: "The project was delivered on time and under budget. The quality of work was exceptional, and the team was responsive throughout the entire process.",
+    //         rating: 5
+    //     },
+    //     {
+    //         id: 3,
+    //         name: "Priya Sharma",
+    //         role: "Founder, InnovateCo",
+    //         content: "I've worked with many development teams, but none have matched the level of expertise and dedication that this team brings to the table.",
+    //         rating: 5
+    //     },
+    //     {
+    //         id: 4,
+    //         name: "David Miller",
+    //         role: "CTO, FutureTech",
+    //         content: "Their technical expertise is unmatched. They've helped us solve complex problems with elegant solutions that are both scalable and maintainable.",
+    //         rating: 5
+    //     },
+    //     {
+    //         id: 5,
+    //         name: "Sophia Rodriguez",
+    //         role: "Product Manager, LaunchPad",
+    //         content: "The attention to detail and user experience design made all the difference. Our users love the intuitive interface and powerful functionality.",
+    //         rating: 5
+    //     }
+    // ];
 
     const handlePrevious = () => {
         setIsAutoPlaying(false);
         setSlideDirection("prev");
-        setActiveIndex(prevIndex => (prevIndex - 1 + testimonials.length) % testimonials.length);
+        setActiveIndex(prevIndex => (prevIndex - 1 + testimonialData.length) % testimonialData.length);
     };
 
     const handleNext = () => {
         setIsAutoPlaying(false);
         setSlideDirection("next");
-        setActiveIndex(prevIndex => (prevIndex + 1) % testimonials.length);
+        setActiveIndex(prevIndex => (prevIndex + 1) % testimonialData.length);
     };
 
     return (
@@ -117,9 +153,11 @@ export default function AboutUs() {
                     </p>
                 </div>
             </div>
+            <TestimonialForm />
+
 
             {/* Single Testimonial Carousel */}
-            <div className="py-12 bg-gray-50 rounded-2xl shadow-sm">
+            <div className="py-12 bg-gray-50 rounded-2xl shadow-sm mt-16">
                 <h2 className="text-3xl font-bold text-center mb-12">What Our Clients Say</h2>
 
                 <div className="relative px-12 max-w-2xl mx-auto">
@@ -148,30 +186,33 @@ export default function AboutUs() {
                                 className={`bg-white p-8 rounded-lg shadow-md h-full flex flex-col justify-between transform transition-all duration-700 ${slideDirection === "next" ? "animate-slideInRight" : "animate-slideInLeft"
                                     }`}
                             >
-                                <div>
-                                    <Quote size={32} className="text-blue-500 mb-4" />
-                                    <p className="italic text-lg text-gray-800">{testimonials[activeIndex].content}</p>
-                                </div>
+                                {!loading && (
+                                    <>
+                                        <div>
+                                            <Quote size={32} className="text-blue-500 mb-4" />
+                                            <p className="italic text-lg text-gray-800">{testimonialData[activeIndex].testimonial}</p>
+                                        </div><div className="flex items-center justify-between mt-6">
+                                            <div>
+                                                <p className="font-bold text-lg">{testimonialData[activeIndex].name}</p>
+                                                <p className="text-gray-600">{testimonialData[activeIndex].position}</p>
+                                                <p className="text-gray-600">{testimonialData[activeIndex].company}</p>
+                                            </div>
 
-                                <div className="flex items-center justify-between mt-6">
-                                    <div>
-                                        <p className="font-bold text-lg">{testimonials[activeIndex].name}</p>
-                                        <p className="text-gray-600">{testimonials[activeIndex].role}</p>
-                                    </div>
-
-                                    <div className="flex">
-                                        {[...Array(testimonials[activeIndex].rating)].map((_, i) => (
-                                            <Star key={i} size={20} className="text-yellow-500 fill-current" />
-                                        ))}
-                                    </div>
-                                </div>
+                                            <div className="flex">
+                                                {[...Array(testimonialData[activeIndex].rating)].map((_, i) => (
+                                                    <Star key={i} size={20} className="text-yellow-500 fill-current" />
+                                                ))}
+                                            </div>
+                                        </div>
+                                    </>
+                                )}
                             </div>
                         </div>
                     </div>
 
                     {/* Carousel Indicators */}
                     <div className="flex justify-center mt-8">
-                        {testimonials.map((_, index) => (
+                        {testimonialData.map((_, index) => (
                             <button
                                 key={index}
                                 className={`w-3 h-3 mx-1 rounded-full transition-all ${activeIndex === index ? 'bg-blue-500 w-6' : 'bg-gray-300'
