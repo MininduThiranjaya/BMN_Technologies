@@ -7,7 +7,7 @@ import jakarta.persistence.Id;
 
 @Entity
 public class AdminLoginModel {
-     @Id
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
