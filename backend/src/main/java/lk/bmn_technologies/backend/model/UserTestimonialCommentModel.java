@@ -44,11 +44,11 @@ public class UserTestimonialCommentModel {
         this.company = company;
     }
 
-    public String getPosision() {
+    public String getPosition() {
         return position;
     }
 
-    public void setPosision(String position) {
+    public void setPosition(String position) {
         this.position = position;
     }
 
