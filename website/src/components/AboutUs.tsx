@@ -148,7 +148,7 @@ export default function AboutUs() {
                                 className={`bg-white p-8 rounded-lg shadow-md h-full flex flex-col justify-between transform transition-all duration-700 ${slideDirection === "next" ? "animate-slideInRight" : "animate-slideInLeft"
                                     }`}
                             >
-                                {!loading && (
+                                {!loading && testimonialData.length > 0 ? (
                                     <>
                                         <div>
                                             <Quote size={32} className="text-blue-500 mb-4" />
@@ -164,6 +164,16 @@ export default function AboutUs() {
                                                 {[...Array(testimonialData[activeIndex].rating)].map((_, i) => (
                                                     <Star key={i} size={20} className="text-yellow-500 fill-current" />
                                                 ))}
+                                            </div>
+                                        </div>
+                                    </>
+                                ) : (
+                                    <>
+                                        <div>
+                                            <Quote size={32} className="text-blue-500 mb-4" />
+                                        </div><div className="flex items-center justify-between mt-6">
+                                            <div>
+                                                <p className="font-bold text-lg">No Comments....</p>
                                             </div>
                                         </div>
                                     </>
