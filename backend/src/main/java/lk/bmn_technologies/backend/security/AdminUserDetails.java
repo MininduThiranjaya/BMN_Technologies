@@ -17,6 +17,10 @@ public class AdminUserDetails implements UserDetails {
         this.adminUserModel = adminUserModel;
     }
 
+    public AdminUserModel getAdminUser() {
+        return adminUserModel;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority("ROLE.USER"));
@@ -54,5 +58,9 @@ public class AdminUserDetails implements UserDetails {
 
     public Long getId() {
         return adminUserModel.getId();
+    }
+
+    public AdminUserModel getAdminUserModel() {
+        return adminUserModel;
     }  
 }
