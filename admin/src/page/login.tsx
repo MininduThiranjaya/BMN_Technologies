@@ -1,18 +1,22 @@
 import { useState } from "react";
 import { LogIn, Mail, Lock, Eye, EyeOff } from "lucide-react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthProvider";
+import { toast } from "react-toastify";
 
 export default function LoginPage() {
-  const [formData, setFormData] = useState({ userName: "", password: "" });
+  const { login } = useAuth();
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({ email: "", password: "" });
   const [errors, setErrors] = useState<{
-    userName?: string;
+    email?: string;
     password?: string;
   }>({});
   const [showPassword, setShowPassword] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<
     "idle" | "submitting" | "success" | "error"
   >("idle");
-  const [loginSuccess, setLoginSuccess] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -24,7 +28,7 @@ export default function LoginPage() {
 
   const validate = () => {
     const newErrors: typeof errors = {};
-    if (!formData.userName.trim()) newErrors.userName = "Username is required";
+    if (!formData.email.trim()) newErrors.email = "Username is required";
     if (!formData.password.trim()) newErrors.password = "Password is required";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -36,9 +40,15 @@ export default function LoginPage() {
 
     setSubmitStatus("submitting");
     try {
-      const res = await axios.post("http://localhost:8080/api/login", formData);
+      const res = await axios.post(
+        "http://localhost:8080/api/admin/auth/login",
+        formData
+      );
       if (res.data.success) {
-        setLoginSuccess(true);
+        console.log("Login successful:", res);
+        login(res.data.token); // Assuming the token is returned in the response
+        navigate("/dashboard");
+        toast.success("Login Successful..."); // Redirect to dashboard after login
       } else {
         setSubmitStatus("error");
         setErrors({ password: "Invalid username or password" });
@@ -50,24 +60,6 @@ export default function LoginPage() {
       setSubmitStatus("idle");
     }
   };
-
-  if (loginSuccess) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100">
-        <div className="p-8 bg-white shadow-md rounded-lg text-center space-y-4">
-          <h2 className="text-3xl font-bold text-green-600">
-            Login Successful
-          </h2>
-          <button
-            onClick={() => setLoginSuccess(false)}
-            className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
-          >
-            Log Out
-          </button>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
@@ -86,18 +78,18 @@ export default function LoginPage() {
                 <Mail size={18} className="text-gray-400" />
               </div>
               <input
-                id="userName"
-                name="userName"
-                value={formData.userName}
+                id="email"
+                name="email"
+                value={formData.email}
                 onChange={handleChange}
                 className={`pl-10 w-full p-3 border ${
-                  errors.userName ? "border-red-500" : "border-gray-300"
+                  errors.email ? "border-red-500" : "border-gray-300"
                 } rounded-md focus:ring-indigo-500 focus:outline-none`}
                 placeholder="Enter your username"
               />
             </div>
-            {errors.userName && (
-              <p className="text-red-500 text-sm mt-1">{errors.userName}</p>
+            {errors.email && (
+              <p className="text-red-500 text-sm mt-1">{errors.email}</p>
             )}
           </div>
 
