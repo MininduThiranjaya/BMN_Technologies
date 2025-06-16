@@ -38,7 +38,7 @@ public class AuthenticationServiceImpl implements  AuthenticationService{
 
     private final AuthenticationManager authenticationManager;
     private final UserDetailsService userDetailsService;
-    private final long jwtExpiry = 86400000L;
+    private final long jwtExpiry = 3600000L;
 
     @Value("${jwt.secret}")
     private String secretKey;
@@ -63,7 +63,7 @@ public class AuthenticationServiceImpl implements  AuthenticationService{
             .setClaims(claims)
             .setSubject(userDetails.getUsername())
             .setIssuedAt(new Date(System.currentTimeMillis()))
-            .setExpiration(new Date(System.currentTimeMillis() * jwtExpiry))
+            .setExpiration(new Date(System.currentTimeMillis() + jwtExpiry))
             .signWith(getSigningKey(), SignatureAlgorithm.HS256)
             .compact();
     }
