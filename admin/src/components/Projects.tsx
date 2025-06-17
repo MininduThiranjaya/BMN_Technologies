@@ -1,8 +1,8 @@
 import { Plus, X } from "lucide-react";
 import { useState } from "react";
-import AddProduct from "./AddProduct";
+import AddProject from "./AddProject";
 
-export default function Products() {
+export default function Projects() {
 
   const [addProduct, setAddProduct] = useState(false);
 
@@ -93,7 +93,7 @@ export default function Products() {
 
       {/* Modal Overlay */}
       {addProduct && (
-        <AddProduct 
+        <AddProject
           isOpen={addProduct} 
           onClose={() => setAddProduct(false)} 
         />
