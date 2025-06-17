@@ -86,6 +86,7 @@ export default function LoginPage() {
                   errors.email ? "border-red-500" : "border-gray-300"
                 } rounded-md focus:ring-indigo-500 focus:outline-none`}
                 placeholder="Enter your username"
+                required={true}
               />
             </div>
             {errors.email && (
@@ -114,6 +115,7 @@ export default function LoginPage() {
                   errors.password ? "border-red-500" : "border-gray-300"
                 } rounded-md focus:ring-indigo-500 focus:outline-none`}
                 placeholder="Enter your password"
+                required={true}
               />
               <button
                 type="button"
