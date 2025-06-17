@@ -53,7 +53,7 @@ public class AdminUserController {
         UserDetails userDetails = authenticationService.authenticate(data.getEmail(), data.getPassword());
         String token = authenticationService.generateToken(userDetails);
         if(token != null) {
-            AuthResponseDTO response = new AuthResponseDTO(token, 3600000L, userDetails,true);
+            AuthResponseDTO response = new AuthResponseDTO(token, 3600000L, token,true);
             return ResponseEntity.ok(response);
         }
         else {
