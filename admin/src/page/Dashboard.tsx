@@ -15,6 +15,7 @@ import {
   LogOut,
   Edit3,
   X,
+  Folder
 } from "lucide-react";
 import { useAuth } from "../context/AuthProvider";
 import { toast } from "react-toastify";
@@ -25,6 +26,7 @@ import Analytics from "../components/Analytics";
 import SettingsPage from "../components/Settings";
 import AdminUserRegistration from "../components/UserRegistration";
 import axios from "axios";
+import Projects from "../components/Projects";
 
 interface AdminUser {
   email: string;
@@ -298,12 +300,9 @@ const Dashboard: React.FC = () => {
     { icon: ShoppingCart, label: "Sales", active: activeView === "Sales" },
     { icon: Users, label: "Customers", active: activeView === "Customers" },
     { icon: Package, label: "Products", active: activeView === "Products" },
+    { icon: Folder, label: "Projects", active: activeView === "Projects" },
     { icon: BarChart3, label: "Analytics", active: activeView === "Analytics" },
-    {
-      icon: User,
-      label: "User Registration",
-      active: activeView === "User Registration",
-    },
+    { icon: User, label: "User Registration", active: activeView === "User Registration"},
     { icon: Settings, label: "Settings", active: activeView === "Settings" },
   ];
 
@@ -340,6 +339,9 @@ const Dashboard: React.FC = () => {
 
       case "Products":
         return <Products />;
+
+       case "Projects":
+        return <Projects/>;
 
       case "Analytics":
         return <Analytics />;
