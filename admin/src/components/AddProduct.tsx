@@ -1,17 +1,9 @@
 //error in 39
-import { useState } from 'react';
-import {
-  Upload,
-  X,
-  Package,
-  Camera,
-  Save,
-  Eye,
-  Plus,
-} from 'lucide-react';
-import axios from 'axios';
-import { toast } from 'react-toastify';
-import imageCompression from 'browser-image-compression';
+import { useState } from "react";
+import { Upload, X, Package, Camera, Save, Eye, Plus } from "lucide-react";
+import axios from "axios";
+import { toast } from "react-toastify";
+import imageCompression from "browser-image-compression";
 import { BeatLoader } from "react-spinners";
 
 interface ImageType {
@@ -32,21 +24,26 @@ const options = {
 };
 
 export default function AddProduct({ isOpen, onClose }: AddProductProps) {
-  console.log("error in line 39")
+  console.log("error in line 39");
   const [isLoading, setIsLoading] = useState(false);
 
-  const CLOUDINARY_UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
+  const CLOUDINARY_UPLOAD_PRESET = import.meta.env
+    .VITE_CLOUDINARY_UPLOAD_PRESET;
   const CLOUDINARY_UPLOAD_URL = import.meta.env.VITE_CLOUDINARY_UPLOAD_URL;
 
   const [formData, setFormData] = useState({
-    productId: '',
-    productName: '',
-    productPrice: '',
-    productDescription: '',
-    category: ''
+    productId: "",
+    productName: "",
+    productPrice: "",
+    productDescription: "",
+    category: "",
   });
 
-  const [mainThumbnail, setMainThumbnail] = useState<ImageType>({file: null, preview: null, name: null});
+  const [mainThumbnail, setMainThumbnail] = useState<ImageType>({
+    file: null,
+    preview: null,
+    name: null,
+  });
   const [additionalImages, setAdditionalImages] = useState<ImageType[]>([
     { file: null, preview: null, name: null },
     { file: null, preview: null, name: null },
@@ -58,20 +55,20 @@ export default function AddProduct({ isOpen, onClose }: AddProductProps) {
 
   const handleInputChange = (e: any) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
   const handleMainThumbnailUpload = (file: any) => {
-    if (file && file.type.startsWith('image/')) {
+    if (file && file.type.startsWith("image/")) {
       const reader = new FileReader();
       reader.onload = (e: any) => {
         setMainThumbnail({
           file: file,
           preview: e.target?.result,
-          name: file.name
+          name: file.name,
         });
       };
       reader.readAsDataURL(file);
@@ -79,14 +76,14 @@ export default function AddProduct({ isOpen, onClose }: AddProductProps) {
   };
 
   const handleAdditionalImageUpload = (file: any, index: any) => {
-    if (file && file.type.startsWith('image/')) {
+    if (file && file.type.startsWith("image/")) {
       const reader = new FileReader();
       reader.onload = (e: any) => {
         const newImages = [...additionalImages];
         newImages[index] = {
           file: file,
           preview: e.target?.result,
-          name: file.name
+          name: file.name,
         };
         setAdditionalImages(newImages);
       };
@@ -96,7 +93,7 @@ export default function AddProduct({ isOpen, onClose }: AddProductProps) {
 
   const removeImage = (index: any) => {
     const newImages = [...additionalImages];
-    newImages[index] = { file: null, preview: null, name: null }
+    newImages[index] = { file: null, preview: null, name: null };
     setAdditionalImages(newImages);
   };
 
@@ -128,7 +125,6 @@ export default function AddProduct({ isOpen, onClose }: AddProductProps) {
   };
 
   const handleSubmit = async (e: any) => {
-
     e.preventDefault();
     if (mainThumbnail?.file && mainThumbnail?.name && mainThumbnail?.preview) {
       setIsLoading(true);
@@ -145,9 +141,8 @@ export default function AddProduct({ isOpen, onClose }: AddProductProps) {
       ).filter((img): img is File => img !== null);
       // console.log(compressedImages);
       uploadImage(compressedImages);
-    }
-    else {
-      toast.error("No Main Thumbnail Selected...")
+    } else {
+      toast.error("No Main Thumbnail Selected...");
     }
   };
 
@@ -180,8 +175,8 @@ export default function AddProduct({ isOpen, onClose }: AddProductProps) {
       setIsLoading(false);
       const updatedFormData = {
         ...formData,
-        uploadedUrls
-      }
+        uploadedUrls,
+      };
       addProductIntoDatabase(updatedFormData);
       handleClose();
     }
@@ -189,8 +184,28 @@ export default function AddProduct({ isOpen, onClose }: AddProductProps) {
   };
 
   const addProductIntoDatabase = (updatedFormData: any) => {
-    console.log(updatedFormData);
-  }
+    try {
+      const token = localStorage.getItem("accessToken");
+      console.log(updatedFormData);
+      axios
+        .post("http://localhost:8080/api/auth/product/add", updatedFormData, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+        .then((response) => {
+          console.log("Product added successfully:", response.data);
+          toast.success("Product added successfully!");
+        })
+        .catch((error) => {
+          console.error("Error adding product:", error);
+          toast.error("Failed to add product. Please try again.");
+        });
+    } catch (error) {
+      console.error("Error adding product to database:", error);
+      toast.error("Failed to add product. Please try again.");
+    }
+  };
 
   const togglePreview = () => {
     setPreviewMode(!previewMode);
@@ -199,18 +214,18 @@ export default function AddProduct({ isOpen, onClose }: AddProductProps) {
   const handleClose = () => {
     // Reset form when closing
     setFormData({
-      productId: '',
-      productName: '',
-      productPrice: '',
-      productDescription: '',
-      category: ''
+      productId: "",
+      productName: "",
+      productPrice: "",
+      productDescription: "",
+      category: "",
     });
     setMainThumbnail({ file: null, preview: null, name: null });
     setAdditionalImages([
       { file: null, preview: null, name: null },
       { file: null, preview: null, name: null },
       { file: null, preview: null, name: null },
-      { file: null, preview: null, name: null }
+      { file: null, preview: null, name: null },
     ]);
     setPreviewMode(false);
     onClose();
@@ -223,7 +238,9 @@ export default function AddProduct({ isOpen, onClose }: AddProductProps) {
       <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
         <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
           <div className="p-6 border-b flex justify-between items-center sticky top-0 bg-white">
-            <h2 className="text-2xl font-bold text-gray-800">Product Preview</h2>
+            <h2 className="text-2xl font-bold text-gray-800">
+              Product Preview
+            </h2>
             <div className="flex space-x-2">
               <button
                 onClick={togglePreview}
@@ -276,18 +293,20 @@ export default function AddProduct({ isOpen, onClose }: AddProductProps) {
 
               <div>
                 <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                  {formData.productName || 'Product Name'}
+                  {formData.productName || "Product Name"}
                 </h1>
                 <p className="text-2xl font-bold text-green-600 mb-4">
-                  Rs {formData.productPrice || '0.00'}
+                  Rs {formData.productPrice || "0.00"}
                 </p>
                 <p className="text-gray-600 mb-4">
-                  Product ID: {formData.productId || 'N/A'}
+                  Product ID: {formData.productId || "N/A"}
                 </p>
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-800 mb-2">Description</h3>
+                  <h3 className="text-lg font-semibold text-gray-800 mb-2">
+                    Description
+                  </h3>
                   <p className="text-gray-600 leading-relaxed">
-                    {formData.productDescription || 'No description provided.'}
+                    {formData.productDescription || "No description provided."}
                   </p>
                 </div>
               </div>
@@ -305,13 +324,15 @@ export default function AddProduct({ isOpen, onClose }: AddProductProps) {
           <BeatLoader color="#0065F8" size={25} margin={6} />
         </div>
       )}
-      
+
       <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
         <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-6">
           <div className="flex justify-between items-center">
             <div>
               <h1 className="text-2xl font-bold text-white">Add New Product</h1>
-              <p className="text-blue-100 mt-1">Fill in the details to add a new product to your inventory</p>
+              <p className="text-blue-100 mt-1">
+                Fill in the details to add a new product to your inventory
+              </p>
             </div>
             <div className="flex space-x-2">
               <button
@@ -446,8 +467,11 @@ export default function AddProduct({ isOpen, onClose }: AddProductProps) {
                     Main Thumbnail *
                   </label>
                   <div
-                    className={`relative border-2 border-dashed rounded-lg p-6 transition-colors ${dragOver ? 'border-blue-500 bg-blue-50' : 'border-gray-300'
-                      }`}
+                    className={`relative border-2 border-dashed rounded-lg p-6 transition-colors ${
+                      dragOver
+                        ? "border-blue-500 bg-blue-50"
+                        : "border-gray-300"
+                    }`}
                     onDrop={(e) => handleDrop(e, handleMainThumbnailUpload, 0)}
                     onDragOver={handleDragOver}
                     onDragLeave={handleDragLeave}
@@ -474,18 +498,22 @@ export default function AddProduct({ isOpen, onClose }: AddProductProps) {
                       <div className="text-center">
                         <Upload className="w-12 h-12 text-gray-400 mx-auto mb-4" />
                         <p className="text-sm text-gray-600 mb-2">
-                          Drop your main product image here, or{' '}
+                          Drop your main product image here, or{" "}
                           <label className="text-blue-600 hover:text-blue-700 cursor-pointer font-medium">
                             browse
                             <input
                               type="file"
                               className="hidden"
                               accept="image/*"
-                              onChange={(e: any) => handleMainThumbnailUpload(e.target.files[0])}
+                              onChange={(e: any) =>
+                                handleMainThumbnailUpload(e.target.files[0])
+                              }
                             />
                           </label>
                         </p>
-                        <p className="text-xs text-gray-500">PNG, JPG, GIF up to 10MB</p>
+                        <p className="text-xs text-gray-500">
+                          PNG, JPG, GIF up to 10MB
+                        </p>
                       </div>
                     )}
                   </div>
@@ -501,7 +529,9 @@ export default function AddProduct({ isOpen, onClose }: AddProductProps) {
                       <div
                         key={index}
                         className="relative border-2 border-dashed border-gray-300 rounded-lg p-4 aspect-square transition-colors hover:border-blue-400"
-                        onDrop={(e) => handleDrop(e, handleAdditionalImageUpload, index)}
+                        onDrop={(e) =>
+                          handleDrop(e, handleAdditionalImageUpload, index)
+                        }
                         onDragOver={handleDragOver}
                         onDragLeave={handleDragLeave}
                       >
@@ -514,7 +544,9 @@ export default function AddProduct({ isOpen, onClose }: AddProductProps) {
                             />
                             <button
                               type="button"
-                              onClick={() => { removeImage(index) }}
+                              onClick={() => {
+                                removeImage(index);
+                              }}
                               className="absolute -top-2 -right-2 p-1 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors"
                             >
                               <X className="w-3 h-3" />
@@ -529,7 +561,12 @@ export default function AddProduct({ isOpen, onClose }: AddProductProps) {
                                 type="file"
                                 className="hidden"
                                 accept="image/*"
-                                onChange={(e: any) => handleAdditionalImageUpload(e.target.files[0], index)}
+                                onChange={(e: any) =>
+                                  handleAdditionalImageUpload(
+                                    e.target.files[0],
+                                    index
+                                  )
+                                }
                               />
                             </label>
                           </div>
@@ -553,7 +590,9 @@ export default function AddProduct({ isOpen, onClose }: AddProductProps) {
             </button>
             <button
               type="submit"
-              onClick={(e) => { handleSubmit(e) }}
+              onClick={(e) => {
+                handleSubmit(e);
+              }}
               className="flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
             >
               <Save className="w-4 h-4 mr-2" />
