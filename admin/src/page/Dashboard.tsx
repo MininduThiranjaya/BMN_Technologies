@@ -10,7 +10,8 @@ import SettingsPage from "../components/Settings";
 import AdminUserRegistration from "../components/UserRegistration";
 import axios from "axios";
 import Projects from "../components/Projects";
-import { AdminUser, MenuItem, Sale, StatCard } from "../interfaces/dashboard_Interfaces" 
+import { AdminUser, MenuItem, Sale, StatCard } from "../interfaces/Dashboard_Interfaces" 
+import { endpoints } from "../api";
 
 const Dashboard: React.FC = () => {
   const { logout } = useAuth();
@@ -41,7 +42,7 @@ const Dashboard: React.FC = () => {
 
       try {
         const res = await axios.get(
-          "http://localhost:8080/api/admin/auth/user/profile",
+          endpoints.user.dashboardUserProfile,
           {
             headers: {
               Authorization: `Bearer ${token}`,

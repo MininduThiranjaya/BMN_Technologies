@@ -4,6 +4,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthProvider";
 import { toast } from "react-toastify";
+import { endpoints } from "../api";
 
 export default function LoginPage() {
   
@@ -42,7 +43,7 @@ export default function LoginPage() {
     setSubmitStatus("submitting");
     try {
       const res = await axios.post(
-        "http://localhost:8080/api/admin/auth/login",
+        endpoints.user.login,
         formData
       );
       if (res.data.success) {
