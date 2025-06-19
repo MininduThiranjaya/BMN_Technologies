@@ -5,7 +5,8 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import imageCompression from "browser-image-compression";
 import { BeatLoader } from "react-spinners";
-import { AddProductProps, ImageType, ProductImage } from "../interfaces/product_Interfaces"
+import { AddProductProps, ImageType, ProductImage } from "../interfaces/Product_Interfaces"
+import { endpoints } from "../api";
 const options = {
   maxSizeMB: 1,
   maxWidthOrHeight: 800,
@@ -16,8 +17,7 @@ export default function AddProduct({ isOpen, onClose }: AddProductProps) {
 
   const [isLoading, setIsLoading] = useState(false);
 
-  const CLOUDINARY_UPLOAD_PRESET = import.meta.env
-    .VITE_CLOUDINARY_UPLOAD_PRESET;
+  const CLOUDINARY_UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
   const CLOUDINARY_UPLOAD_URL = import.meta.env.VITE_CLOUDINARY_UPLOAD_URL;
 
   const [formData, setFormData] = useState({
@@ -176,7 +176,7 @@ export default function AddProduct({ isOpen, onClose }: AddProductProps) {
     try {
       const token = localStorage.getItem("accessToken");
       console.log(updatedFormData);
-      axios.post("http://localhost:8080/api/auth/product/add", updatedFormData, {
+      axios.post(endpoints.product.add, updatedFormData, {
           headers: {
             Authorization: `Bearer ${token}`,
           },

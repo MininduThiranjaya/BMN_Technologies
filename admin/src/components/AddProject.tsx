@@ -5,6 +5,7 @@ import { toast } from 'react-toastify';
 import imageCompression from 'browser-image-compression';
 import { BeatLoader } from "react-spinners";
 import { AddProjectProps, ImageType, ProjectImage } from "../interfaces/Project_Interfaces"
+import { endpoints } from '../api';
 
 const options = {
   maxSizeMB: 1,
@@ -172,7 +173,7 @@ export default function AddProject({ isOpen, onClose }: AddProjectProps) {
    try {
       const token = localStorage.getItem("accessToken");
       console.log(updatedFormData);
-      axios.post("http://localhost:8080/api/auth/project/add", updatedFormData, {
+      axios.post(endpoints.project.add, updatedFormData, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
