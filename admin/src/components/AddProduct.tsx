@@ -5,18 +5,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import imageCompression from "browser-image-compression";
 import { BeatLoader } from "react-spinners";
-
-interface ImageType {
-  file: File | null;
-  preview: string | null;
-  name: string | null;
-}
-
-interface AddProductProps {
-  isOpen: boolean;
-  onClose: () => void;
-}
-
+import { AddProductProps, ImageType, ProductImage } from "../interfaces/product_Interfaces"
 const options = {
   maxSizeMB: 1,
   maxWidthOrHeight: 800,
@@ -24,7 +13,7 @@ const options = {
 };
 
 export default function AddProduct({ isOpen, onClose }: AddProductProps) {
-  console.log("error in line 39");
+
   const [isLoading, setIsLoading] = useState(false);
 
   const CLOUDINARY_UPLOAD_PRESET = import.meta.env
@@ -147,7 +136,7 @@ export default function AddProduct({ isOpen, onClose }: AddProductProps) {
   };
 
   const uploadImage = async (allImages: File[]) => {
-    const uploadedUrls: string[] = [];
+    const imageUrl: ProductImage[] = [];
 
     try {
       const uploadPromises = allImages.map(async (file) => {
@@ -167,7 +156,7 @@ export default function AddProduct({ isOpen, onClose }: AddProductProps) {
       });
 
       const urls = await Promise.all(uploadPromises);
-      uploadedUrls.push(...urls);
+      imageUrl.push(...urls.map((url) => ({ imageUrl: url })));
     } catch (error) {
       console.error("Image upload failed:", error);
       toast.error("Image upload failed.");
@@ -175,20 +164,19 @@ export default function AddProduct({ isOpen, onClose }: AddProductProps) {
       setIsLoading(false);
       const updatedFormData = {
         ...formData,
-        uploadedUrls,
+        imageUrl,
       };
       addProductIntoDatabase(updatedFormData);
       handleClose();
     }
-    // console.log("All Uploaded URLs:", uploadedUrls);
+    // console.log("All Uploaded URLs:", imageUrl);
   };
 
   const addProductIntoDatabase = (updatedFormData: any) => {
     try {
       const token = localStorage.getItem("accessToken");
       console.log(updatedFormData);
-      axios
-        .post("http://localhost:8080/api/auth/product/add", updatedFormData, {
+      axios.post("http://localhost:8080/api/auth/product/add", updatedFormData, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
