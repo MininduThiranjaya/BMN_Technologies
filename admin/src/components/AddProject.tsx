@@ -1,31 +1,11 @@
 import { useState } from 'react';
-import {
-  Upload, 
-  X, 
-  MapPin, 
-  User, 
-  Camera,
-  Save,
-  Eye,
-  Plus,
-  Calendar,
-  FileText
-} from 'lucide-react';
+import { Upload, X, MapPin, User, Camera, Save, Eye, Plus, Calendar, FileText } from 'lucide-react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import imageCompression from 'browser-image-compression';
 import { BeatLoader } from "react-spinners";
-
-interface ImageType {
-  file: File | null;
-  preview: string | null;
-  name: string | null;
-}
-
-interface AddProductProps {
-  isOpen: boolean;
-  onClose: () => void;
-}
+import { AddProjectProps, ImageType, ProjectImage } from "../interfaces/Project_Interfaces"
+import { endpoints } from '../api';
 
 const options = {
   maxSizeMB: 1,
@@ -33,7 +13,7 @@ const options = {
   useWebWorker: true,
 };
 
-export default function AddProject({ isOpen, onClose }: AddProductProps) {
+export default function AddProject({ isOpen, onClose }: AddProjectProps) {
 
   const [isLoading, setIsLoading] = useState(false);
   const CLOUDINARY_UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
@@ -153,7 +133,7 @@ export default function AddProject({ isOpen, onClose }: AddProductProps) {
   };
 
   const uploadImage = async (allImages: File[]) => {
-    const uploadedUrls: string[] = [];
+    const imageUrl: ProjectImage[] = [];
 
     try {
       const uploadPromises = allImages.map(async (file) => {
@@ -173,7 +153,7 @@ export default function AddProject({ isOpen, onClose }: AddProductProps) {
       });
 
       const urls = await Promise.all(uploadPromises);
-      uploadedUrls.push(...urls);
+      imageUrl.push(...urls.map((url) => ({ imageUrl: url })));
     } catch (error) {
       console.error("Image upload failed:", error);
       toast.error("Image upload failed.");
@@ -181,16 +161,35 @@ export default function AddProject({ isOpen, onClose }: AddProductProps) {
       setIsLoading(false);
       const updatedFormData = {
         ...formData,
-        uploadedUrls
+        imageUrl
       }
       addProjectIntoDatabase(updatedFormData);
       handleClose();
     }
-    // console.log("All Uploaded URLs:", uploadedUrls);
+    // console.log("All Uploaded URLs:", imageUrl);
   };
 
   const addProjectIntoDatabase = (updatedFormData: any) => {
-    console.log(updatedFormData);
+   try {
+      const token = localStorage.getItem("accessToken");
+      console.log(updatedFormData);
+      axios.post(endpoints.project.add, updatedFormData, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+        .then((response) => {
+          console.log("Project added successfully:", response.data);
+          toast.success("Project added successfully!");
+        })
+        .catch((error) => {
+          console.error("Error adding Project:", error);
+          toast.error("Failed to add Project. Please try again.");
+        });
+    } catch (error) {
+      console.error("Error adding Project to database:", error);
+      toast.error("Failed to add Project. Please try again.");
+    }
   }
 
   const togglePreview = () => {

@@ -1,22 +1,5 @@
 import React, { JSX, useEffect, useState } from "react";
-import {
-  Search,
-  Bell,
-  User,
-  ShoppingCart,
-  Users,
-  Package,
-  BarChart3,
-  Settings,
-  Home,
-  DollarSign,
-  TrendingUp,
-  Plus,
-  LogOut,
-  Edit3,
-  X,
-  Folder
-} from "lucide-react";
+import { Search, Bell, User, ShoppingCart, Users, Package, BarChart3, Settings, Home, DollarSign, TrendingUp, Plus, LogOut, Edit3, X, Folder } from "lucide-react";
 import { useAuth } from "../context/AuthProvider";
 import { toast } from "react-toastify";
 import Sales from "../components/Sales";
@@ -27,35 +10,8 @@ import SettingsPage from "../components/Settings";
 import AdminUserRegistration from "../components/UserRegistration";
 import axios from "axios";
 import Projects from "../components/Projects";
-
-interface AdminUser {
-  email: string;
-  userName: string;
-  phoneNumber: string;
-  avatar: string | null;
-}
-
-interface StatCard {
-  title: string;
-  value: string;
-  change: string;
-  icon: React.ComponentType<{ className?: string }>;
-  color: string;
-  iconBg: string;
-}
-
-interface Sale {
-  customer: string;
-  product: string;
-  amount: string;
-  time: string;
-}
-
-interface MenuItem {
-  icon: React.ComponentType<{ className?: string }>;
-  label: string;
-  active: boolean;
-}
+import { AdminUser, MenuItem, Sale, StatCard } from "../interfaces/Dashboard_Interfaces" 
+import { endpoints } from "../api";
 
 const Dashboard: React.FC = () => {
   const { logout } = useAuth();
@@ -86,7 +42,7 @@ const Dashboard: React.FC = () => {
 
       try {
         const res = await axios.get(
-          "http://localhost:8080/api/admin/auth/user/profile",
+          endpoints.user.dashboardUserProfile,
           {
             headers: {
               Authorization: `Bearer ${token}`,
