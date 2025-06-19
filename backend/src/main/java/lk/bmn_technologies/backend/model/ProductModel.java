@@ -2,6 +2,7 @@ package lk.bmn_technologies.backend.model;
 
 import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -18,7 +19,7 @@ public class ProductModel {
     private String productDescription;
     private Double productPrice;
     private String category;
-    @OneToMany(mappedBy = "product")
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProductImageModel> imageUrl;
 
     public Long getId() {
