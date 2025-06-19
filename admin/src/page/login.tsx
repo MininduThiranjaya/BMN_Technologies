@@ -6,6 +6,7 @@ import { useAuth } from "../context/AuthProvider";
 import { toast } from "react-toastify";
 
 export default function LoginPage() {
+  
   const { login } = useAuth();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({ email: "", password: "" });
