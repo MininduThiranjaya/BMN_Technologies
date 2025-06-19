@@ -2,25 +2,10 @@ import React, { useState } from "react";
 import { User, Mail, Lock, Phone, Shield, Eye, EyeOff } from "lucide-react";
 import axios from "axios";
 import { toast } from "react-toastify";
-
-interface FormData {
-  username: string;
-  email: string;
-  password: string;
-  confirmPassword: string;
-  phoneNumber: string;
-}
-
-interface FormErrors {
-  username?: string;
-  email?: string;
-  password?: string;
-  confirmPassword?: string;
-  phoneNumber?: string;
-  token?: string;
-}
+import { FormData, FormErrors } from "../interfaces/User_Interface"
 
 export default function AdminUserRegistration() {
+
   const [formData, setFormData] = useState<FormData>({
     username: "",
     email: "",
