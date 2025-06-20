@@ -68,8 +68,8 @@ const CartOverlay: React.FC = () => {
           <>
             <div className="flex-1 overflow-y-auto p-4">
               <ul className="space-y-4">
-                {cartItems.map((item : any) => (
-                  <li key={item.id} className="flex border-b pb-4">
+                {cartItems.map((item : any, index) => (
+                  <li key={index} className="flex border-b pb-4">
                     <div className="w-16 h-16 bg-gray-100 rounded-md flex items-center justify-center mr-4">
                       {item.image ? (
                         <img 
@@ -85,16 +85,16 @@ const CartOverlay: React.FC = () => {
                       <div className="flex justify-between">
                         <h3 className="font-medium">{item.name}</h3>
                         <button 
-                          onClick={() => removeFromCart(item.id)}
+                          onClick={() => removeFromCart(item.productId)}
                           className="text-gray-400 hover:text-red-500"
                         >
                           <Trash2 size={18} />
                         </button>
                       </div>
-                      <p className="text-gray-500 text-sm">${item.price.toFixed(2)}</p>
+                      <p className="text-gray-500 text-sm">${item.productPrice}</p>
                       <div className="flex items-center mt-2">
                         <button 
-                          onClick={() => decreaseQuantity(item.id)}
+                          onClick={() => decreaseQuantity(item.productId)}
                           className="w-8 h-8 flex items-center justify-center border rounded-l-md hover:bg-gray-100"
                         >
                           <Minus size={16} />
@@ -103,13 +103,13 @@ const CartOverlay: React.FC = () => {
                           {item.quantity}
                         </div>
                         <button 
-                          onClick={() => increaseQuantity(item.id)}
+                          onClick={() => increaseQuantity(item.productId)}
                           className="w-8 h-8 flex items-center justify-center border rounded-r-md hover:bg-gray-100"
                         >
                           <Plus size={16} />
                         </button>
                         <span className="ml-auto font-medium">
-                          ${(item.price * item.quantity).toFixed(2)}
+                          ${(item.productPrice * item.quantity).toFixed(2)}
                         </span>
                       </div>
                     </div>
