@@ -2,80 +2,62 @@ import { useRef, useState, useEffect } from 'react';
 import { X, ChevronLeft, ChevronRight, ShoppingCart, Plus, Minus } from 'lucide-react';
 import BannerImages from '../components/BannerImages';
 import Footer from '../components/Footer';
-import banner1 from '../assets/bannerImages/banner1.jpg';
-import banner2 from '../assets/bannerImages/banner2.jpg';
 import { useCart, CartItem } from '../context/CartContext';
-import { useParams } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 import NavBar from '../components/NavBar';
+import axios from 'axios';
 
 interface ItemType {
-    id: number,
-    title: string,
-    image: string,
-    additionalImages: string[],
-    description: string,
-    price: number
+    productId: number,
+    productName: string,
+    imageUrl: string[],
+    productDescription: string,
+    productPrice: number,
+    category: string
 }
 
 // Main Showcase Component
 export default function ProductShowCasePage() {
 
     const { pathname } = useLocation();
-
-    useEffect(() => {
-        window.scrollTo(0, 0); // scroll to top
-    }, [pathname]);
-
-    const { category } = useParams<{ category: string }>();
     const introRef = useRef(null);
     const servicesRef = useRef(null);
     const contactRef = useRef(null);
     const aboutRef = useRef(null);
-
-    // Sample data - replace with your actual items
-    const allItems = Array.from({ length: 12 }, (_, i) => ({
-        id: i + 1,
-        title: `Item ${i + 1}`,
-        // Main image and additional images for carousel
-        image: banner1,
-        additionalImages: [
-            banner2,
-            banner1,
-            banner2,
-            banner1
-        ],
-        description: `This is a detailed description for item ${i + 1}. Here you can include all the information about this particular item that would be useful for users to know.`,
-        price: 49.99 + (i * 10) // Generate different prices for items
-    }));
-
+    const [allItems, setAllItems] = useState<ItemType[]>([]);
     // State variables
     const [currentPage, setCurrentPage] = useState(1);
     const [selectedItem, setSelectedItem] = useState<ItemType | null>(null);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [itemQuantity, setItemQuantity] = useState(1);
-    const itemsPerPage = 8; // 4x2 grid
+    const itemsPerPage = 8; // 4x2 grproductId
     const totalPages = Math.ceil(allItems.length / itemsPerPage);
-
     // Use cart context
-    const {
-        cartItems,
-        itemCount,
-        cartTotal,
-        isCartOpen,
-        toggleCart,
-        closeCart,
-        addToCart,
-        removeFromCart,
-        increaseQuantity,
-        decreaseQuantity,
-        clearCart
-    } = useCart();
+    const { addToCart } = useCart();
+
+    useEffect(() => {
+        window.scrollTo(0, 0); // scroll to top
+        async function fetchAllProducts() {
+            await axios.get("http://localhost:8080/api/auth/product/get")
+                .then((res) => {
+                    console.log(res);
+                    setAllItems(res.data);
+                })
+                .catch((error) => {
+                    console.log("Error fetching data : ", error);
+                })
+        }
+
+        fetchAllProducts();
+    }, [pathname]);
 
     // Get current items
     const getCurrentItems = () => {
-        const startIndex = (currentPage - 1) * itemsPerPage;
-        return allItems.slice(startIndex, startIndex + itemsPerPage);
+        if (allItems.length > 0) {
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            return allItems.slice(startIndex, startIndex + itemsPerPage);
+        }
+        return [];
     };
 
     // Handle page change
@@ -99,14 +81,14 @@ export default function ProductShowCasePage() {
     // Navigate to previous image
     const prevImage = () => {
         if (!selectedItem) return;
-        const totalImages = selectedItem.additionalImages.length + 1; // Include main image
+        const totalImages = selectedItem.imageUrl.length; // Include main image
         setCurrentImageIndex((prevIndex) => (prevIndex - 1 + totalImages) % totalImages);
     };
 
     // Navigate to next image
     const nextImage = () => {
         if (!selectedItem) return;
-        const totalImages = selectedItem.additionalImages.length + 1; // Include main image
+        const totalImages = selectedItem.imageUrl.length; // Include main image
         setCurrentImageIndex((prevIndex) => (prevIndex + 1) % totalImages);
     };
 
@@ -118,8 +100,8 @@ export default function ProductShowCasePage() {
     // Get current image based on index
     const getCurrentImage = () => {
         if (!selectedItem) return "";
-        if (currentImageIndex === 0) return selectedItem.image;
-        return selectedItem.additionalImages[currentImageIndex - 1];
+        if (currentImageIndex === 0) return selectedItem.imageUrl[0];
+        return selectedItem.imageUrl[currentImageIndex];
     };
 
     // Increase quantity in modal
@@ -138,10 +120,10 @@ export default function ProductShowCasePage() {
 
         // Format the item as expected by the cart context
         const cartItem: Omit<CartItem, 'quantity'> = {
-            id: selectedItem.id,
-            name: selectedItem.title,
-            price: selectedItem.price,
-            image: selectedItem.image
+            productId: selectedItem.productId,
+            name: selectedItem.productName,
+            productPrice: selectedItem.productPrice,
+            image: selectedItem.imageUrl[0]
         };
 
         // Add item to cart with the selected quantity
@@ -154,7 +136,7 @@ export default function ProductShowCasePage() {
 
     return (
         <div className="flex flex-col min-h-screen absolute left-0 right-0">
-            <NavBar refs={{ introRef, servicesRef, contactRef, aboutRef }}/>
+            <NavBar refs={{ introRef, servicesRef, contactRef, aboutRef }} />
             <BannerImages />
 
             <main className="flex-grow bg-gray-50 py-8">
@@ -165,21 +147,30 @@ export default function ProductShowCasePage() {
                         <p className="text-gray-600">Browse our collection of premium items</p>
                     </div>
 
-                    {/* Grid Layout */}
+                    {/* Grid Layout - Replace your existing grid section with this */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
                         {getCurrentItems().map((item) => (
                             <div
-                                key={item.id}
-                                className="bg-white rounded-lg shadow hover:shadow-lg cursor-pointer transition-shadow"
+                                key={item.productId}
+                                className="bg-white rounded-lg shadow hover:shadow-lg cursor-pointer transition-shadow overflow-hidden"
                                 onClick={() => openModal(item)}
                             >
-                                <img src={item.image} alt={item.title} className="w-full h-48 object-cover rounded-t-lg" />
+                                {/* Image container */}
+                                <div className="w-full h-48 bg-gray-100 overflow-hidden rounded-t-lg">
+                                    <img
+                                        src={item.imageUrl[0]}
+                                        alt={item.productName}
+                                        className="w-full h-full object-cover"
+                                    />
+                                </div>
+
+                                {/* Content section */}
                                 <div className="p-4">
+                                    <h3 className="font-semibold text-lg text-gray-800 mb-2">{item.productName}</h3>
                                     <div className="flex justify-between items-center">
-                                        <h3 className="font-semibold text-lg">{item.title}</h3>
-                                        <span className="font-bold text-blue-600">${item.price.toFixed(2)}</span>
+                                        <span className="font-bold text-xl text-blue-600">${item.productPrice.toFixed(2)}</span>
                                     </div>
-                                    <p className="text-gray-500 text-sm mt-1">Click to view details</p>
+                                    <p className="text-gray-500 text-sm mt-2">Click to view details</p>
                                 </div>
                             </div>
                         ))}
@@ -225,13 +216,13 @@ export default function ProductShowCasePage() {
                             </button>
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2">
-                            {/* Left side - Image Carousel */}
+                        <div className="grproductId grproductId-cols-1 md:grproductId-cols-2">
+                            {/* Left sproductIde - Image Carousel */}
                             <div className="p-6 relative">
                                 <div className="relative">
                                     <img
                                         src={getCurrentImage()}
-                                        alt={selectedItem.title}
+                                        alt={selectedItem.productName}
                                         className="w-full h-80 object-cover rounded"
                                     />
 
@@ -253,41 +244,32 @@ export default function ProductShowCasePage() {
 
                                 {/* Thumbnail images */}
                                 <div className="flex mt-4 space-x-2 overflow-x-auto py-2">
-                                    <div
-                                        className={`w-16 h-16 cursor-pointer ${currentImageIndex === 0 ? 'ring-2 ring-blue-500' : ''}`}
-                                        onClick={() => selectImage(0)}
-                                    >
-                                        <img
-                                            src={selectedItem.image}
-                                            alt={`${selectedItem.title} - main`}
-                                            className="w-full h-full object-cover rounded"
-                                        />
-                                    </div>
-
-                                    {selectedItem.additionalImages.map((img, idx) => (
-                                        <div
-                                            key={idx}
-                                            className={`w-16 h-16 cursor-pointer ${currentImageIndex === idx + 1 ? 'ring-2 ring-blue-500' : ''}`}
-                                            onClick={() => selectImage(idx + 1)}
-                                        >
-                                            <img
-                                                src={img}
-                                                alt={`${selectedItem.title} - ${idx + 1}`}
-                                                className="w-full h-full object-cover rounded"
-                                            />
-                                        </div>
+                                    {selectedItem.imageUrl.map((img, index) => (
+                                        (
+                                            <div
+                                                key={index}
+                                                className={`w-16 h-16 cursor-pointer ${currentImageIndex === index ? 'ring-2 ring-blue-500' : ''}`}
+                                                onClick={() => selectImage(index)}
+                                            >
+                                                <img
+                                                    src={img}
+                                                    alt={`${selectedItem.productName} - ${index}`}
+                                                    className="w-full h-full object-cover rounded"
+                                                />
+                                                <p>{index}</p>
+                                            </div>)
                                     ))}
                                 </div>
                             </div>
 
-                            {/* Right side - Description */}
+                            {/* Right sproductIde - productDescription */}
                             <div className="p-6 bg-gray-50 rounded-r-lg flex flex-col justify-between">
                                 <div>
                                     <div className="flex justify-between items-center mb-4">
-                                        <h2 className="text-2xl font-bold">{selectedItem.title}</h2>
-                                        <span className="text-2xl font-bold text-blue-600">${selectedItem.price.toFixed(2)}</span>
+                                        <h2 className="text-2xl font-bold">{selectedItem.productName}</h2>
+                                        <span className="text-2xl font-bold text-blue-600">${selectedItem.productPrice.toFixed(2)}</span>
                                     </div>
-                                    <p className="text-gray-700 mb-8">{selectedItem.description}</p>
+                                    <p className="text-gray-700 mb-8">{selectedItem.productDescription}</p>
 
                                     {/* Quantity selector */}
                                     <div className="mt-6">
@@ -333,7 +315,7 @@ export default function ProductShowCasePage() {
                                 className="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 flex items-center"
                             >
                                 <ShoppingCart size={18} className="mr-2" />
-                                Add to Cart - ${(selectedItem.price * itemQuantity).toFixed(2)}
+                                Add to Cart - ${(selectedItem.productPrice * itemQuantity).toFixed(2)}
                             </button>
                         </div>
                     </div>
