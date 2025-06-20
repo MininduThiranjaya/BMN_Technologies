@@ -82,6 +82,7 @@ export default function LoginPage() {
               <input
                 id="email"
                 name="email"
+                type="email"
                 value={formData.email}
                 onChange={handleChange}
                 className={`pl-10 w-full p-3 border ${
