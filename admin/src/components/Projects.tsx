@@ -3,7 +3,6 @@ import { useState } from "react";
 import AddProject from "./AddProject";
 
 export default function Projects() {
-
   const [addProduct, setAddProduct] = useState(false);
 
   return (
@@ -12,14 +11,16 @@ export default function Projects() {
         <div className="bg-white rounded-lg shadow-sm border">
           <div className="p-6 border-b flex items-center justify-between">
             <h3 className="text-xl font-semibold text-gray-800">
-              Product Management
+              Project Management
             </h3>
-            <button 
-              className="flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors" 
-              onClick={() => {setAddProduct(true)}}
+            <button
+              className="flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+              onClick={() => {
+                setAddProduct(true);
+              }}
             >
               <Plus className="w-4 h-4" />
-              <span>Add Product</span>
+              <span>Add Project</span>
             </button>
           </div>
           <div className="p-6">
@@ -83,7 +84,9 @@ export default function Projects() {
                   <p className="text-2xl font-bold text-blue-600 mb-2">
                     {product.price}
                   </p>
-                  <p className="text-sm text-gray-600">Sales: {product.sales}</p>
+                  <p className="text-sm text-gray-600">
+                    Sales: {product.sales}
+                  </p>
                 </div>
               ))}
             </div>
@@ -93,10 +96,7 @@ export default function Projects() {
 
       {/* Modal Overlay */}
       {addProduct && (
-        <AddProject
-          isOpen={addProduct} 
-          onClose={() => setAddProduct(false)} 
-        />
+        <AddProject isOpen={addProduct} onClose={() => setAddProduct(false)} />
       )}
     </>
   );

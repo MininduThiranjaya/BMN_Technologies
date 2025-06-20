@@ -1,21 +1,14 @@
-package lk.bmn_technologies.backend.model;
+package lk.bmn_technologies.backend.dto.responseDTO;
 
 import java.sql.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import lk.bmn_technologies.backend.model.ProjectImageModel;
+import lk.bmn_technologies.backend.model.ProjectModel;
 
-@Entity
-public class ProjectModel {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class ProjectDTO {
+
     private String projectId;
     private String projectName;
     private String personName;
@@ -23,15 +16,35 @@ public class ProjectModel {
     private String projectDescription;
     private String category;
     private Date projectDate;
-    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private List<ProjectImageModel> imageUrl;
+    private List<String> imageUrl;
 
-    public Long getId() {
-        return id;
+    
+
+    public ProjectDTO(String projectId, String projectName, String personName, String location,
+            String projectDescription, String category, Date projectDate, List<ProjectImageModel> imageUrl) {
+        this.projectId = projectId;
+        this.projectName = projectName;
+        this.personName = personName;
+        this.location = location;
+        this.projectDescription = projectDescription;
+        this.category = category;
+        this.projectDate = projectDate;
+        this.imageUrl = imageUrl.stream()
+            .map(ProjectImageModel::getImageUrl)
+            .collect(Collectors.toList());
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public ProjectDTO(ProjectModel project) {
+        this(
+            project.getProjectId(),
+            project.getProjectName(),
+            project.getPersonName(),
+            project.getLocation(),
+            project.getProjectDescription(),
+            project.getCategory(),
+            project.getProjectDate(),
+            project.getImageUrl()
+        );
     }
 
     public String getProjectId() {
@@ -90,11 +103,11 @@ public class ProjectModel {
         this.projectDate = projectDate;
     }
 
-    public List<ProjectImageModel> getImageUrl() {
+    public List<String> getImageUrl() {
         return imageUrl;
     }
 
-    public void setImageUrl(List<ProjectImageModel> imageUrl) {
+    public void setImageUrl(List<String> imageUrl) {
         this.imageUrl = imageUrl;
     }
 }
