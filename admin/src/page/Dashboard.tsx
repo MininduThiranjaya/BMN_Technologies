@@ -91,6 +91,39 @@ const Dashboard: React.FC = () => {
     updatedAt: "",
   });
 
+   const fetchCountDetails = async () => {
+      const token = localStorage.getItem("accessToken");
+      if (!token) {
+        console.error("No token found");
+        return;
+      }
+      try {
+        const updatedStats = await Promise.all(
+          stats.map(async (data) => {
+            if (data.url === null) return { ...data };
+            const res = await axios.get(data.url, {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            });
+
+            if (res.data) {
+              console.log(res.data);
+              return {
+                ...data,
+                value: res.data,
+              };
+            } else {
+              return { ...data };
+            }
+          })
+        );
+        setStats(updatedStats);
+      } catch (err) {
+        console.error("Failed to fetch count details", err);
+      }
+    }
+
   useEffect(() => {
     const fetchUser = async () => {
       const token = localStorage.getItem("accessToken");
@@ -121,39 +154,6 @@ const Dashboard: React.FC = () => {
       } catch (err) {
         console.error("Failed to fetch user profile", err);
         logout(); // Ensure to log out if fetching fails
-      }
-    };
-
-    const fetchCountDetails = async () => {
-      const token = localStorage.getItem("accessToken");
-      if (!token) {
-        console.error("No token found");
-        return;
-      }
-      try {
-        const updatedStats = await Promise.all(
-          stats.map(async (data) => {
-            if (data.url === null) return { ...data };
-            const res = await axios.get(data.url, {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            });
-
-            if (res.data) {
-              console.log(res.data);
-              return {
-                ...data,
-                value: res.data,
-              };
-            } else {
-              return { ...data };
-            }
-          })
-        );
-        setStats(updatedStats);
-      } catch (err) {
-        console.error("Failed to fetch count details", err);
       }
     };
 
@@ -348,13 +348,13 @@ const Dashboard: React.FC = () => {
   const renderContent = (): JSX.Element => {
     switch (activeView) {
       case "Sales":
-        return <Sales />;
+        return <Sales/>;
 
       case "Customers":
         return <Customers />;
 
       case "Products":
-        return <Products />;
+        return <Products onSuccess={fetchCountDetails}/>;
 
       case "Projects":
         return <Projects />;
