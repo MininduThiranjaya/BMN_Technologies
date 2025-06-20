@@ -1,5 +1,22 @@
 import React, { JSX, useEffect, useState } from "react";
-import { Search, Bell, User, ShoppingCart, Users, Package, BarChart3, Settings, Home, DollarSign, TrendingUp, Plus, LogOut, Edit3, X, Folder } from "lucide-react";
+import {
+  Search,
+  Bell,
+  User,
+  ShoppingCart,
+  Users,
+  Package,
+  BarChart3,
+  Settings,
+  Home,
+  DollarSign,
+  TrendingUp,
+  Plus,
+  LogOut,
+  Edit3,
+  X,
+  Folder,
+} from "lucide-react";
 import { useAuth } from "../context/AuthProvider";
 import { toast } from "react-toastify";
 import Sales from "../components/Sales";
@@ -10,10 +27,53 @@ import SettingsPage from "../components/Settings";
 import AdminUserRegistration from "../components/UserRegistration";
 import axios from "axios";
 import Projects from "../components/Projects";
-import { AdminUser, MenuItem, Sale, StatCard } from "../interfaces/Dashboard_Interfaces" 
+import {
+  AdminUser,
+  MenuItem,
+  Sale,
+  StatCard,
+} from "../interfaces/Dashboard_Interfaces";
 import { endpoints } from "../api";
 
 const Dashboard: React.FC = () => {
+  const [stats, setStats] = useState<StatCard[]>([
+    {
+      title: "Total Products",
+      value: 45231,
+      change: "+12% from last month",
+      icon: Package,
+      color: "bg-green-50 text-green-600",
+      iconBg: "bg-green-100",
+      url: endpoints.product.count,
+    },
+    {
+      title: "Total Projects",
+      value: 184,
+      change: "+8% from last week",
+      icon: Folder,
+      color: "bg-blue-50 text-blue-600",
+      iconBg: "bg-blue-100",
+      url: endpoints.project.count,
+    },
+    {
+      title: "Total Sales",
+      value: 2847,
+      change: "+23% from last month",
+      icon: DollarSign,
+      color: "bg-purple-50 text-purple-600",
+      iconBg: "bg-purple-100",
+      url: null,
+    },
+    {
+      title: "Growth",
+      value: 18.6,
+      change: "+4.2% from last quarter",
+      icon: TrendingUp,
+      color: "bg-orange-50 text-orange-600",
+      iconBg: "bg-orange-100",
+      url: null,
+    },
+  ]);
   const { logout } = useAuth();
   const [notifications, setNotifications] = useState(3);
   const [showNotifications, setShowNotifications] = useState(false);
@@ -41,14 +101,11 @@ const Dashboard: React.FC = () => {
       }
 
       try {
-        const res = await axios.get(
-          endpoints.user.dashboardUserProfile,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        const res = await axios.get(endpoints.user.dashboardUserProfile, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
         if (res.data.success) {
           setAdminUser({
@@ -67,7 +124,41 @@ const Dashboard: React.FC = () => {
       }
     };
 
+    const fetchCountDetails = async () => {
+      const token = localStorage.getItem("accessToken");
+      if (!token) {
+        console.error("No token found");
+        return;
+      }
+      try {
+        const updatedStats = await Promise.all(
+          stats.map(async (data) => {
+            if (data.url === null) return { ...data };
+            const res = await axios.get(data.url, {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            });
+
+            if (res.data) {
+              console.log(res.data);
+              return {
+                ...data,
+                value: res.data,
+              };
+            } else {
+              return { ...data };
+            }
+          })
+        );
+        setStats(updatedStats);
+      } catch (err) {
+        console.error("Failed to fetch count details", err);
+      }
+    };
+
     fetchUser();
+    fetchCountDetails();
   }, []);
 
   if (!adminUser) return <p>Loading...</p>;
@@ -183,41 +274,6 @@ const Dashboard: React.FC = () => {
     }
   };
 
-  const stats: StatCard[] = [
-    {
-      title: "Total Sales",
-      value: "$45,231",
-      change: "+12% from last month",
-      icon: DollarSign,
-      color: "bg-green-50 text-green-600",
-      iconBg: "bg-green-100",
-    },
-    {
-      title: "New Orders",
-      value: "184",
-      change: "+8% from last week",
-      icon: ShoppingCart,
-      color: "bg-blue-50 text-blue-600",
-      iconBg: "bg-blue-100",
-    },
-    {
-      title: "Customers",
-      value: "2,847",
-      change: "+23% from last month",
-      icon: Users,
-      color: "bg-purple-50 text-purple-600",
-      iconBg: "bg-purple-100",
-    },
-    {
-      title: "Growth",
-      value: "18.6%",
-      change: "+4.2% from last quarter",
-      icon: TrendingUp,
-      color: "bg-orange-50 text-orange-600",
-      iconBg: "bg-orange-100",
-    },
-  ];
-
   const recentSales: Sale[] = [
     {
       customer: "John Doe",
@@ -258,7 +314,11 @@ const Dashboard: React.FC = () => {
     { icon: Package, label: "Products", active: activeView === "Products" },
     { icon: Folder, label: "Projects", active: activeView === "Projects" },
     { icon: BarChart3, label: "Analytics", active: activeView === "Analytics" },
-    { icon: User, label: "User Registration", active: activeView === "User Registration"},
+    {
+      icon: User,
+      label: "User Registration",
+      active: activeView === "User Registration",
+    },
     { icon: Settings, label: "Settings", active: activeView === "Settings" },
   ];
 
@@ -296,8 +356,8 @@ const Dashboard: React.FC = () => {
       case "Products":
         return <Products />;
 
-       case "Projects":
-        return <Projects/>;
+      case "Projects":
+        return <Projects />;
 
       case "Analytics":
         return <Analytics />;
