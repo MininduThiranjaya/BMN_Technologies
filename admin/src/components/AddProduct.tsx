@@ -5,7 +5,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import imageCompression from "browser-image-compression";
 import { BeatLoader } from "react-spinners";
-import { AddProductProps, ImageType, ProductImage } from "../interfaces/Product_Interfaces"
+import { AddProductProps, formDataType, ImageType, ProductImage } from "../interfaces/Product_Interfaces"
 import { endpoints } from "../api";
 const options = {
   maxSizeMB: 1,
@@ -13,31 +13,32 @@ const options = {
   useWebWorker: true,
 };
 
-export default function AddProduct({ isOpen, onClose }: AddProductProps) {
+export default function AddProduct({ existFormData, isOpen, onClose, type, title, statement, onSuccess}: AddProductProps) {
 
   const [isLoading, setIsLoading] = useState(false);
 
   const CLOUDINARY_UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
   const CLOUDINARY_UPLOAD_URL = import.meta.env.VITE_CLOUDINARY_UPLOAD_URL;
 
-  const [formData, setFormData] = useState({
-    productId: "",
-    productName: "",
-    productPrice: "",
-    productDescription: "",
-    category: "",
+  const [formData, setFormData] = useState<formDataType>({
+    productId: existFormData?.productId,
+    productName: existFormData?.productName,
+    productPrice: existFormData?.productPrice,
+    productDescription: existFormData?.productDescription,
+    category: existFormData?.category,
   });
 
   const [mainThumbnail, setMainThumbnail] = useState<ImageType>({
     file: null,
-    preview: null,
+    preview: existFormData?.imageUrl[0].imageUrl,
     name: null,
   });
+
   const [additionalImages, setAdditionalImages] = useState<ImageType[]>([
-    { file: null, preview: null, name: null },
-    { file: null, preview: null, name: null },
-    { file: null, preview: null, name: null },
-    { file: null, preview: null, name: null },
+    { file: null, preview: existFormData?.imageUrl[1].imageUrl, name: null },
+    { file: null, preview: existFormData?.imageUrl[2].imageUrl, name: null },
+    { file: null, preview: existFormData?.imageUrl[3].imageUrl, name: null },
+    { file: null, preview: existFormData?.imageUrl[4].imageUrl, name: null },
   ]);
   const [dragOver, setDragOver] = useState(false);
   const [previewMode, setPreviewMode] = useState(false);
@@ -183,6 +184,7 @@ export default function AddProduct({ isOpen, onClose }: AddProductProps) {
         })
         .then((response) => {
           console.log("Product added successfully:", response.data);
+          onSuccess();
           toast.success("Product added successfully!");
         })
         .catch((error) => {
@@ -204,7 +206,7 @@ export default function AddProduct({ isOpen, onClose }: AddProductProps) {
     setFormData({
       productId: "",
       productName: "",
-      productPrice: "",
+      productPrice: 0,
       productDescription: "",
       category: "",
     });
@@ -306,9 +308,9 @@ export default function AddProduct({ isOpen, onClose }: AddProductProps) {
   }
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+    <div className="fixed inset-0 bg-black  bg-opacity-20 flex items-center justify-center z-50 p-4">
       {isLoading && (
-        <div className="fixed inset-0 bg-black bg-opacity-25 flex items-center justify-center z-60">
+        <div className="fixed inset-0 bg-black bg-opacity-20 flex items-center justify-center z-60">
           <BeatLoader color="#0065F8" size={25} margin={6} />
         </div>
       )}
@@ -317,9 +319,9 @@ export default function AddProduct({ isOpen, onClose }: AddProductProps) {
         <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-6">
           <div className="flex justify-between items-center">
             <div>
-              <h1 className="text-2xl font-bold text-white">Add New Product</h1>
+              <h1 className="text-2xl font-bold text-white">{title}</h1>
               <p className="text-blue-100 mt-1">
-                Fill in the details to add a new product to your inventory
+                {statement}
               </p>
             </div>
             <div className="flex space-x-2">
@@ -358,7 +360,7 @@ export default function AddProduct({ isOpen, onClose }: AddProductProps) {
                     <input
                       type="text"
                       name="productId"
-                      value={formData.productId}
+                      value={formData.productId ?? ""}
                       onChange={handleInputChange}
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
                       placeholder="Enter unique product ID"
@@ -373,7 +375,7 @@ export default function AddProduct({ isOpen, onClose }: AddProductProps) {
                     <input
                       type="text"
                       name="productName"
-                      value={formData.productName}
+                      value={formData.productName ?? ""}
                       onChange={handleInputChange}
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
                       placeholder="Enter product name"
@@ -392,7 +394,7 @@ export default function AddProduct({ isOpen, onClose }: AddProductProps) {
                       <input
                         type="number"
                         name="productPrice"
-                        value={formData.productPrice}
+                        value={formData.productPrice ?? ""}
                         onChange={handleInputChange}
                         className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
                         placeholder="0.00"
@@ -409,7 +411,7 @@ export default function AddProduct({ isOpen, onClose }: AddProductProps) {
                     </label>
                     <select
                       name="category"
-                      value={formData.category}
+                      value={formData.category ?? ""}
                       onChange={handleInputChange}
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
                     >
@@ -429,7 +431,7 @@ export default function AddProduct({ isOpen, onClose }: AddProductProps) {
                     </label>
                     <textarea
                       name="productDescription"
-                      value={formData.productDescription}
+                      value={formData.productDescription ?? ""}
                       onChange={handleInputChange}
                       rows={6}
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors resize-none"
@@ -584,7 +586,7 @@ export default function AddProduct({ isOpen, onClose }: AddProductProps) {
               className="flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
             >
               <Save className="w-4 h-4 mr-2" />
-              Add Product
+              {type} Product
             </button>
           </div>
         </div>
