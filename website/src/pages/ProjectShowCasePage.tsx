@@ -5,6 +5,8 @@ import Footer from '../components/Footer';
 import { useLocation } from 'react-router-dom';
 import NavBar from '../components/NavBar';
 import axios from 'axios';
+import { endpoints } from '../api';
+import { useParams } from 'react-router-dom';
 
 interface tempItemType {
     projectId: string,
@@ -20,6 +22,7 @@ interface tempItemType {
 // Main Showcase Component
 export default function ProjectShowCasePage() {
 
+    const { category } = useParams();
     const { pathname } = useLocation();
     const introRef = useRef(null);
     const servicesRef = useRef(null);
@@ -38,7 +41,7 @@ export default function ProjectShowCasePage() {
 
          window.scrollTo(0, 0); // scroll to top
         async function fetchAllProducts() {
-            await axios.get("http://localhost:8080/api/auth/project/get")
+            await axios.get(`${endpoints.project.get}/${category}`)
                 .then((res) => {
                     console.log(res);
                     setAllItems(res.data);

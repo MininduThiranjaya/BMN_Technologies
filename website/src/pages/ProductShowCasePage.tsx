@@ -3,9 +3,11 @@ import { X, ChevronLeft, ChevronRight, ShoppingCart, Plus, Minus } from 'lucide-
 import BannerImages from '../components/BannerImages';
 import Footer from '../components/Footer';
 import { useCart, CartItem } from '../context/CartContext';
-import { useLocation } from 'react-router-dom';
+import { replace, useLocation } from 'react-router-dom';
 import NavBar from '../components/NavBar';
 import axios from 'axios';
+import { endpoints } from '../api';
+import { useParams } from 'react-router-dom';
 
 interface ItemType {
     productId: number,
@@ -19,6 +21,7 @@ interface ItemType {
 // Main Showcase Component
 export default function ProductShowCasePage() {
 
+    const { category } = useParams();
     const { pathname } = useLocation();
     const introRef = useRef(null);
     const servicesRef = useRef(null);
@@ -30,7 +33,7 @@ export default function ProductShowCasePage() {
     const [selectedItem, setSelectedItem] = useState<ItemType | null>(null);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [itemQuantity, setItemQuantity] = useState(1);
-    const itemsPerPage = 8; // 4x2 grproductId
+    const itemsPerPage = 8; 
     const totalPages = Math.ceil(allItems.length / itemsPerPage);
     // Use cart context
     const { addToCart } = useCart();
@@ -38,7 +41,7 @@ export default function ProductShowCasePage() {
     useEffect(() => {
         window.scrollTo(0, 0); // scroll to top
         async function fetchAllProducts() {
-            await axios.get("http://localhost:8080/api/auth/product/get")
+            await axios.get(`${endpoints.product.get}/${category}`)
                 .then((res) => {
                     console.log(res);
                     setAllItems(res.data);
