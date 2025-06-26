@@ -37,8 +37,19 @@ public class ProductService {
         repo.save(data);
     }
 
-    public List<ProductDTO> getProduct() {
-       return repo.findAll().stream()
+    public List<ProductDTO> getProduct(String category) {
+
+        String filter;
+
+        filter = switch (category) {
+            case "solar-panels" -> "Sola Panels";
+            case "battery-storage" -> "Battery Storage";
+            case "smart-energy" -> "Smart Energy System";
+            default -> "Hybrid Inverters";
+        };
+
+        return repo.findAll().stream()
+            .filter((product) -> product.getCategory().equals(filter))
             .map(ProductDTO::new)
             .collect(Collectors.toList());
     }
