@@ -3,9 +3,9 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 
 // Define types
 export interface CartItem {
-  id: number;
+  productId: number;
   name: string;
-  price: number;
+  productPrice: number;
   quantity: number;
   image?: string;
 }
@@ -18,13 +18,13 @@ interface CartContextType {
   toggleCart: () => void;
   closeCart: () => void;
   addToCart: (product: Omit<CartItem, 'quantity'>) => void;
-  removeFromCart: (productId: number) => void;
-  increaseQuantity: (productId: number) => void;
-  decreaseQuantity: (productId: number) => void;
+  removeFromCart: (productproductId: number) => void;
+  increaseQuantity: (productproductId: number) => void;
+  decreaseQuantity: (productproductId: number) => void;
   clearCart: () => void;
 }
 
-interface CartProviderProps {
+interface CartProvproductIderProps {
   children: ReactNode;
 }
 
@@ -35,13 +35,13 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 export const useCart = (): CartContextType => {
   const context = useContext(CartContext);
   if (!context) {
-    throw new Error('useCart must be used within a CartProvider');
+    throw new Error('useCart must be used within a CartProvproductIder');
   }
   return context;
 };
 
-// Cart provider component
-export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
+// Cart provproductIder component
+export const CartProvider: React.FC<CartProvproductIderProps> = ({ children }) => {
   // Cart state
   const [cartItems, setCartItems] = useState<CartItem[]>(() => {
     try {
@@ -64,9 +64,9 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
   // Calculate total number of items in cart
   const itemCount = cartItems.reduce((total, item) => total + item.quantity, 0);
   
-  // Calculate total price
+  // Calculate total productPrice
   const cartTotal = cartItems.reduce(
-    (total, item) => total + item.price * item.quantity, 
+    (total, item) => total + item.productPrice * item.quantity, 
     0
   );
 
@@ -79,12 +79,12 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
   // Add item to cart
   const addToCart = (product: Omit<CartItem, 'quantity'>) => {
     setCartItems(prevItems => {
-      const existingItem = prevItems.find(item => item.id === product.id);
+      const existingItem = prevItems.find(item => item.productId === product.productId);
       
       if (existingItem) {
         // Increase quantity if item already exists
         return prevItems.map(item => 
-          item.id === product.id 
+          item.productId === product.productId 
             ? { ...item, quantity: item.quantity + 1 } 
             : item
         );
@@ -96,17 +96,17 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
   };
 
   // Remove item from cart
-  const removeFromCart = (productId: number) => {
+  const removeFromCart = (productproductId: number) => {
     setCartItems(prevItems => 
-      prevItems.filter(item => item.id !== productId)
+      prevItems.filter(item => item.productId !== productproductId)
     );
   };
 
   // Increase item quantity
-  const increaseQuantity = (productId: number) => {
+  const increaseQuantity = (productproductId: number) => {
     setCartItems(prevItems => 
       prevItems.map(item => 
-        item.id === productId 
+        item.productId === productproductId 
           ? { ...item, quantity: item.quantity + 1 } 
           : item
       )
@@ -114,19 +114,19 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
   };
 
   // Decrease item quantity
-  const decreaseQuantity = (productId: number) => {
+  const decreaseQuantity = (productproductId: number) => {
     setCartItems(prevItems => {
       // Find the item
-      const item = prevItems.find(item => item.id === productId);
+      const item = prevItems.find(item => item.productId === productproductId);
       
       // If quantity will be 0, remove the item
       if (item && item.quantity <= 1) {
-        return prevItems.filter(item => item.id !== productId);
+        return prevItems.filter(item => item.productId !== productproductId);
       }
       
       // Otherwise, decrease the quantity
       return prevItems.map(item => 
-        item.id === productId 
+        item.productId === productproductId 
           ? { ...item, quantity: item.quantity - 1 } 
           : item
       );

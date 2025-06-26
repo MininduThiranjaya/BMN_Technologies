@@ -1,57 +1,55 @@
 import { useRef, useState, useEffect } from 'react';
-import { X, ChevronLeft, ChevronRight } from 'lucide-react';
+import { User, MapPin, Folder, X, ChevronLeft, ChevronRight, Calendar, Tags, FileText   } from 'lucide-react';
 import BannerImages from '../components/BannerImages';
 import Footer from '../components/Footer';
-import banner1 from '../assets/bannerImages/banner1.jpg';
-import banner2 from '../assets/bannerImages/banner2.jpg';
-import { useParams } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 import NavBar from '../components/NavBar';
+import axios from 'axios';
 
-interface ItemType {
-    id: number,
-    title: string,
-    image: string,
-    additionalImages: string[],
-    description: string,
+interface tempItemType {
+    projectId: string,
+    projectName: string,
+    personName: string,
+    location: string,
+    projectDescription: string,
+    category: string,
+    projectDate: string,
+    imageUrl: string[]
 }
 
 // Main Showcase Component
 export default function ProjectShowCasePage() {
 
     const { pathname } = useLocation();
-
-    useEffect(() => {
-        window.scrollTo(0, 0); // scroll to top
-    }, [pathname]);
-
-    const { category } = useParams<{ category: string }>();
     const introRef = useRef(null);
     const servicesRef = useRef(null);
     const contactRef = useRef(null);
     const aboutRef = useRef(null);
-
-    // Sample data - replace with your actual items
-    const allItems = Array.from({ length: 12 }, (_, i) => ({
-        id: i + 1,
-        title: `Item ${i + 1}`,
-        // Main image and additional images for carousel
-        image: banner1,
-        additionalImages: [
-            banner2,
-            banner1,
-            banner2,
-            banner1
-        ],
-        description: `This is a detailed description for item ${i + 1}. Here you can include all the information about this particular item that would be useful for users to know.`,
-    }));
-
     // State variables
     const [currentPage, setCurrentPage] = useState(1);
-    const [selectedItem, setSelectedItem] = useState<ItemType | null>(null);
+    const [selectedItem, setSelectedItem] = useState<tempItemType| null>(null);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
+    const [allItems, setAllItems] = useState<tempItemType[]>([]);
     const itemsPerPage = 8; // 4x2 grid
     const totalPages = Math.ceil(allItems.length / itemsPerPage);
+
+    useEffect(() => {
+        window.scrollTo(0, 0); // scroll to top
+
+         window.scrollTo(0, 0); // scroll to top
+        async function fetchAllProducts() {
+            await axios.get("http://localhost:8080/api/auth/project/get")
+                .then((res) => {
+                    console.log(res);
+                    setAllItems(res.data);
+                })
+                .catch((error) => {
+                    console.log("Error fetching data : ", error);
+                })
+        }
+
+        fetchAllProducts();
+    }, [pathname]);
 
     // Get current items
     const getCurrentItems = () => {
@@ -65,7 +63,7 @@ export default function ProjectShowCasePage() {
     };
 
     // Open modal with selected item
-    const openModal = (item: ItemType) => {
+    const openModal = (item: tempItemType) => {
         setSelectedItem(item);
         setCurrentImageIndex(0); // Reset to first image when opening modal
     };
@@ -79,14 +77,14 @@ export default function ProjectShowCasePage() {
     // Navigate to previous image
     const prevImage = () => {
         if (!selectedItem) return;
-        const totalImages = selectedItem.additionalImages.length + 1; // Include main image
+        const totalImages = selectedItem.imageUrl.length; // Include main image
         setCurrentImageIndex((prevIndex) => (prevIndex - 1 + totalImages) % totalImages);
     };
 
     // Navigate to next image
     const nextImage = () => {
         if (!selectedItem) return;
-        const totalImages = selectedItem.additionalImages.length + 1; // Include main image
+        const totalImages = selectedItem.imageUrl.length; // Include main image
         setCurrentImageIndex((prevIndex) => (prevIndex + 1) % totalImages);
     };
 
@@ -98,8 +96,8 @@ export default function ProjectShowCasePage() {
     // Get current image based on index
     const getCurrentImage = () => {
         if (!selectedItem) return "";
-        if (currentImageIndex === 0) return selectedItem.image;
-        return selectedItem.additionalImages[currentImageIndex - 1];
+        if (currentImageIndex === 0) return selectedItem.imageUrl[0];
+        return selectedItem.imageUrl[currentImageIndex];
     };
 
     return (
@@ -111,22 +109,22 @@ export default function ProjectShowCasePage() {
                 <div className="container mx-auto px-4">
                     {/* Page Title */}
                     <div className="mb-8 text-center">
-                        <h2 className="text-3xl font-bold text-gray-800">OUR PRODUCTS</h2>
+                        <h2 className="text-3xl font-bold text-gray-800">OUR PROJECTS</h2>
                         <p className="text-gray-600">Browse our collection of premium items</p>
                     </div>
 
                     {/* Grid Layout */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-                        {getCurrentItems().map((item) => (
+                        {getCurrentItems().map((item, index) => (
                             <div
-                                key={item.id}
+                                key={index}
                                 className="bg-white rounded-lg shadow hover:shadow-lg cursor-pointer transition-shadow"
                                 onClick={() => openModal(item)}
                             >
-                                <img src={item.image} alt={item.title} className="w-full h-48 object-cover rounded-t-lg" />
+                                <img src={item.imageUrl[0]} alt={item.projectName} className="w-full h-48 object-cover rounded-t-lg" />
                                 <div className="p-4">
                                     <div className="flex justify-between items-center">
-                                        <h3 className="font-semibold text-lg">{item.title}</h3>
+                                        <h3 className="font-semibold text-lg">{item.projectName}</h3>
                                     </div>
                                     <p className="text-gray-500 text-sm mt-1">Click to view details</p>
                                 </div>
@@ -180,7 +178,7 @@ export default function ProjectShowCasePage() {
                                 <div className="relative">
                                     <img
                                         src={getCurrentImage()}
-                                        alt={selectedItem.title}
+                                        alt={selectedItem.projectId}
                                         className="w-full h-80 object-cover rounded"
                                     />
 
@@ -202,26 +200,15 @@ export default function ProjectShowCasePage() {
 
                                 {/* Thumbnail images */}
                                 <div className="flex mt-4 space-x-2 overflow-x-auto py-2">
-                                    <div
-                                        className={`w-16 h-16 cursor-pointer ${currentImageIndex === 0 ? 'ring-2 ring-blue-500' : ''}`}
-                                        onClick={() => selectImage(0)}
-                                    >
-                                        <img
-                                            src={selectedItem.image}
-                                            alt={`${selectedItem.title} - main`}
-                                            className="w-full h-full object-cover rounded"
-                                        />
-                                    </div>
-
-                                    {selectedItem.additionalImages.map((img, idx) => (
+                                    {selectedItem.imageUrl.map((img, index) => (
                                         <div
-                                            key={idx}
-                                            className={`w-16 h-16 cursor-pointer ${currentImageIndex === idx + 1 ? 'ring-2 ring-blue-500' : ''}`}
-                                            onClick={() => selectImage(idx + 1)}
+                                            key={index}
+                                            className={`w-16 h-16 cursor-pointer ${currentImageIndex === index ? 'ring-2 ring-blue-500' : ''}`}
+                                            onClick={() => selectImage(index)}
                                         >
                                             <img
                                                 src={img}
-                                                alt={`${selectedItem.title} - ${idx + 1}`}
+                                                alt={`${selectedItem.projectId} - ${index}`}
                                                 className="w-full h-full object-cover rounded"
                                             />
                                         </div>
@@ -229,10 +216,62 @@ export default function ProjectShowCasePage() {
                                 </div>
                             </div>
 
-                            {/* Right side - Description */}
-                            <div className="p-6 bg-gray-50 rounded-r-lg flex flex-col justify-between">
-                                <div>
-                                    <p className="text-gray-700 mb-8">{selectedItem.description}</p>
+                            {/* Right side - Project Details */}
+                            <div className="p-6 bg-gray-50 rounded-r-lg flex flex-col">
+                                <div className="space-y-4">
+                                    {/* Project Name */}
+                                    <div>
+                                        <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wide">Project Name</h3>
+                                        <div className="mt-1 flex items-center">
+                                            <Folder className="h-5 w-5 text-gray-400 mr-2" />
+                                            <p className="mt-1 text-lg font-bold text-gray-900">{selectedItem.projectName || 'N/A'}</p>
+                                        </div>
+                                    </div>
+
+                                    {/* Person Name */}
+                                    <div>
+                                        <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wide">Person Name</h3>
+                                        <div className="mt-1 flex items-center">
+                                            <User className="h-5 w-5 text-gray-400 mr-2" />
+                                            <p className="text-gray-900 font-semibold">{selectedItem.personName || 'N/A'}</p>
+                                        </div>
+                                    </div>
+
+                                    {/* Location */}
+                                    <div>
+                                        <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wide">Location</h3>
+                                        <div className="mt-1 flex items-center">
+                                            <MapPin className="h-5 w-5 text-gray-400 mr-2" />
+                                            <p className="text-gray-900 font-semibold">{selectedItem.location || 'N/A'}</p>
+                                        </div>
+                                    </div>
+
+                                    {/* Category and Project Date */}
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                        <div>
+                                            <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wide">Category</h3>
+                                            <div className="mt-1 flex items-center">
+                                                <Tags className="h-5 w-5 text-gray-400 mr-2" />
+                                                <p className="mt-1 text-gray-900 font-semibold capitalize">{selectedItem.category || 'N/A'}</p>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wide">Project Date</h3>
+                                            <div className="mt-1 flex items-center">
+                                                <Calendar className="h-5 w-5 text-gray-400 mr-2" />
+                                                <p className="mt-1 text-gray-900 font-semibold">{selectedItem.projectDate || 'N/A'}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Project Description */}
+                                    <div>
+                                        <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wide">Project Description</h3>
+                                        <div className="mt-1 flex items-center">
+                                            <FileText className="h-5 w-5 text-gray-400 mr-2" />
+                                            <p className="mt-1 text-gray-900 font-semibold leading-relaxed">{selectedItem.projectDescription || 'N/A'}</p>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -241,9 +280,9 @@ export default function ProjectShowCasePage() {
                         <div className="flex justify-end p-4 bg-gray-100 rounded-b-lg border-t">
                             <button
                                 onClick={closeModal}
-                                className="px-6 py-2 mr-2 bg-gray-200 rounded hover:bg-gray-300"
+                                className="px-6 py-2 bg-gray-200 rounded hover:bg-gray-300"
                             >
-                                Cancel
+                                Close
                             </button>
                         </div>
                     </div>

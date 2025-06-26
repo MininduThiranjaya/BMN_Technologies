@@ -8,6 +8,8 @@ export const endpoints = {
   product: {
     add: `${BACKEND_BASE_URL}auth/product/add`,
     count: `${BACKEND_BASE_URL}auth/product/count`,
+    getAllProducts: `${BACKEND_BASE_URL}auth/product/all-details/get`,
+    deleteProduct: `${BACKEND_BASE_URL}auth/product/delete-by-id/:productId`
   },
   project: {
     add: `${BACKEND_BASE_URL}auth/project/add`,
