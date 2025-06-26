@@ -5,6 +5,7 @@ import Dashboard from "./page/Dashboard.js";
 import PrivateRoute from "./components/PrivateRoute .js";
 import { AuthProvider } from "./context/AuthProvider.js";
 import { ToastContainer } from "react-toastify";
+import ForgotPassword from "./components/ForgetPassword.js";
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<LoginPage />} />
+            <Route path="/forget-password" element={<ForgotPassword />} />
             <Route
               path="/dashboard"
               element={

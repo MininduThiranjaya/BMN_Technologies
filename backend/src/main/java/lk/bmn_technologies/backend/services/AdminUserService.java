@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import lk.bmn_technologies.backend.dto.ApiResponseDTO;
 import lk.bmn_technologies.backend.dto.requestDTO.AdminLoginDTO;
+import lk.bmn_technologies.backend.dto.requestDTO.ForgetPassword_ChangePassword_DTO;
 import lk.bmn_technologies.backend.model.AdminUserModel;
 import lk.bmn_technologies.backend.repository.AdminUserRepository;
 
@@ -23,36 +24,48 @@ public class AdminUserService {
     private PasswordEncoder passwordEncoder;
 
     public ApiResponseDTO adminUserRegistrationService(AdminUserModel data) {
-        
+
         Optional<AdminUserModel> user = repo.getAdminUserByEmail(data.getEmail());
-        if(!user.isPresent()) {
+        if (!user.isPresent()) {
             String encryptedPasword = passwordEncoder.encode(data.getPassword());
             data.setPassword(encryptedPasword);
             repo.save(data);
             return (new ApiResponseDTO(true, "Admin user registration successfully completed"));
-        }
-        else {
+        } else {
             return (new ApiResponseDTO(false, "Admin user exists - use differet email address"));
-        }  
+        }
     }
 
     public ApiResponseDTO adminUserLoginService(AdminLoginDTO data) {
 
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         Optional<AdminUserModel> user = repo.getAdminUserByEmail(data.getEmail());
-        if(user.isPresent()) {
+        if (user.isPresent()) {
             boolean isMatch = encoder.matches(data.getPassword(), user.get().getPassword());
-            if(user.get().getEmail().equals(data.getEmail()) && isMatch) {
+            if (user.get().getEmail().equals(data.getEmail()) && isMatch) {
                 user.get().setLastLogin(LocalDateTime.now());
                 return (new ApiResponseDTO(true, "Admin User login success", user));
-            }
-            else {
+            } else {
                 return (new ApiResponseDTO(false, "Invalied credentials"));
             }
-        }
-        else {
+        } else {
             return (new ApiResponseDTO(false, "Admin user not exsists"));
         }
     }
 
+    public ApiResponseDTO forgetPassword_changePassword_service(ForgetPassword_ChangePassword_DTO data) {
+        Optional<AdminUserModel> user = repo.getAdminUserByEmail(data.getEmail());
+        if(user.isEmpty()) {
+            return (new ApiResponseDTO(false, "Admin user not exsists"));
+        }
+        String encryptedPasword = passwordEncoder.encode(data.getNewPassword());
+        int response = repo.changePassword(data.getEmail(), encryptedPasword);
+        System.out.println(response);
+        if(response > 0) {
+            return (new ApiResponseDTO(true, "Changed password successfull"));
+        }
+        else {
+            return (new ApiResponseDTO(false, "Failed changing password"));
+        }
+    }
 }

@@ -1,6 +1,7 @@
 package lk.bmn_technologies.backend.services;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -11,6 +12,7 @@ import lk.bmn_technologies.backend.dto.ApiResponseDTO;
 import lk.bmn_technologies.backend.dto.responseDTO.ProductDTO;
 import lk.bmn_technologies.backend.model.ProductImageModel;
 import lk.bmn_technologies.backend.model.ProductModel;
+import lk.bmn_technologies.backend.repository.ProductImageRepo;
 import lk.bmn_technologies.backend.repository.ProductRepo;
 
 @Service
@@ -18,6 +20,12 @@ public class ProductService {
 
     @Autowired
     private ProductRepo repo;
+
+    @Autowired
+    private CloudinaryService cloudinaryService;
+
+    @Autowired
+    private ProductImageRepo productImageRepo;
 
     public void addProduct(ProductModel data) {
 
@@ -43,11 +51,16 @@ public class ProductService {
        return repo.findAll();
     } 
 
-    public ApiResponseDTO deleteProduct(long id) {
+    public ApiResponseDTO deleteProduct(Long id) {
         if(repo.existsById(id)) {
+            List<String> imagePublicIdList = productImageRepo.getProductImages(id);
             Optional<ProductModel> product = repo.findById(id);
-            repo.deleteById(id);
-            return new ApiResponseDTO(true, "Product deleted successfully", product);
+            Map<String, Boolean> results = cloudinaryService.deleteImagesFromCloudinary(imagePublicIdList);
+            if(results.values().stream().allMatch(Boolean::booleanValue)) {
+                repo.deleteById(id);
+                return new ApiResponseDTO(true, "Product deleted successfully", product);
+            }
+            return new ApiResponseDTO(false, "Failed product image deletion - Failed product deletion");
         }
         return new ApiResponseDTO(false, "Product is not available", null);
     }

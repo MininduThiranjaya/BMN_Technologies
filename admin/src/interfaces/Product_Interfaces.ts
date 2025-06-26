@@ -19,13 +19,13 @@ export interface ProductImage {
 }
 
 export interface ProductType {
-    id: number | null;
-    productId: string | null;
-    productName: string | null;
-    imageUrl: ProductImages[] | [];
-    productDescription: string | null;
-    productPrice: number | null;
-    category: string | null;
+  id: number | null;
+  productId: string | null;
+  productName: string | null;
+  imageUrl: ProductImages[] | [];
+  productDescription: string | null;
+  productPrice: number | null;
+  category: string | null;
 }
 
 interface ProductImages {
@@ -34,23 +34,17 @@ interface ProductImages {
 }
 
 export interface ProductDetailsProps {
-  products : ProductType[];
+  products: ProductType[];
   deleteProduct: (id: number) => void;
   onSuccess: () => void;
 }
 
 export interface formDataType {
-  productId: string | null | undefined,
-  productName: string | null | undefined,
-  productPrice: number | null | undefined,
-  productDescription: string | null | undefined,
-  category: string | null | undefined,
-}
-
-export interface DeleteConfirmationType {
-  product: ProductType | null;
-  cancelDelete: () => void;
-  confirmDelete: () => void;
+  productId: string | null | undefined;
+  productName: string | null | undefined;
+  productPrice: number | null | undefined;
+  productDescription: string | null | undefined;
+  category: string | null | undefined;
 }
 
 export interface ProductPropsType {

@@ -5,33 +5,34 @@ import {
   Package,
   ChevronLeft,
   ChevronRight,
+  Folder,
 } from "lucide-react";
-import { ProductDetailsProps } from "../interfaces/Product_Interfaces";
-import AddProduct from "./AddProduct";
 import DeleteConfirmation from "./DeleteConfirmation";
 import axios from "axios";
 import { endpoints } from "../api";
 import { toast } from "react-toastify";
+import AddProject from "./AddProject";
+import { ProjectDetailsProps } from "../interfaces/Project_Interfaces";
 
-const ProductManagement = ({
-  products,
+const ProjectManagement = ({
+  projects,
   deleteProduct,
   onSuccess,
-}: ProductDetailsProps) => {
+}: ProjectDetailsProps) => {
   const [currentPage, setCurrentPage] = useState(1);
-  const productsPerPage = products.length;
-  const [editProduct, setEditProduct] = useState(false);
+  const projectsPerPage = projects.length;
+  const [editProject, setEditProject] = useState(false);
   const [deleteConfirmation, setDeleteConfirmation] = useState({
     show: false,
     id: null,
   });
 
-  function fetchAllProducts() {
+  function fetchAllProjects() {
     onSuccess();
   }
 
   const handleEdit = (id: any) => {
-    setEditProduct(true);
+    setEditProject(true);
     console.log(id);
     //fetch for updating exist product
   };
@@ -44,11 +45,11 @@ const ProductManagement = ({
     console.log("Deleting product:", deleteConfirmation.id);
     const token = localStorage.getItem("accessToken");
 
-    async function fetchAllProducts() {
+    async function fetchAllProjects() {
       await axios
         .delete(
-          endpoints.product.deleteProduct.replace(
-            ":productId",
+          endpoints.project.deleteProject.replace(
+            ":projectId",
             deleteConfirmation.id ?? ""
           ),
           {
@@ -59,16 +60,16 @@ const ProductManagement = ({
         )
         .then((res) => {
           console.log(res.data);
-          toast.success("Product deleted successfuly...");
+          toast.success("Project deleted successfuly...");
           deleteProduct(res.data.object.id);
         })
         .catch((error) => {
           console.log("Error fetching data : ", error);
-          toast.error("Error deleting product...");
+          toast.error("Error deleting project...");
         });
     }
     if (deleteConfirmation.id) {
-      fetchAllProducts();
+      fetchAllProjects();
     }
     setDeleteConfirmation({ show: false, id: null });
   };
@@ -78,12 +79,12 @@ const ProductManagement = ({
   };
 
   // Calculate pagination
-  const totalPages = Math.ceil(products.length / productsPerPage);
-  const startIndex = (currentPage - 1) * productsPerPage;
-  const endIndex = startIndex + productsPerPage;
+  const totalPages = Math.ceil(projects.length / projectsPerPage);
+  const startIndex = (currentPage - 1) * projectsPerPage;
+  const endIndex = startIndex + projectsPerPage;
   const currentProducts = useMemo(
-    () => products.slice(startIndex, endIndex),
-    [products, startIndex, endIndex]
+    () => projects.slice(startIndex, endIndex),
+    [projects, startIndex, endIndex]
   );
 
   const handlePageChange = (page: any) => {
@@ -138,12 +139,12 @@ const ProductManagement = ({
     return pages;
   };
 
-  if (products.length === 0) {
+  if (projects.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-16 text-gray-500">
-        <Package className="w-16 h-16 mb-4 text-gray-300" />
-        <h3 className="text-lg font-medium mb-2">No products yet</h3>
-        <p className="text-sm">Add your first product to get started</p>
+        <Folder className="w-16 h-16 mb-4 text-gray-300" />
+        <h3 className="text-lg font-medium mb-2">No projects yet</h3>
+        <p className="text-sm">Add your first project to get started</p>
       </div>
     );
   }
@@ -153,23 +154,23 @@ const ProductManagement = ({
       {/* Products Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 p-6">
         {currentProducts.length > 0 &&
-          currentProducts.map((product) => (
+          currentProducts.map((project) => (
             <div
-              key={product.id}
+              key={project.id}
               className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 overflow-hidden border border-gray-200"
             >
               {/* Product Image */}
               <div className="relative h-48 bg-gray-100">
-                {product.imageUrl.length > 0 && product.productName ? (
+                {project.imageUrl.length > 0 && project.projectName ? (
                   <img
-                    src={product.imageUrl[0].imageUrl}
-                    alt={product.productName}
+                    src={project.imageUrl[0].imageUrl}
+                    alt={project.projectName}
                     className="w-full h-full object-cover"
                   />
                 ) : null}
                 <div
                   className={`${
-                    product.imageUrl ? "hidden" : "flex"
+                    project.imageUrl ? "hidden" : "flex"
                   } absolute inset-0 items-center justify-center bg-gray-100`}
                 >
                   <Package className="w-12 h-12 text-gray-400" />
@@ -180,23 +181,23 @@ const ProductManagement = ({
               <div className="p-4">
                 <div className="mb-3">
                   <h3 className="text-lg font-semibold text-gray-900 mb-1 line-clamp-2">
-                    {product.productName}
+                    {project.projectName}
                   </h3>
-                  {product.productDescription && (
+                  {project.projectDescription && (
                     <p className="text-sm text-gray-600 line-clamp-2">
-                      {product.productDescription}
+                      {project.projectDescription}
                     </p>
                   )}
                 </div>
 
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex flex-col">
-                    <span className="text-xl font-bold text-blue-600">
-                      ${product.productPrice}
+                    <span className="text-md font-bold text-blue-500">
+                      {project.location}
                     </span>
-                    {product.category && (
+                    {project.category && (
                       <span className="text-xs text-gray-500 uppercase tracking-wide">
-                        {product.category}
+                        {project.category}
                       </span>
                     )}
                   </div>
@@ -205,14 +206,14 @@ const ProductManagement = ({
                 {/* Action Buttons */}
                 <div className="flex gap-2">
                   <button
-                    onClick={() => handleEdit(product.id)}
+                    onClick={() => handleEdit(project.id)}
                     className="flex items-center justify-center gap-1 px-2 py-1.5 bg-blue-50 text-blue-600 rounded-md hover:bg-blue-100 transition-colors duration-200 text-xs font-medium"
                   >
                     <Edit2 className="w-3 h-3" />
                     Edit
                   </button>
                   <button
-                    onClick={() => handleDelete(product.id)}
+                    onClick={() => handleDelete(project.id)}
                     className="flex items-center justify-center gap-1 px-2 py-1.5 bg-red-50 text-red-600 rounded-md hover:bg-red-100 transition-colors duration-200 text-xs font-medium"
                   >
                     <Trash2 className="w-3 h-3" />
@@ -220,29 +221,29 @@ const ProductManagement = ({
                   </button>
                 </div>
                 {/* Edit Product */}
-                {editProduct && (
-                  <AddProduct
-                    existFormData={product}
-                    isOpen={editProduct}
-                    onClose={() => setEditProduct(false)}
+                {editProject && (
+                  <AddProject
+                    existFormData={project}
+                    isOpen={editProject}
+                    onClose={() => setEditProject(false)}
                     type={"Edit"}
-                    title="Edit Product"
-                    statement="Fill in the details to Edit a exits product"
-                    onSuccess={fetchAllProducts}
+                    title="Edit Project"
+                    statement="Fill in the details to Edit a exits project"
+                    onSuccess={fetchAllProjects}
                   />
                 )}
 
                 {/* Delete Confirmation Modal */}
                 {deleteConfirmation.show && (
                   <DeleteConfirmation
-                    data={product}
+                    data={project}
                     cancelDelete={() => {
                       cancelDelete();
                     }}
                     confirmDelete={() => {
                       confirmDelete();
                     }}
-                    categoty={"Product"}
+                    categoty={"Project"}
                   />
                 )}
               </div>
@@ -256,8 +257,8 @@ const ProductManagement = ({
           {/* Results Info */}
           <div className="flex items-center text-sm text-gray-700">
             <span>
-              Showing {startIndex + 1} to {Math.min(endIndex, products.length)}{" "}
-              of {products.length} products
+              Showing {startIndex + 1} to {Math.min(endIndex, projects.length)}{" "}
+              of {projects.length} products
             </span>
           </div>
 
@@ -319,4 +320,4 @@ const ProductManagement = ({
   );
 };
 
-export default ProductManagement;
+export default ProjectManagement;

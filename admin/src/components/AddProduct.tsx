@@ -5,7 +5,12 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import imageCompression from "browser-image-compression";
 import { BeatLoader } from "react-spinners";
-import { AddProductProps, formDataType, ImageType, ProductImage } from "../interfaces/Product_Interfaces"
+import {
+  AddProductProps,
+  formDataType,
+  ImageType,
+  ProductImage,
+} from "../interfaces/Product_Interfaces";
 import { endpoints } from "../api";
 const options = {
   maxSizeMB: 1,
@@ -13,11 +18,19 @@ const options = {
   useWebWorker: true,
 };
 
-export default function AddProduct({ existFormData, isOpen, onClose, type, title, statement, onSuccess}: AddProductProps) {
-
+export default function AddProduct({
+  existFormData,
+  isOpen,
+  onClose,
+  type,
+  title,
+  statement,
+  onSuccess,
+}: AddProductProps) {
   const [isLoading, setIsLoading] = useState(false);
 
-  const CLOUDINARY_UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
+  const CLOUDINARY_UPLOAD_PRESET = import.meta.env
+    .VITE_CLOUDINARY_UPLOAD_PRESET;
   const CLOUDINARY_UPLOAD_URL = import.meta.env.VITE_CLOUDINARY_UPLOAD_URL;
 
   const [formData, setFormData] = useState<formDataType>({
@@ -30,15 +43,41 @@ export default function AddProduct({ existFormData, isOpen, onClose, type, title
 
   const [mainThumbnail, setMainThumbnail] = useState<ImageType>({
     file: null,
-    preview: existFormData?.imageUrl[0].imageUrl,
+    preview: existFormData?.imageUrl[0]
+      ? existFormData.imageUrl[0].imageUrl
+      : null,
     name: null,
   });
 
   const [additionalImages, setAdditionalImages] = useState<ImageType[]>([
-    { file: null, preview: existFormData?.imageUrl[1].imageUrl, name: null },
-    { file: null, preview: existFormData?.imageUrl[2].imageUrl, name: null },
-    { file: null, preview: existFormData?.imageUrl[3].imageUrl, name: null },
-    { file: null, preview: existFormData?.imageUrl[4].imageUrl, name: null },
+    {
+      file: null,
+      preview: existFormData?.imageUrl[1]
+        ? existFormData.imageUrl[1].imageUrl
+        : null,
+      name: null,
+    },
+    {
+      file: null,
+      preview: existFormData?.imageUrl[2]
+        ? existFormData.imageUrl[2].imageUrl
+        : null,
+      name: null,
+    },
+    {
+      file: null,
+      preview: existFormData?.imageUrl[3]
+        ? existFormData.imageUrl[3].imageUrl
+        : null,
+      name: null,
+    },
+    {
+      file: null,
+      preview: existFormData?.imageUrl[4]
+        ? existFormData.imageUrl[4].imageUrl
+        : null,
+      name: null,
+    },
   ]);
   const [dragOver, setDragOver] = useState(false);
   const [previewMode, setPreviewMode] = useState(false);
@@ -177,7 +216,8 @@ export default function AddProduct({ existFormData, isOpen, onClose, type, title
     try {
       const token = localStorage.getItem("accessToken");
       console.log(updatedFormData);
-      axios.post(endpoints.product.add, updatedFormData, {
+      axios
+        .post(endpoints.product.add, updatedFormData, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -320,9 +360,7 @@ export default function AddProduct({ existFormData, isOpen, onClose, type, title
           <div className="flex justify-between items-center">
             <div>
               <h1 className="text-2xl font-bold text-white">{title}</h1>
-              <p className="text-blue-100 mt-1">
-                {statement}
-              </p>
+              <p className="text-blue-100 mt-1">{statement}</p>
             </div>
             <div className="flex space-x-2">
               <button
