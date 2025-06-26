@@ -39,7 +39,7 @@ const Dashboard: React.FC = () => {
   const [stats, setStats] = useState<StatCard[]>([
     {
       title: "Total Products",
-      value: 45231,
+      value: 0,
       change: "+12% from last month",
       icon: Package,
       color: "bg-green-50 text-green-600",
@@ -48,7 +48,7 @@ const Dashboard: React.FC = () => {
     },
     {
       title: "Total Projects",
-      value: 184,
+      value: 0,
       change: "+8% from last week",
       icon: Folder,
       color: "bg-blue-50 text-blue-600",
@@ -91,38 +91,38 @@ const Dashboard: React.FC = () => {
     updatedAt: "",
   });
 
-   const fetchCountDetails = async () => {
-      const token = localStorage.getItem("accessToken");
-      if (!token) {
-        console.error("No token found");
-        return;
-      }
-      try {
-        const updatedStats = await Promise.all(
-          stats.map(async (data) => {
-            if (data.url === null) return { ...data };
-            const res = await axios.get(data.url, {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            });
-
-            if (res.data) {
-              console.log(res.data);
-              return {
-                ...data,
-                value: res.data,
-              };
-            } else {
-              return { ...data };
-            }
-          })
-        );
-        setStats(updatedStats);
-      } catch (err) {
-        console.error("Failed to fetch count details", err);
-      }
+  const fetchCountDetails = async () => {
+    const token = localStorage.getItem("accessToken");
+    if (!token) {
+      console.error("No token found");
+      return;
     }
+    try {
+      const updatedStats = await Promise.all(
+        stats.map(async (data) => {
+          if (data.url === null) return { ...data };
+          const res = await axios.get(data.url, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+
+          if (res.data) {
+            console.log(res.data);
+            return {
+              ...data,
+              value: res.data,
+            };
+          } else {
+            return { ...data };
+          }
+        })
+      );
+      setStats(updatedStats);
+    } catch (err) {
+      console.error("Failed to fetch count details", err);
+    }
+  };
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -348,16 +348,16 @@ const Dashboard: React.FC = () => {
   const renderContent = (): JSX.Element => {
     switch (activeView) {
       case "Sales":
-        return <Sales/>;
+        return <Sales />;
 
       case "Customers":
         return <Customers />;
 
       case "Products":
-        return <Products onSuccess={fetchCountDetails}/>;
+        return <Products onSuccess={fetchCountDetails} />;
 
       case "Projects":
-        return <Projects />;
+        return <Projects onSuccess={fetchCountDetails} />;
 
       case "Analytics":
         return <Analytics />;
@@ -384,7 +384,7 @@ const Dashboard: React.FC = () => {
                         {stat.title}
                       </p>
                       <p className="text-2xl font-bold text-gray-900 mt-2">
-                        {stat.value}
+                        {stat.value == 0 ? <>---</> : stat.value}
                       </p>
                       <p className="text-sm text-green-600 mt-2">
                         {stat.change}
