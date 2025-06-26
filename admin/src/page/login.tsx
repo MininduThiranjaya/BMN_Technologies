@@ -7,7 +7,6 @@ import { toast } from "react-toastify";
 import { endpoints } from "../api";
 
 export default function LoginPage() {
-  
   const { login } = useAuth();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({ email: "", password: "" });
@@ -42,10 +41,7 @@ export default function LoginPage() {
 
     setSubmitStatus("submitting");
     try {
-      const res = await axios.post(
-        endpoints.user.login,
-        formData
-      );
+      const res = await axios.post(endpoints.user.login, formData);
       if (res.data.success) {
         console.log("Login successful:", res);
         login(res.data.token); // Assuming the token is returned in the response
@@ -160,6 +156,16 @@ export default function LoginPage() {
             Sign In
           </button>
         </form>
+        <div className="flex justify-center p-5">
+          <button
+            className="text-indigo-600 hover:text-indigo-700 text-sm font-medium text-center"
+            onClick={() => {
+              navigate("/forget-password");
+            }}
+          >
+            Forget Password {"->"}
+          </button>
+        </div>
       </div>
     </div>
   );
