@@ -1,5 +1,7 @@
 package lk.bmn_technologies.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -17,6 +19,7 @@ public class ProjectImageModel {
 
     @ManyToOne
     @JoinColumn(name = "projectId")
+    @JsonBackReference
     private ProjectModel project;
 
     public Long getId() {
