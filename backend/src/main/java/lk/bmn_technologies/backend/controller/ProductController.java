@@ -32,9 +32,9 @@ public class ProductController {
         service.addProduct(data);
     }
 
-    @GetMapping("/get")
-    public List<ProductDTO> getProductsFromDatabase() {
-        return service.getProduct();
+    @GetMapping("/get/{category}")
+    public List<ProductDTO> getProductsFromDatabase(@PathVariable("category") String category) {
+        return service.getProduct(category);
     }
     
 

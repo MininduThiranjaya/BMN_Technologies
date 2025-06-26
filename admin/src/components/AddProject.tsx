@@ -469,12 +469,9 @@ export default function AddProject({
                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
                       >
                         <option value="">Select Category</option>
-                        <option value="web-development">Web Development</option>
-                        <option value="mobile-app">Mobile App</option>
-                        <option value="design">Design</option>
-                        <option value="construction">Construction</option>
-                        <option value="photography">Photography</option>
-                        <option value="other">Other</option>
+                        <option value="web-development">Residential Solar</option>
+                        <option value="mobile-app">Commercial Buildings</option>
+                        <option value="design">Industrial Solutions</option>
                       </select>
                     </div>
 

@@ -35,12 +35,20 @@ import {
 } from "../interfaces/Dashboard_Interfaces";
 import { endpoints } from "../api";
 
+interface NotificationType {
+  id: number | null | undefined,
+  text: string | null | undefined,
+  time: string | null | undefined,
+  type: string | null | undefined,
+  read: boolean | null | undefined,
+}
+
 const Dashboard: React.FC = () => {
   const [stats, setStats] = useState<StatCard[]>([
     {
       title: "Total Products",
       value: 0,
-      change: "+12% from last month",
+      change: "",
       icon: Package,
       color: "bg-green-50 text-green-600",
       iconBg: "bg-green-100",
@@ -49,7 +57,7 @@ const Dashboard: React.FC = () => {
     {
       title: "Total Projects",
       value: 0,
-      change: "+8% from last week",
+      change: "",
       icon: Folder,
       color: "bg-blue-50 text-blue-600",
       iconBg: "bg-blue-100",
@@ -57,8 +65,8 @@ const Dashboard: React.FC = () => {
     },
     {
       title: "Total Sales",
-      value: 2847,
-      change: "+23% from last month",
+      value: 0,
+      change: "",
       icon: DollarSign,
       color: "bg-purple-50 text-purple-600",
       iconBg: "bg-purple-100",
@@ -66,8 +74,8 @@ const Dashboard: React.FC = () => {
     },
     {
       title: "Growth",
-      value: 18.6,
-      change: "+4.2% from last quarter",
+      value: 0,
+      change: "",
       icon: TrendingUp,
       color: "bg-orange-50 text-orange-600",
       iconBg: "bg-orange-100",
@@ -75,7 +83,7 @@ const Dashboard: React.FC = () => {
     },
   ]);
   const { logout } = useAuth();
-  const [notifications, setNotifications] = useState(3);
+  const [notifications, setNotifications] = useState(0);
   const [showNotifications, setShowNotifications] = useState(false);
   const [showAllNotifications, setShowAllNotifications] = useState(false);
   const [showUserDropdown, setShowUserDropdown] = useState<boolean>(false);
@@ -163,78 +171,7 @@ const Dashboard: React.FC = () => {
 
   if (!adminUser) return <p>Loading...</p>;
 
-  const notificationItems = [
-    {
-      id: 1,
-      text: "New order from John Doe",
-      time: "5 min ago",
-      type: "order",
-      read: false,
-    },
-    {
-      id: 2,
-      text: "Payment received $1,250",
-      time: "12 min ago",
-      type: "payment",
-      read: false,
-    },
-    {
-      id: 3,
-      text: "Customer support ticket #1234",
-      time: "1 hour ago",
-      type: "support",
-      read: false,
-    },
-    {
-      id: 4,
-      text: "New user registration: Sarah Johnson",
-      time: "2 hours ago",
-      type: "user",
-      read: true,
-    },
-    {
-      id: 5,
-      text: "Inventory alert: Low stock on Premium Package",
-      time: "3 hours ago",
-      type: "inventory",
-      read: true,
-    },
-    {
-      id: 6,
-      text: "Monthly report generated successfully",
-      time: "5 hours ago",
-      type: "system",
-      read: true,
-    },
-    {
-      id: 7,
-      text: "New review received for Enterprise Suite",
-      time: "6 hours ago",
-      type: "review",
-      read: true,
-    },
-    {
-      id: 8,
-      text: "Scheduled maintenance completed",
-      time: "1 day ago",
-      type: "system",
-      read: true,
-    },
-    {
-      id: 9,
-      text: "New order from Mike Chen",
-      time: "1 day ago",
-      type: "order",
-      read: true,
-    },
-    {
-      id: 10,
-      text: "Payment failed for customer ID #2847",
-      time: "2 days ago",
-      type: "payment",
-      read: true,
-    },
-  ];
+  const notificationItems: NotificationType[] = [];
 
   const handleNotificationClick = () => {
     setShowNotifications(!showNotifications);
@@ -274,52 +211,21 @@ const Dashboard: React.FC = () => {
     }
   };
 
-  const recentSales: Sale[] = [
-    {
-      customer: "John Doe",
-      product: "Premium Package",
-      amount: "$1,250",
-      time: "2 min ago",
-    },
-    {
-      customer: "Sarah Johnson",
-      product: "Standard Plan",
-      amount: "$850",
-      time: "15 min ago",
-    },
-    {
-      customer: "Mike Chen",
-      product: "Enterprise Suite",
-      amount: "$2,100",
-      time: "1 hour ago",
-    },
-    {
-      customer: "Emily Davis",
-      product: "Basic Package",
-      amount: "$675",
-      time: "2 hours ago",
-    },
-    {
-      customer: "Alex Wilson",
-      product: "Pro Plan",
-      amount: "$1,875",
-      time: "3 hours ago",
-    },
-  ];
+  const recentSales: Sale[] = [];
 
   const menuItems: MenuItem[] = [
     { icon: Home, label: "Dashboard", active: activeView === "Dashboard" },
-    { icon: ShoppingCart, label: "Sales", active: activeView === "Sales" },
-    { icon: Users, label: "Customers", active: activeView === "Customers" },
+    // { icon: ShoppingCart, label: "Sales", active: activeView === "Sales" },
+    // { icon: Users, label: "Customers", active: activeView === "Customers" },
     { icon: Package, label: "Products", active: activeView === "Products" },
     { icon: Folder, label: "Projects", active: activeView === "Projects" },
-    { icon: BarChart3, label: "Analytics", active: activeView === "Analytics" },
+    // { icon: BarChart3, label: "Analytics", active: activeView === "Analytics" },
     {
       icon: User,
       label: "User Registration",
       active: activeView === "User Registration",
     },
-    { icon: Settings, label: "Settings", active: activeView === "Settings" },
+    // { icon: Settings, label: "Settings", active: activeView === "Settings" },
   ];
 
   const handleLogout = (): void => {
@@ -347,11 +253,11 @@ const Dashboard: React.FC = () => {
 
   const renderContent = (): JSX.Element => {
     switch (activeView) {
-      case "Sales":
-        return <Sales />;
+      // case "Sales":
+      //   return <Sales />;
 
-      case "Customers":
-        return <Customers />;
+      // case "Customers":
+      //   return <Customers />;
 
       case "Products":
         return <Products onSuccess={fetchCountDetails} />;
@@ -359,14 +265,14 @@ const Dashboard: React.FC = () => {
       case "Projects":
         return <Projects onSuccess={fetchCountDetails} />;
 
-      case "Analytics":
-        return <Analytics />;
+      // case "Analytics":
+      //   return <Analytics />;
 
       case "User Registration":
         return <AdminUserRegistration />;
 
-      case "Settings":
-        return <SettingsPage />;
+      // case "Settings":
+      //   return <SettingsPage />;
 
       default:
         return (
@@ -404,10 +310,10 @@ const Dashboard: React.FC = () => {
                 <h3 className="text-lg font-semibold text-gray-800">
                   Recent Sales
                 </h3>
-                <button className="flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                {/* <button className="flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
                   <Plus className="w-4 h-4" />
                   <span>New Sale</span>
-                </button>
+                </button> */}
               </div>
 
               <div className="overflow-x-auto">
@@ -429,7 +335,7 @@ const Dashboard: React.FC = () => {
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
-                    {recentSales.map((sale, index) => (
+                    {recentSales.length > 0 ? (recentSales.map((sale, index) => (
                       <tr key={index}>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="flex items-center">
@@ -451,7 +357,13 @@ const Dashboard: React.FC = () => {
                           {sale.time}
                         </td>
                       </tr>
-                    ))}
+                    ))) : (
+                      <tr className="p-5">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-center" colSpan={4}>
+                          No Sales is Available
+                        </td>
+                      </tr>
+                    )}
                   </tbody>
                 </table>
               </div>
@@ -475,11 +387,10 @@ const Dashboard: React.FC = () => {
             <button
               key={index}
               onClick={() => handleMenuClick(item.label)}
-              className={`w-full flex items-center px-6 py-3 text-sm font-medium transition-colors text-left ${
-                item.active
+              className={`w-full flex items-center px-6 py-3 text-sm font-medium transition-colors text-left ${item.active
                   ? "bg-blue-50 text-blue-700 border-r-2 border-blue-700"
                   : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-              }`}
+                }`}
             >
               <item.icon className="w-5 h-5 mr-3" />
               {item.label}
@@ -611,9 +522,8 @@ const Dashboard: React.FC = () => {
                       {notificationItems.map((notification) => (
                         <div
                           key={notification.id}
-                          className={`p-4 border-b hover:bg-gray-50 transition-colors ${
-                            !notification.read ? "bg-blue-50" : ""
-                          }`}
+                          className={`p-4 border-b hover:bg-gray-50 transition-colors ${!notification.read ? "bg-blue-50" : ""
+                            }`}
                         >
                           <div className="flex items-start space-x-4">
                             <div className="flex-shrink-0 mt-1">
@@ -623,11 +533,10 @@ const Dashboard: React.FC = () => {
                               <div className="flex items-start justify-between">
                                 <div className="flex-1">
                                   <p
-                                    className={`text-sm ${
-                                      !notification.read
+                                    className={`text-sm ${!notification.read
                                         ? "font-medium text-gray-900"
                                         : "text-gray-800"
-                                    }`}
+                                      }`}
                                   >
                                     {notification.text}
                                   </p>
@@ -636,23 +545,22 @@ const Dashboard: React.FC = () => {
                                       {notification.time}
                                     </p>
                                     <span
-                                      className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                                        notification.type === "order"
+                                      className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${notification.type === "order"
                                           ? "bg-blue-100 text-blue-800"
                                           : notification.type === "payment"
-                                          ? "bg-green-100 text-green-800"
-                                          : notification.type === "support"
-                                          ? "bg-orange-100 text-orange-800"
-                                          : notification.type === "user"
-                                          ? "bg-purple-100 text-purple-800"
-                                          : notification.type === "inventory"
-                                          ? "bg-red-100 text-red-800"
-                                          : notification.type === "system"
-                                          ? "bg-gray-100 text-gray-800"
-                                          : notification.type === "review"
-                                          ? "bg-indigo-100 text-indigo-800"
-                                          : "bg-gray-100 text-gray-800"
-                                      }`}
+                                            ? "bg-green-100 text-green-800"
+                                            : notification.type === "support"
+                                              ? "bg-orange-100 text-orange-800"
+                                              : notification.type === "user"
+                                                ? "bg-purple-100 text-purple-800"
+                                                : notification.type === "inventory"
+                                                  ? "bg-red-100 text-red-800"
+                                                  : notification.type === "system"
+                                                    ? "bg-gray-100 text-gray-800"
+                                                    : notification.type === "review"
+                                                      ? "bg-indigo-100 text-indigo-800"
+                                                      : "bg-gray-100 text-gray-800"
+                                        }`}
                                     >
                                       {notification.type}
                                     </span>

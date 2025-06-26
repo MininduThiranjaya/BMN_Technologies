@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { User, Briefcase, Mail, MessageSquare, Send, Star } from 'lucide-react';
 import axios from 'axios';
+import { endpoints } from '../api';
 
 export default function TestimonialForm() {
     const [formData, setFormData] = useState<any>({
@@ -84,7 +85,7 @@ export default function TestimonialForm() {
             setSubmitStatus('submitting');
             console.log(formData)
 
-            axios.post('http://localhost:8080/api/user-testimonial/submit', formData)
+            axios.post(endpoints.testimonial.submit, formData)
                 .then(res => {
                     console.log(res.data);
                 })

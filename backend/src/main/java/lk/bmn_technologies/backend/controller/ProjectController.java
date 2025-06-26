@@ -29,9 +29,9 @@ public class ProjectController {
         service.addProject(data);
     }
 
-    @GetMapping("/get")
-    public List<ProjectDTO> getProductsFromDatabase() {
-        return service.getProduct();
+    @GetMapping("/get/{category}")
+    public List<ProjectDTO> getProductsFromDatabase(@PathVariable("category") String category) {
+        return service.getProduct(category);
     }
 
     @GetMapping("/count")
