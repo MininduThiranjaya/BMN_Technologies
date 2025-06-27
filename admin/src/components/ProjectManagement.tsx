@@ -45,7 +45,7 @@ const ProjectManagement = ({
   };
 
   const confirmDelete = () => {
-    console.log("Deleting product:", deleteConfirmation.id);
+    console.log("Deleting project:", deleteConfirmation.id);
     const token = localStorage.getItem("accessToken");
 
     async function fetchAllProjects() {
@@ -62,9 +62,14 @@ const ProjectManagement = ({
           }
         )
         .then((res) => {
-          console.log(res.data);
-          toast.success("Project deleted successfuly...");
-          deleteProduct(res.data.object.id);
+          if(res.data.success) {
+            console.log(res.data);
+            toast.success("Project deleted successfuly...");
+            deleteProduct(res.data.object.id);
+          }
+          else {
+            toast.error("Error deleting project...");
+          }
         })
         .catch((error) => {
           console.log("Error fetching data : ", error);
