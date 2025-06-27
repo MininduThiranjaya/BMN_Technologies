@@ -105,7 +105,7 @@
 
 import { useState } from "react";
 import { Menu, X } from 'lucide-react';
-import logo from '../assets/spring-boot-logo.png';
+import logo from '../assets/bmn_technologies_logo.png';
 import CartButton from '../components/CartButoon'; // Import the CartButton component
 import CartOverlay from '../components/Cart'; // Import the CartOverlay component
 import { useLocation, useNavigate } from "react-router-dom";
@@ -131,10 +131,10 @@ function NavBar({ refs }: any) {
     return (
         <div className="mx-4 mt-4 sticky top-0 z-50">
             <nav className="w-full bg-gray-800 text-white">
-                <div className="flex justify-between items-center h-16 px-4">
+                <div className="flex justify-between items-center h-16 px-2">
                     {/* Logo - Centered on mobile */}
                     <div className="flex-shrink-0 w-32 h-auto text-center md:text-left">
-                        <img src={logo} alt="Logo" className="mx-auto md:mx-0" />
+                        <img src={logo} alt="Logo" className="mx-auto md:mx-0 rounded" />
                     </div>
 
                     {/* Desktop Menu */}
