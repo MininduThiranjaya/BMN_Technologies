@@ -113,7 +113,6 @@ export default function ProjectShowCasePage() {
                     {/* Page Title */}
                     <div className="mb-8 text-center">
                         <h2 className="text-3xl font-bold text-gray-800">OUR PROJECTS</h2>
-                        <p className="text-gray-600">Browse our collection of premium items</p>
                     </div>
 
                     {/* Grid Layout */}
