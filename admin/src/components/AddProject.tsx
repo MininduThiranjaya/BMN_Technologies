@@ -20,6 +20,7 @@ import {
   FormDataType,
   ImageType,
   ProjectImage,
+  ProjectType,
 } from "../interfaces/Project_Interfaces";
 import { endpoints } from "../api";
 
@@ -55,15 +56,15 @@ export default function AddProject({
 
   const [mainThumbnail, setMainThumbnail] = useState<ImageType>({
     file: null,
-    preview: existFormData?.imageUrl[0].imageUrl,
+    preview: existFormData?.imageUrl[0] ? existFormData.imageUrl[0].imageUrl : null,
     name: null,
   });
 
   const [additionalImages, setAdditionalImages] = useState<ImageType[]>([
-    { file: null, preview: existFormData?.imageUrl[1].imageUrl, name: null },
-    { file: null, preview: existFormData?.imageUrl[2].imageUrl, name: null },
-    { file: null, preview: existFormData?.imageUrl[3].imageUrl, name: null },
-    { file: null, preview: existFormData?.imageUrl[4].imageUrl, name: null },
+    { file: null, preview: existFormData?.imageUrl[1] ? existFormData.imageUrl[1].imageUrl : null, name: null },
+    { file: null, preview: existFormData?.imageUrl[2] ? existFormData.imageUrl[2].imageUrl : null, name: null },
+    { file: null, preview: existFormData?.imageUrl[3] ? existFormData.imageUrl[3].imageUrl : null, name: null },
+    { file: null, preview: existFormData?.imageUrl[4] ? existFormData.imageUrl[4].imageUrl : null, name: null },
   ]);
   const [dragOver, setDragOver] = useState(false);
   const [previewMode, setPreviewMode] = useState(false);
@@ -469,12 +470,9 @@ export default function AddProject({
                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
                       >
                         <option value="">Select Category</option>
-                        <option value="web-development">Web Development</option>
-                        <option value="mobile-app">Mobile App</option>
-                        <option value="design">Design</option>
-                        <option value="construction">Construction</option>
-                        <option value="photography">Photography</option>
-                        <option value="other">Other</option>
+                        <option value="Residential Solar">Residential Solar</option>
+                        <option value="Commercial Buildings">Commercial Buildings</option>
+                        <option value="Industrial Solutions">Industrial Solutions</option>
                       </select>
                     </div>
 

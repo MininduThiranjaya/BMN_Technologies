@@ -43,17 +43,14 @@ export default function LoginPage() {
     try {
       const res = await axios.post(endpoints.user.login, formData);
       if (res.data.success) {
-        console.log("Login successful:", res);
         login(res.data.token); // Assuming the token is returned in the response
         navigate("/dashboard");
         toast.success("Login Successful..."); // Redirect to dashboard after login
-      } else {
-        setSubmitStatus("error");
-        setErrors({ password: "Invalid username or password" });
       }
     } catch (err) {
-      console.error(err);
+      toast.error("Invalid Username or Password")
       setSubmitStatus("error");
+      setErrors({ password: "Invalid username or password" });
     } finally {
       setSubmitStatus("idle");
     }

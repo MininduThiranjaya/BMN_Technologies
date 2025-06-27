@@ -12,7 +12,7 @@ import axios from "axios";
 import { endpoints } from "../api";
 import { toast } from "react-toastify";
 import AddProject from "./AddProject";
-import { ProjectDetailsProps } from "../interfaces/Project_Interfaces";
+import { ProjectDetailsProps, ProjectType } from "../interfaces/Project_Interfaces";
 
 const ProjectManagement = ({
   projects,
@@ -22,6 +22,7 @@ const ProjectManagement = ({
   const [currentPage, setCurrentPage] = useState(1);
   const projectsPerPage = projects.length;
   const [editProject, setEditProject] = useState(false);
+  const [editProjectDetails, setEditProjectDetails] = useState<ProjectType>();
   const [deleteConfirmation, setDeleteConfirmation] = useState({
     show: false,
     id: null,
@@ -33,6 +34,8 @@ const ProjectManagement = ({
 
   const handleEdit = (id: any) => {
     setEditProject(true);
+    const tempProject = currentProjects.find((project) => project.id === id);
+    setEditProjectDetails(tempProject);
     console.log(id);
     //fetch for updating exist product
   };
@@ -42,7 +45,7 @@ const ProjectManagement = ({
   };
 
   const confirmDelete = () => {
-    console.log("Deleting product:", deleteConfirmation.id);
+    console.log("Deleting project:", deleteConfirmation.id);
     const token = localStorage.getItem("accessToken");
 
     async function fetchAllProjects() {
@@ -59,9 +62,14 @@ const ProjectManagement = ({
           }
         )
         .then((res) => {
-          console.log(res.data);
-          toast.success("Project deleted successfuly...");
-          deleteProduct(res.data.object.id);
+          if(res.data.success) {
+            console.log(res.data);
+            toast.success("Project deleted successfuly...");
+            deleteProduct(res.data.object.id);
+          }
+          else {
+            toast.error("Error deleting project...");
+          }
         })
         .catch((error) => {
           console.log("Error fetching data : ", error);
@@ -82,7 +90,7 @@ const ProjectManagement = ({
   const totalPages = Math.ceil(projects.length / projectsPerPage);
   const startIndex = (currentPage - 1) * projectsPerPage;
   const endIndex = startIndex + projectsPerPage;
-  const currentProducts = useMemo(
+  const currentProjects = useMemo(
     () => projects.slice(startIndex, endIndex),
     [projects, startIndex, endIndex]
   );
@@ -153,8 +161,8 @@ const ProjectManagement = ({
     <div>
       {/* Products Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 p-6">
-        {currentProducts.length > 0 &&
-          currentProducts.map((project) => (
+        {currentProjects.length > 0 &&
+          currentProjects.map((project) => (
             <div
               key={project.id}
               className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 overflow-hidden border border-gray-200"
@@ -223,7 +231,7 @@ const ProjectManagement = ({
                 {/* Edit Product */}
                 {editProject && (
                   <AddProject
-                    existFormData={project}
+                    existFormData={editProjectDetails}
                     isOpen={editProject}
                     onClose={() => setEditProject(false)}
                     type={"Edit"}

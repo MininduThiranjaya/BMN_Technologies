@@ -37,8 +37,18 @@ public class ProjectService {
         repo.save(data);
     }
 
-    public List<ProjectDTO> getProduct() {
-       return repo.findAll().stream()
+    public List<ProjectDTO> getProduct(String category) {
+
+        String filter;
+
+        filter = switch (category) {
+            case "residential" -> "Residential Solar";
+            case "commercial" -> "Commercial Buildings";
+            default -> "Industrial Solutions";
+        };
+
+        return repo.findAll().stream()
+            .filter(project -> project.getCategory().equals(filter))
             .map(ProjectDTO::new)
             .collect(Collectors.toList());
     }

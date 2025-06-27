@@ -3,9 +3,11 @@ import { X, ChevronLeft, ChevronRight, ShoppingCart, Plus, Minus } from 'lucide-
 import BannerImages from '../components/BannerImages';
 import Footer from '../components/Footer';
 import { useCart, CartItem } from '../context/CartContext';
-import { useLocation } from 'react-router-dom';
+import { replace, useLocation } from 'react-router-dom';
 import NavBar from '../components/NavBar';
 import axios from 'axios';
+import { endpoints } from '../api';
+import { useParams } from 'react-router-dom';
 
 interface ItemType {
     productId: number,
@@ -19,6 +21,7 @@ interface ItemType {
 // Main Showcase Component
 export default function ProductShowCasePage() {
 
+    const { category } = useParams();
     const { pathname } = useLocation();
     const introRef = useRef(null);
     const servicesRef = useRef(null);
@@ -30,7 +33,7 @@ export default function ProductShowCasePage() {
     const [selectedItem, setSelectedItem] = useState<ItemType | null>(null);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [itemQuantity, setItemQuantity] = useState(1);
-    const itemsPerPage = 8; // 4x2 grproductId
+    const itemsPerPage = 8;
     const totalPages = Math.ceil(allItems.length / itemsPerPage);
     // Use cart context
     const { addToCart } = useCart();
@@ -38,7 +41,7 @@ export default function ProductShowCasePage() {
     useEffect(() => {
         window.scrollTo(0, 0); // scroll to top
         async function fetchAllProducts() {
-            await axios.get("http://localhost:8080/api/auth/product/get")
+            await axios.get(`${endpoints.product.get}/${category}`)
                 .then((res) => {
                     console.log(res);
                     setAllItems(res.data);
@@ -144,7 +147,6 @@ export default function ProductShowCasePage() {
                     {/* Page Title */}
                     <div className="mb-8 text-center">
                         <h2 className="text-3xl font-bold text-gray-800">OUR PRODUCTS</h2>
-                        <p className="text-gray-600">Browse our collection of premium items</p>
                     </div>
 
                     {/* Grid Layout - Replace your existing grid section with this */}
@@ -205,7 +207,7 @@ export default function ProductShowCasePage() {
             {/* Detail Modal */}
             {selectedItem && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-                    <div className="bg-white rounded-lg shadow-xl w-full max-w-5xl h-auto max-h-full overflow-auto">
+                    <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl h-auto max-h-full overflow-auto">
                         {/* Fixed position close button that's always visible */}
                         <div className="sticky top-0 left-0 right-0 flex justify-end p-2 bg-white bg-opacity-90 rounded-t-lg z-20">
                             <button
@@ -220,11 +222,14 @@ export default function ProductShowCasePage() {
                             {/* Left sproductIde - Image Carousel */}
                             <div className="p-6 relative">
                                 <div className="relative">
-                                    <img
-                                        src={getCurrentImage()}
-                                        alt={selectedItem.productName}
-                                        className="w-full h-80 object-cover rounded"
-                                    />
+                                    <div className="w-full h-80 bg-gray-100 flex items-center justify-center rounded overflow-hidden">
+                                        <img
+                                            src={getCurrentImage()}
+                                            alt={selectedItem.productName}
+                                            className="max-w-full max-h-full object-contain"
+                                        />
+                                    </div>
+
 
                                     {/* Navigation arrows */}
                                     <button
@@ -243,22 +248,22 @@ export default function ProductShowCasePage() {
                                 </div>
 
                                 {/* Thumbnail images */}
-                                <div className="flex mt-4 space-x-2 overflow-x-auto py-2">
+                                <div className="flex mt-4 space-x-2 overflow-x-auto py-2 p-1">
                                     {selectedItem.imageUrl.map((img, index) => (
                                         (
                                             <div
                                                 key={index}
-                                                className={`w-16 h-16 cursor-pointer ${currentImageIndex === index ? 'ring-2 ring-blue-500' : ''}`}
+                                                className={`w-20 h-20 rounded-lg overflow-hidden border-2 transition-all duration-300 cursor-pointer ${currentImageIndex === index ? 'border-blue-500 shadow-md scale-105' : 'border-transparent hover:border-gray-300'}`}
                                                 onClick={() => selectImage(index)}
                                             >
                                                 <img
                                                     src={img}
                                                     alt={`${selectedItem.productName} - ${index}`}
-                                                    className="w-full h-full object-cover rounded"
+                                                    className="w-full h-full object-cover"
                                                 />
-                                                <p>{index}</p>
-                                            </div>)
-                                    ))}
+                                            </div>
+
+                                        )))}
                                 </div>
                             </div>
 

@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Star, Quote, ChevronLeft, ChevronRight } from "lucide-react";
 import TestimonialForm from "./TestimonialForm";
 import axios from "axios";
+import { endpoints } from "../api";
 
 interface Testimonial {
   id: number;
@@ -31,7 +32,7 @@ export default function AboutUs() {
   useEffect(() => {
     function getTestimonialData() {
       axios
-        .get("http://localhost:8080/api/user-testimonial/get")
+        .get(endpoints.testimonial.get)
         .then((res) => {
           setTestimonialData(res.data?.object || []);
           setLoading(false);
