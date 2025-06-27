@@ -6,7 +6,7 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
-import { ProductDetailsProps } from "../interfaces/Product_Interfaces";
+import { ProductDetailsProps, ProductType } from "../interfaces/Product_Interfaces";
 import AddProduct from "./AddProduct";
 import DeleteConfirmation from "./DeleteConfirmation";
 import axios from "axios";
@@ -21,6 +21,7 @@ const ProductManagement = ({
   const [currentPage, setCurrentPage] = useState(1);
   const productsPerPage = products.length;
   const [editProduct, setEditProduct] = useState(false);
+  const [editProductDetails, setEditProductDetails] = useState<ProductType>();
   const [deleteConfirmation, setDeleteConfirmation] = useState({
     show: false,
     id: null,
@@ -32,7 +33,9 @@ const ProductManagement = ({
 
   const handleEdit = (id: any) => {
     setEditProduct(true);
-    console.log(id);
+    const tempProduct = currentProducts.find((product) => product.id === id)
+    setEditProductDetails(tempProduct);
+    console.log(tempProduct);
     //fetch for updating exist product
   };
 
@@ -222,7 +225,7 @@ const ProductManagement = ({
                 {/* Edit Product */}
                 {editProduct && (
                   <AddProduct
-                    existFormData={product}
+                    existFormData={editProductDetails}
                     isOpen={editProduct}
                     onClose={() => setEditProduct(false)}
                     type={"Edit"}
