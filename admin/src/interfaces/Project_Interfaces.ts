@@ -32,7 +32,7 @@ export interface ProjectDetailsProps {
 }
 
 export interface AddProjectProps {
-  existFormData: ProjectType | null;
+  existFormData: ProjectType | null | undefined;
   isOpen: boolean | null;
   onClose: () => void;
   type: string;

@@ -4,8 +4,18 @@ export interface ImageType {
   name: string | null;
 }
 
+export interface ProductType {
+  id: number | null;
+  productId: string | null;
+  productName: string | null;
+  imageUrl: ProductImages[] | [];
+  productDescription: string | null;
+  productPrice: number | null;
+  category: string | null;
+}
+
 export interface AddProductProps {
-  existFormData: ProductType | null;
+  existFormData: ProductType | null | undefined;
   isOpen: boolean | null;
   onClose: () => void;
   type: string;
@@ -16,16 +26,6 @@ export interface AddProductProps {
 
 export interface ProductImage {
   imageUrl: String;
-}
-
-export interface ProductType {
-  id: number | null;
-  productId: string | null;
-  productName: string | null;
-  imageUrl: ProductImages[] | [];
-  productDescription: string | null;
-  productPrice: number | null;
-  category: string | null;
 }
 
 interface ProductImages {
