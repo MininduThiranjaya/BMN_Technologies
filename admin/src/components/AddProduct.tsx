@@ -454,10 +454,9 @@ export default function AddProduct({
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
                     >
                       <option value="">Select Category</option>
-                      <option value="electronics">Sola Panels</option>
-                      <option value="clothing">Battery Storage</option>
-                      <option value="home">Smart Energy System</option>
-                      <option value="sports">Hybrid Inverters</option>
+                      <option value="Sola Panels">Sola Panels</option>
+                      <option value="Battery Storage">Battery Storage</option>
+                      <option value="Hybrid Inverters">Hybrid Inverters</option>
                     </select>
                   </div>
 
