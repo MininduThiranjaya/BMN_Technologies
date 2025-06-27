@@ -20,6 +20,7 @@ import {
   FormDataType,
   ImageType,
   ProjectImage,
+  ProjectType,
 } from "../interfaces/Project_Interfaces";
 import { endpoints } from "../api";
 
@@ -55,15 +56,15 @@ export default function AddProject({
 
   const [mainThumbnail, setMainThumbnail] = useState<ImageType>({
     file: null,
-    preview: existFormData?.imageUrl[0].imageUrl,
+    preview: existFormData?.imageUrl[0] ? existFormData.imageUrl[0].imageUrl : null,
     name: null,
   });
 
   const [additionalImages, setAdditionalImages] = useState<ImageType[]>([
-    { file: null, preview: existFormData?.imageUrl[1].imageUrl, name: null },
-    { file: null, preview: existFormData?.imageUrl[2].imageUrl, name: null },
-    { file: null, preview: existFormData?.imageUrl[3].imageUrl, name: null },
-    { file: null, preview: existFormData?.imageUrl[4].imageUrl, name: null },
+    { file: null, preview: existFormData?.imageUrl[1] ? existFormData.imageUrl[1].imageUrl : null, name: null },
+    { file: null, preview: existFormData?.imageUrl[2] ? existFormData.imageUrl[2].imageUrl : null, name: null },
+    { file: null, preview: existFormData?.imageUrl[3] ? existFormData.imageUrl[3].imageUrl : null, name: null },
+    { file: null, preview: existFormData?.imageUrl[4] ? existFormData.imageUrl[4].imageUrl : null, name: null },
   ]);
   const [dragOver, setDragOver] = useState(false);
   const [previewMode, setPreviewMode] = useState(false);
