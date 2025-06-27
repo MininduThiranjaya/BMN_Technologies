@@ -66,12 +66,12 @@ export default function Intro() {
               </p>
             </div>
             
-            <div className={`mt-8 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'} transition-all duration-1000 delay-1000`}>
+            {/* <div className={`mt-8 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'} transition-all duration-1000 delay-1000`}>
               <button className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg shadow-lg transition-colors duration-300 flex items-center">
                 <Sun size={20} className="mr-2" />
                 Discover Our Solutions
               </button>
-            </div>
+            </div> */}
           </div>
           
           {/* Column 2: Sweeping Banner Image */}
