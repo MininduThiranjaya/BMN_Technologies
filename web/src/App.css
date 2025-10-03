@@ -1,0 +1,8 @@
+body {
+  margin: 0;
+  padding: 0;
+  width: 100vw;
+}
+html {
+  scroll-behavior: smooth;
+}
