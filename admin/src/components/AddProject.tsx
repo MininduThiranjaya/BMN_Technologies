@@ -19,8 +19,7 @@ import {
   AddProjectProps,
   FormDataType,
   ImageType,
-  ProjectImage,
-  ProjectType,
+  ProjectImage
 } from "../interfaces/Project_Interfaces";
 import { endpoints } from "../api";
 

@@ -13,6 +13,7 @@ import { endpoints } from "../api";
 import { toast } from "react-toastify";
 import AddProject from "./AddProject";
 import { ProjectDetailsProps, ProjectType } from "../interfaces/Project_Interfaces";
+import { BeatLoader } from "react-spinners";
 
 const ProjectManagement = ({
   projects,
@@ -27,6 +28,7 @@ const ProjectManagement = ({
     show: false,
     id: null,
   });
+  const [isLoading, setIsLoading] = useState(false)
 
   function fetchAllProjects() {
     onSuccess();
@@ -45,6 +47,7 @@ const ProjectManagement = ({
   };
 
   const confirmDelete = () => {
+    setIsLoading(true)
     console.log("Deleting project:", deleteConfirmation.id);
     const token = localStorage.getItem("accessToken");
 
@@ -65,6 +68,7 @@ const ProjectManagement = ({
           if(res.data.success) {
             console.log(res.data);
             toast.success("Project deleted successfuly...");
+            setIsLoading(false)
             deleteProduct(res.data.object.id);
           }
           else {
@@ -161,6 +165,11 @@ const ProjectManagement = ({
     <div>
       {/* Products Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 p-6">
+        {isLoading && (
+          <div className="fixed inset-0 bg-black bg-opacity-20 flex items-center justify-center z-60">
+            <BeatLoader color="#0065F8" size={25} margin={6} />
+          </div>
+        )}
         {currentProjects.length > 0 &&
           currentProjects.map((project) => (
             <div

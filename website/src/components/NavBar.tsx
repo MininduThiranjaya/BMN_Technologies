@@ -106,8 +106,8 @@
 import { useState } from "react";
 import { Menu, X } from 'lucide-react';
 import logo from '../assets/bmn_technologies_logo.png';
-import CartButton from '../components/CartButoon'; // Import the CartButton component
-import CartOverlay from '../components/Cart'; // Import the CartOverlay component
+// import CartButton from '../components/CartButoon'; // Import the CartButton component
+// import CartOverlay from '../components/Cart'; // Import the CartOverlay component
 import { useLocation, useNavigate } from "react-router-dom";
 
 function NavBar({ refs }: any) {
@@ -129,7 +129,8 @@ function NavBar({ refs }: any) {
     };
 
     return (
-        <div className="mx-4 mt-4 sticky top-0 z-50">
+        <div className="sticky w-full top-0 z-50">
+        <div className="absolute w-full">
             <nav className="w-full bg-gray-800 text-white">
                 <div className="flex justify-between items-center h-16 px-2">
                     {/* Logo - Centered on mobile */}
@@ -150,9 +151,9 @@ function NavBar({ refs }: any) {
                     {/* Mobile Controls Group - Cart Button & Menu Button */}
                     <div className="flex items-center">
                         {/* Cart Button - No margin between cart and menu on mobile */}
-                        <div className="md:mr-4">
+                        {/* <div className="md:mr-4">
                             <CartButton />
-                        </div>
+                        </div> */}
 
                         {/* Mobile Menu Button */}
                         <div className="md:hidden ml-2">
@@ -182,7 +183,8 @@ function NavBar({ refs }: any) {
             </nav>
 
             {/* Cart Overlay */}
-            <CartOverlay />
+            {/* <CartOverlay /> */}
+        </div>
         </div>
     )
 }

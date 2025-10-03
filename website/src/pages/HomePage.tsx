@@ -2,7 +2,6 @@ import { useRef } from "react"
 import AboutUs from "../components/AboutUs"
 import ContactUs from "../components/ContactUs"
 import Footer from "../components/Footer"
-import Header from "../components/Header"
 import Intro from "../components/Intro"
 import Services from "../components/Services"
 import NavBar from "../components/NavBar"
@@ -16,10 +15,10 @@ function HomePage() {
 
     return (
         <>
-            <div className="absolute left-0 right-0" >
+            <div className="absolute mx-2 my-2">
                 <NavBar refs={{ introRef, servicesRef, contactRef, aboutRef }} />
                 <BannerImages />
-                <div className="mx-4 mb-4">
+                <div className="mb-4">
                     <div ref={introRef} id="intro">
                         <Intro />
                     </div>

@@ -6,12 +6,16 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
-import { ProductDetailsProps, ProductType } from "../interfaces/Product_Interfaces";
+import {
+  ProductDetailsProps,
+  ProductType,
+} from "../interfaces/Product_Interfaces";
 import AddProduct from "./AddProduct";
 import DeleteConfirmation from "./DeleteConfirmation";
 import axios from "axios";
 import { endpoints } from "../api";
 import { toast } from "react-toastify";
+import { BeatLoader } from "react-spinners";
 
 const ProductManagement = ({
   products,
@@ -26,6 +30,7 @@ const ProductManagement = ({
     show: false,
     id: null,
   });
+  const [isLoading, setIsLoading] = useState(false);
 
   function fetchAllProducts() {
     onSuccess();
@@ -33,7 +38,7 @@ const ProductManagement = ({
 
   const handleEdit = (id: any) => {
     setEditProduct(true);
-    const tempProduct = currentProducts.find((product) => product.id === id)
+    const tempProduct = currentProducts.find((product) => product.id === id);
     setEditProductDetails(tempProduct);
     console.log(tempProduct);
     //fetch for updating exist product
@@ -44,6 +49,7 @@ const ProductManagement = ({
   };
 
   const confirmDelete = () => {
+    setIsLoading(true)
     console.log("Deleting product:", deleteConfirmation.id);
     const token = localStorage.getItem("accessToken");
 
@@ -63,6 +69,7 @@ const ProductManagement = ({
         .then((res) => {
           console.log(res.data);
           toast.success("Product deleted successfuly...");
+          setIsLoading(false)
           deleteProduct(res.data.object.id);
         })
         .catch((error) => {
@@ -155,6 +162,11 @@ const ProductManagement = ({
     <div>
       {/* Products Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 p-6">
+        {isLoading && (
+          <div className="fixed inset-0 bg-black bg-opacity-20 flex items-center justify-center z-60">
+            <BeatLoader color="#0065F8" size={25} margin={6} />
+          </div>
+        )}
         {currentProducts.length > 0 &&
           currentProducts.map((product) => (
             <div
