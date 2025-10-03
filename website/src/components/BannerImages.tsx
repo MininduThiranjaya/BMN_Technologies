@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Menu, X, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import banner1 from '../assets/bannerImages/banner1.jpg';
 import banner2 from '../assets/bannerImages/banner2.jpg';
 
@@ -30,12 +30,10 @@ export default function BannerImages() {
     }, []);
 
     return (
-        <div className="mx-4 my-1">
-
+        <div className="">
             <div className="flex flex-col w-full">
-
                 {/* Image Carousel Banner */}
-                <div className="relative w-full h-96 overflow-hidden">
+                <div className="relative w-full h-screen overflow-hidden">
                     {/* Images */}
                     <div className="flex h-full transition-transform duration-1000 ease-in-out" style={{ transform: `translateX(-${currentSlide * 100}%)` }}>
                         {bannerImages.map((image, index) => (
@@ -44,6 +42,7 @@ export default function BannerImages() {
                                     src={image}
                                     alt={`Banner ${index + 1}`}
                                     className="w-full h-full object-cover"
+                                    fetchPriority="high"
                                 />
                             </div>
                         ))}
