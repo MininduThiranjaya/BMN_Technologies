@@ -2,8 +2,8 @@ import { useRef, useState, useEffect } from 'react';
 import { X, ChevronLeft, ChevronRight, ShoppingCart, Plus, Minus } from 'lucide-react';
 import BannerImages from '../components/BannerImages';
 import Footer from '../components/Footer';
-import { useCart, CartItem } from '../context/CartContext';
-import { replace, useLocation } from 'react-router-dom';
+// import { useCart, CartItem } from '../context/CartContext';
+import { useLocation } from 'react-router-dom';
 import NavBar from '../components/NavBar';
 import axios from 'axios';
 import { endpoints } from '../api';
@@ -36,7 +36,7 @@ export default function ProductShowCasePage() {
     const itemsPerPage = 8;
     const totalPages = Math.ceil(allItems.length / itemsPerPage);
     // Use cart context
-    const { addToCart } = useCart();
+    // const { addToCart } = useCart();
 
     useEffect(() => {
         window.scrollTo(0, 0); // scroll to top
@@ -118,24 +118,24 @@ export default function ProductShowCasePage() {
     };
 
     // Add to cart with selected quantity
-    const handleAddToCart = () => {
-        if (!selectedItem) return;
+    // const handleAddToCart = () => {
+    //     if (!selectedItem) return;
 
-        // Format the item as expected by the cart context
-        const cartItem: Omit<CartItem, 'quantity'> = {
-            productId: selectedItem.productId,
-            name: selectedItem.productName,
-            productPrice: selectedItem.productPrice,
-            image: selectedItem.imageUrl[0]
-        };
+    //     // Format the item as expected by the cart context
+    //     const cartItem: Omit<CartItem, 'quantity'> = {
+    //         productId: selectedItem.productId,
+    //         name: selectedItem.productName,
+    //         productPrice: selectedItem.productPrice,
+    //         image: selectedItem.imageUrl[0]
+    //     };
 
-        // Add item to cart with the selected quantity
-        for (let i = 0; i < itemQuantity; i++) {
-            addToCart(cartItem);
-        }
+    //     // Add item to cart with the selected quantity
+    //     for (let i = 0; i < itemQuantity; i++) {
+    //         addToCart(cartItem);
+    //     }
 
-        closeModal();
-    };
+    //     closeModal();
+    // };
 
     return (
         <div className="flex flex-col min-h-screen absolute left-0 right-0">
@@ -184,6 +184,7 @@ export default function ProductShowCasePage() {
                             <div className="flex space-x-2">
                                 {Array.from({ length: totalPages }, (_, i) => (
                                     <button
+                                        aria-label="pageButton"
                                         key={i + 1}
                                         onClick={() => handlePageChange(i + 1)}
                                         className={`px-4 py-2 rounded ${currentPage === i + 1
@@ -211,6 +212,7 @@ export default function ProductShowCasePage() {
                         {/* Fixed position close button that's always visible */}
                         <div className="sticky top-0 left-0 right-0 flex justify-end p-2 bg-white bg-opacity-90 rounded-t-lg z-20">
                             <button
+                                aria-label="detailedButton"
                                 onClick={closeModal}
                                 className="bg-white p-1 rounded-full shadow-md hover:bg-gray-100"
                             >
@@ -233,6 +235,7 @@ export default function ProductShowCasePage() {
 
                                     {/* Navigation arrows */}
                                     <button
+                                        aria-label="navigationButtonLeft"
                                         onClick={prevImage}
                                         className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-70 rounded-full p-1 hover:bg-opacity-100"
                                     >
@@ -240,6 +243,7 @@ export default function ProductShowCasePage() {
                                     </button>
 
                                     <button
+                                        aria-label="navigationButtonRight"
                                         onClick={nextImage}
                                         className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-70 rounded-full p-1 hover:bg-opacity-100"
                                     >
@@ -277,10 +281,11 @@ export default function ProductShowCasePage() {
                                     <p className="text-gray-700 mb-8">{selectedItem.productDescription}</p>
 
                                     {/* Quantity selector */}
-                                    <div className="mt-6">
+                                    {/* <div className="mt-6">
                                         <label className="block text-gray-700 mb-2">Quantity:</label>
                                         <div className="flex items-center">
                                             <button
+                                                aria-label="decreaseQuantityButton"
                                                 onClick={(e) => {
                                                     e.stopPropagation();
                                                     handleDecreaseQuantity();
@@ -293,6 +298,7 @@ export default function ProductShowCasePage() {
                                                 {itemQuantity}
                                             </span>
                                             <button
+                                                aria-label="IncreaseQuantityButton"
                                                 onClick={(e) => {
                                                     e.stopPropagation();
                                                     handleIncreaseQuantity();
@@ -302,7 +308,7 @@ export default function ProductShowCasePage() {
                                                 <Plus size={18} />
                                             </button>
                                         </div>
-                                    </div>
+                                    </div> */}
                                 </div>
                             </div>
                         </div>
@@ -310,18 +316,20 @@ export default function ProductShowCasePage() {
                         {/* Bottom buttons */}
                         <div className="flex justify-end p-4 bg-gray-100 rounded-b-lg border-t">
                             <button
+                                aria-label="closeDetailButton"
                                 onClick={closeModal}
                                 className="px-6 py-2 mr-2 bg-gray-200 rounded hover:bg-gray-300"
                             >
                                 Cancel
                             </button>
-                            <button
+                            {/* <button
+                                aria-label="addToCartButton"
                                 onClick={handleAddToCart}
                                 className="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 flex items-center"
                             >
                                 <ShoppingCart size={18} className="mr-2" />
                                 Add to Cart - ${(selectedItem.productPrice * itemQuantity).toFixed(2)}
-                            </button>
+                            </button> */}
                         </div>
                     </div>
                 </div>

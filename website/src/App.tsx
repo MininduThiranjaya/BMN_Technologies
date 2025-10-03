@@ -6,11 +6,11 @@ import AllProducts from './pages/AllProducts';
 import AllProjects from './pages/AllProjects';
 import ProductShowCasePage from './pages/ProductShowCasePage';
 import ProjectShowCasePage from './pages/ProjectShowCasePage';
-import { CartProvider } from './context/CartContext';
+// import { CartProvider } from './context/CartContext';
 
 function App() {
   return (
-    <CartProvider>
+    // <CartProvider>
       <Router>
         {/* Routes */}
         <Routes>
@@ -21,7 +21,7 @@ function App() {
           <Route path="/all-projects/:category" element={<ProjectShowCasePage />} />
         </Routes>
       </Router>
-    </CartProvider>
+    // </CartProvider>
     // <ShowCase/>
   )
 }
