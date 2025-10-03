@@ -11,7 +11,6 @@ import {
   Home,
   DollarSign,
   TrendingUp,
-  Plus,
   LogOut,
   Edit3,
   X,
@@ -19,11 +18,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "../context/AuthProvider";
 import { toast } from "react-toastify";
-import Sales from "../components/Sales";
-import Customers from "../components/Customers";
 import Products from "../components/Products";
-import Analytics from "../components/Analytics";
-import SettingsPage from "../components/Settings";
 import AdminUserRegistration from "../components/UserRegistration";
 import axios from "axios";
 import Projects from "../components/Projects";
