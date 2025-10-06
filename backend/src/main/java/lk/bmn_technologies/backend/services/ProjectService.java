@@ -9,6 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import lk.bmn_technologies.backend.dto.ApiResponseDTO;
+import lk.bmn_technologies.backend.dto.requestDTO.ProductFilterDTO;
+import lk.bmn_technologies.backend.dto.requestDTO.ProjectFilterDTO;
+import lk.bmn_technologies.backend.dto.responseDTO.ProductDTO;
 import lk.bmn_technologies.backend.dto.responseDTO.ProjectDTO;
 import lk.bmn_technologies.backend.model.ProjectImageModel;
 import lk.bmn_technologies.backend.model.ProjectModel;
@@ -37,7 +40,7 @@ public class ProjectService {
         repo.save(data);
     }
 
-    public List<ProjectDTO> getProduct(String category) {
+    public List<ProjectDTO> getProjects(String category) {
 
         String filter;
 
@@ -53,7 +56,22 @@ public class ProjectService {
             .collect(Collectors.toList());
     }
 
-    public long countProducts() {
+    public List<ProjectDTO> getFilteredProject(ProjectFilterDTO projectFilter) {
+
+        String filter;
+
+        filter = switch (projectFilter.getCategory()) {
+            case "residential" -> "Residential Solar";
+            case "commercial" -> "Commercial Buildings";
+            default -> "Industrial Solutions";
+        };
+
+        List<ProjectDTO> filteredProjectList = repo.getFilteredProjects(filter, projectFilter.getLocation(), projectFilter.getProjectMinDate(), projectFilter.getProjectMaxnDate());
+
+        return filteredProjectList;
+    }
+
+    public long countProjects() {
         return repo.count();
     }
 

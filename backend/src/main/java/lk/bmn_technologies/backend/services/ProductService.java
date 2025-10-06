@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import lk.bmn_technologies.backend.dto.ApiResponseDTO;
+import lk.bmn_technologies.backend.dto.requestDTO.ProductFilterDTO;
 import lk.bmn_technologies.backend.dto.responseDTO.ProductDTO;
 import lk.bmn_technologies.backend.model.ProductImageModel;
 import lk.bmn_technologies.backend.model.ProductModel;
@@ -52,6 +53,22 @@ public class ProductService {
             .filter((product) -> product.getCategory().equals(filter))
             .map(ProductDTO::new)
             .collect(Collectors.toList());
+    }
+
+    public List<ProductDTO> getFilteredProduct(ProductFilterDTO productFilter) {
+
+        String filter;
+
+        filter = switch (productFilter.getCategory()) {
+            case "solar-panels" -> "Sola Panels";
+            case "battery-storage" -> "Battery Storage";
+            case "smart-energy" -> "Smart Energy System";
+            default -> "Hybrid Inverters";
+        };
+
+        List<ProductDTO> filteredProductList = repo.getFilteredProducts(filter, productFilter.getMinPrice(), productFilter.getMaxPrice());
+
+        return filteredProductList;
     }
 
     public long countProducts() {
