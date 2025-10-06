@@ -10,17 +10,10 @@ export default function Products({ onSuccess }: ProductPropsType) {
 
   const [addProduct, setAddProduct] = useState(false);
   const [allProducts, setAllProducts] = useState<ProductType[]>([])
-
-  
-  const token = localStorage.getItem("accessToken");
   
   async function fetchAllProducts() {
 
-    await axios.get(endpoints.product.getAllProducts,{ 
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
+    await axios.get(endpoints.product.getAllProducts)
     .then((res) => {
       console.log(res.data);
       setAllProducts(res.data);

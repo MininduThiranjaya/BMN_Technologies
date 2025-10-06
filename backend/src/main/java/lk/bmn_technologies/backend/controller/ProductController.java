@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import lk.bmn_technologies.backend.dto.ApiResponseDTO;
+import lk.bmn_technologies.backend.dto.requestDTO.ProductFilterDTO;
 import lk.bmn_technologies.backend.dto.responseDTO.ProductDTO;
 import lk.bmn_technologies.backend.model.ProductModel;
 import lk.bmn_technologies.backend.services.ProductService;
@@ -37,13 +38,17 @@ public class ProductController {
         return service.getProduct(category);
     }
     
+    @PostMapping("/get/filter")
+    public List<ProductDTO> getFilteredProductsFromDatabase(@RequestBody ProductFilterDTO filters) {
+        return service.getFilteredProduct(filters);
+    }
 
     @GetMapping("/count")
     public long countProductsInDatabase() {
         return service.countProducts();
     }
 
-    @GetMapping("/all-details/get")
+    @GetMapping("/get/all")
     public List<ProductModel> getProductWithAllDetailsFromDatabase() {
         return service.getProductWithAllDetails();
     }
