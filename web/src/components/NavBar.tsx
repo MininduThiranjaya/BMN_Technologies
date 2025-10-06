@@ -47,10 +47,10 @@ function NavBar({ refs }: any) {
 
         {isOpen && (
           <div className="md:hidden absolute top-16 left-0 right-0">
-            <div className="px-4 pt-2 pb-3 space-y-1 bg-opacity-75 bg-gray-800 shadow-lg">
+            <div className="flex flex-col px-4 pt-2 pb-3 space-y-14 bg-opacity-75 bg-white/95 backdrop-blur-md text-black font-serif shadow-lg h-[calc(100vh-64px)] justify-center items-center">
               <a
                 href="#intro"
-                className="block px-3 py-2 rounded-md hover:bg-gray-700 text-lg text-center"
+                className="block px-3 py-2 rounded-md hover:bg-gray-700 text-5xl text-center"
                 onClick={() => {
                   scrollTo(introRef, 'intro')
                 }}
@@ -58,8 +58,17 @@ function NavBar({ refs }: any) {
                 Home
               </a>
               <a
+                href="#about"
+                className="block px-3 py-2 rounded-md hover:bg-gray-700 text-5xl text-center"
+                onClick={() => {
+                  scrollTo(aboutRef, 'about')
+                }}
+              >
+                About Us
+              </a>
+              <a
                 href="#services"
-                className="block px-3 py-2 rounded-md hover:bg-gray-700 text-lg text-center"
+                className="block px-3 py-2 rounded-md hover:bg-gray-700 text-5xl text-center"
                 onClick={() => {
                   scrollTo(servicesRef, 'services')
                 }}
@@ -68,21 +77,12 @@ function NavBar({ refs }: any) {
               </a>
               <a
                 href="#contact"
-                className="block px-3 py-2 rounded-md hover:bg-gray-700 text-lg text-center"
+                className="block px-3 py-2 rounded-md hover:bg-gray-700 text-5xl text-center"
                 onClick={() => {
                   scrollTo(contactRef, 'contact')
                 }}
               >
                 Contact Us
-              </a>
-              <a
-                href="#about"
-                className="block px-3 py-2 rounded-md hover:bg-gray-700 text-lg text-center"
-                onClick={() => {
-                  scrollTo(aboutRef, 'about')
-                }}
-              >
-                About Us
               </a>
             </div>
           </div>
