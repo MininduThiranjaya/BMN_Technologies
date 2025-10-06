@@ -13,6 +13,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import lk.bmn_technologies.backend.dto.ApiResponseDTO;
+import lk.bmn_technologies.backend.dto.requestDTO.ProductFilterDTO;
+import lk.bmn_technologies.backend.dto.requestDTO.ProjectFilterDTO;
+import lk.bmn_technologies.backend.dto.responseDTO.ProductDTO;
 import lk.bmn_technologies.backend.dto.responseDTO.ProjectDTO;
 import lk.bmn_technologies.backend.model.ProjectModel;
 import lk.bmn_technologies.backend.services.ProjectService;
@@ -30,16 +33,21 @@ public class ProjectController {
     }
 
     @GetMapping("/get/{category}")
-    public List<ProjectDTO> getProductsFromDatabase(@PathVariable("category") String category) {
-        return service.getProduct(category);
+    public List<ProjectDTO> getProjectsFromDatabase(@PathVariable("category") String category) {
+        return service.getProjects(category);
+    }
+
+    @PostMapping("/get/filter")
+    public List<ProjectDTO> getFilteredProductsFromDatabase(@RequestBody ProjectFilterDTO filters) {
+        return service.getFilteredProject(filters);
     }
 
     @GetMapping("/count")
-    public long countProductsInDatabase() {
-        return service.countProducts();
+    public long countProjectsInDatabase() {
+        return service.countProjects();
     }
 
-    @GetMapping("/all-details/get")
+    @GetMapping("/get/all")
     public List<ProjectModel> getProjectWithAllDetailsFromDatabase() {
         return service.getProjectWithAllDetails();
     }
