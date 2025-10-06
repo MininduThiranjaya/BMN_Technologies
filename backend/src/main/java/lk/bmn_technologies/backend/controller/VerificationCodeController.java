@@ -26,24 +26,34 @@ public class VerificationCodeController {
 
      @PostMapping("forget-password/send-mail")
     public ResponseEntity<ApiResponseDTO> sendCode(@RequestBody ForgetPasswordMailDTO data) {
-        String code = verificationCodeService.generateCode();
-        verificationCodeService.storeCode(data.getTo(), code);
-        data.setBody("""
-                    We received a request to change the password for your account associated with this email address.\r
-                    If you made this request, please use the code below to reset your password:\r"""
+
+        boolean isUserExist = verificationCodeService.checkUserExist(data.getTo());
+        if(isUserExist) {
+
+            String code = verificationCodeService.generateCode();
+            verificationCodeService.storeCode(data.getTo(), code);
+            data.setBody("""
+                We received a request to change the password for your account associated with this email address.\r
+                If you made this request, please use the code below to reset your password:\r"""
                     + code +"\r\n"+ 
                     "If you did not request a password change, please ignore this email or contact our support team immediately.\r\n"
                     + 
                     "Thank you,\r\n" +
                     "BMN Technologies.");
-        boolean isSendMail = emailService.sendEmail(data);
-        if(isSendMail) {
-            return ResponseEntity.ok(new ApiResponseDTO(isSendMail, "Verification code send successfully to " + data.getTo()));
+            boolean isSendMail = emailService.sendEmail(data);
+            if(isSendMail) {
+                return ResponseEntity.ok(new ApiResponseDTO(isSendMail, "Verification code send successfully to " + data.getTo()));
+            }
+            else {
+                return ResponseEntity
+                .status(401)
+                .body(new ApiResponseDTO(false, "Failed send verification code"));
+            }
         }
         else {
             return ResponseEntity
-                .status(401)
-                .body(new ApiResponseDTO(false, "Failed send verification code"));
+            .status(404)
+            .body(new ApiResponseDTO(false, "User not found"));
         }
     }
 

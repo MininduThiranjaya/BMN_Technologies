@@ -51,7 +51,9 @@ public class SecurityConfig {
                                 .requestMatchers(HttpMethod.GET, "api/user-testimonial/get").permitAll()
                                 .requestMatchers(HttpMethod.POST, "api/user-testimonial/submit").permitAll()
                                 .requestMatchers(HttpMethod.GET, "api/auth/product/get/*").permitAll()
+                                .requestMatchers(HttpMethod.POST, "api/auth/product/get/*").permitAll()
                                 .requestMatchers(HttpMethod.GET, "api/auth/project/get/*").permitAll()
+                                .requestMatchers(HttpMethod.POST, "api/auth/project/get/*").permitAll()
                                 .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
