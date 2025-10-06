@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import type { ProjectItemType } from "../types/Project";
+import type { ProjectFilter, ProjectItemType } from "../types/Project";
 import { endpoints } from "../api";
 import axios from "axios";
 import { X, ChevronLeft, ChevronRight, Folder, User, Tags, Calendar, MapPin, FileText } from "lucide-react";
@@ -14,30 +14,69 @@ function ProjectShowcase() {
     const itemsPerPage = 8; // 4x2 grid
     const totalPages = Math.ceil(allItems.length / itemsPerPage);
     const [isOpen, setIsOpen] = useState(true)
-    const [filter, setFilter] = useState('')
+    const [filters, setFilters] = useState<ProjectFilter>({
+        category: 'all',
+        location: null,
+        projectMinDate: null,
+        projectMaxDate: null,
+    })
+    const [submitFilter, setSubmitFilter] = useState(false)
     const menuItems = [
-        { type: "Select a Category", value: "" },
+        { type: "Select all category", value: "all" },
         { type: "Residential Solar", value: "residential" },
         { type: "Commercial Buildings", value: "commercial" },
-        { type: "Industrial Solutions", value: "industrial" }
+        { type: "Industrial Solutions", value: "industry" }
+    ];
+    const provinces = [
+        { type: "All Provinces", value: "all" },
+        { type: "Central Province", value: "central" },
+        { type: "Eastern Province", value: "eastern" },
+        { type: "Northern Province", value: "northern" },
+        { type: "North Central Province", value: "north_central" },
+        { type: "North Western Province", value: "north_western" },
+        { type: "Sabaragamuwa Province", value: "sabaragamuwa" },
+        { type: "Southern Province", value: "southern" },
+        { type: "Uva Province", value: "uva" },
+        { type: "Western Province", value: "western" }
     ];
 
+
     useEffect(() => {
-        async function fetchAllProducts() {
-            await axios.get(`${endpoints.project.get}/${filter}`)
+        async function fetchFilteredProducts() {
+            await axios
+                .post(`${endpoints.project.getFiltered}`, filters)
                 .then((res) => {
                     console.log(res);
                     setAllItems(res.data);
                 })
                 .catch((error) => {
                     console.log("Error fetching data : ", error);
+                });
+        }
+        
+        async function fetchAllProducts() {
+            await axios
+                .get(`${endpoints.project.getAll}`)
+                .then((res) => {
+                    console.log(res);
+                    setAllItems(res.data);
                 })
+                .catch((error) => {
+                    console.log("Error fetching data : ", error);
+                });
         }
 
-        if(filter != '') {
+        if (submitFilter) {
+            fetchFilteredProducts();
+            setSubmitFilter(false)
+        }
+
+        if(!submitFilter && filters.category == 'all') {
             fetchAllProducts();
         }
-    }, [filter]);
+    }, [submitFilter]);
+
+   
 
     // Get current items
     const getCurrentItems = () => {
@@ -90,10 +129,10 @@ function ProjectShowcase() {
 
 
     return (
-        <div className="w-full h-full p-10">
+        <div className="w-full h-full p-3 md:p-5 overflow-y-scroll scrollbar-hide">
 
             {!isOpen && (
-                <div className="fixed top-25 w-2/3 h-1/2 md:w-1/5 md:h-2/3 backdrop-blur-sm z-50 flex items-center justify-center">
+                <div className="fixed top-25 w-2/3 h-2/5 md:w-1/5 md:h-3/5 backdrop-blur-sm z-50 flex items-center justify-center">
                     {/* Modal container */}
                     <div className="relative w-full h-full bg-white/90 rounded-lg border-2 shadow-lg max-w-md p-6">
 
@@ -107,17 +146,66 @@ function ProjectShowcase() {
 
                         {/* Content */}
                         <div className="text-center mt-4">
-                            <h2 className="text-2xl font-bold text-gray-800">Filter Projects</h2>
-                            <div className="mt-4">
+                            <h2 className="text-2xl font-bold text-gray-800">Filter Products</h2>
+                            <div className="flex flex-col md:flex-col justify-between items-center gap-4 w-full mt-5 md:mt-10">
                                 <select
-                                    onChange={(e) => setFilter(e.target.value)}
-                                    className="w-5/6 md:w-64 px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 text-gray-700"
-                                >     
+                                    value={filters.category || ""}
+                                    onChange={(e) => setFilters({ ...filters, category: e.target.value })}
+                                    className="w-full md:w-64 px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 text-gray-700"
+                                >    
                                     {menuItems.map((item, index) => (
-                                        <option className="w-5/6 md:w-64" key={index} value={item.value}>{item.type}</option>
+                                        <option className="text-xs md:text-sm" key={index} value={item.value}>
+                                                {item.type}
+                                        </option>
                                     ))}
                                 </select>
+
+                                <select
+                                    value={filters.location || ""}
+                                    onChange={(e) => setFilters({ ...filters, location: e.target.value })}
+                                    className="w-full md:w-64 px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 text-gray-700"
+                                >   
+                                    {provinces.map((item, index) => (
+                                        <option className="text-xs md:text-sm" key={index} value={item.value}>
+                                            {item.type}
+                                        </option>
+                                    ))}
+                                </select>
+
+                                <input
+                                    type="date"
+                                    value={filters.projectMinDate || ""}
+                                    onChange={(e) => setFilters({...filters, projectMinDate: e.target.value})}
+                                    className="border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-400 w-full md:w-64"
+                                />
+
+                                <input
+                                    type="date"
+                                    value={filters.projectMaxDate || ""}
+                                    onChange={(e) => setFilters({...filters, projectMaxDate: e.target.value})}
+                                    className="border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-400 w-full md:w-64"
+                                />
+
+                                <div className="w-3/4 md:w-2/3 flex flex-row justify-between md:mt-5">
+                                    <button
+                                        onClick={() => {setSubmitFilter(true)}}
+                                    >
+                                        Set Filters
+                                    </button>
+
+                                    <button
+                                        onClick={() => {setFilters({
+                                            category: 'all',
+                                            location: null,
+                                            projectMinDate: null,
+                                            projectMaxDate: null,
+                                        })}}
+                                    >
+                                        Clear Filters
+                                    </button>
+                                </div>
                             </div>
+
                         </div>
                     </div>
                 </div>
@@ -131,14 +219,18 @@ function ProjectShowcase() {
                     Filter
                 </button>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
                 {getCurrentItems().map((item, index) => (
                     <div
                         key={index}
                         className="bg-white rounded-lg shadow hover:shadow-lg cursor-pointer transition-shadow"
                         onClick={() => openModal(item)}
                     >
-                        <img src={item.imageUrl[0]} alt={item.projectName} className="w-full h-48 object-cover rounded-t-lg" />
+                        <img 
+                            src={typeof(item.imageUrl[0]) == 'string' ? item.imageUrl[0] : item.imageUrl[0].imageUrl}
+                            alt={item.projectName} 
+                            className="w-full h-36 object-cover rounded-t-lg" 
+                        />
                         <div className="p-4">
                             <div className="flex justify-between items-center">
                                 <h3 className="font-semibold text-lg">{item.projectName}</h3>
@@ -187,7 +279,7 @@ function ProjectShowcase() {
                             <div className="p-6 relative">
                                 <div className="relative">
                                     <img
-                                        src={getCurrentImage()}
+                                        src={typeof(getCurrentImage()) == 'string' ? getCurrentImage() : getCurrentImage().imageUrl}
                                         alt={selectedItem.projectId}
                                         className="w-full h-80 object-cover rounded"
                                     />
@@ -210,14 +302,14 @@ function ProjectShowcase() {
 
                                 {/* Thumbnail images */}
                                 <div className="flex mt-4 space-x-2 overflow-x-auto py-2">
-                                    {selectedItem.imageUrl.map((img, index) => (
+                                    {selectedItem.imageUrl.map((img:any, index:number) => (
                                         <div
                                             key={index}
                                             className={`w-16 h-16 cursor-pointer ${currentImageIndex === index ? 'ring-2 ring-blue-500' : ''}`}
                                             onClick={() => selectImage(index)}
                                         >
                                             <img
-                                                src={img}
+                                                src={typeof(img) == 'string' ? img : img.imageUrl}
                                                 alt={`${selectedItem.projectId} - ${index}`}
                                                 className="w-full h-full object-cover rounded"
                                             />
