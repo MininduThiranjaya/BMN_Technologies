@@ -6,7 +6,7 @@ import {
     ChevronLeft,
     ChevronRight
 } from "lucide-react";
-import type { ProductItemType } from "../types/Product";
+import type { ProductFilter, ProductItemType } from "../types/Product";
 
 function ProductShowcase() {
     // State variables
@@ -19,18 +19,35 @@ function ProductShowcase() {
     const itemsPerPage = 8;
     const totalPages = Math.ceil(allItems.length / itemsPerPage);
     const [isOpen, setIsOpen] = useState(true)
-    const [filter, setFilter] = useState('')
+    const [filters, setFilters] = useState<ProductFilter>({
+        category: "all",
+        minPrice: null,
+        maxPrice: null
+    })
+    const [submitFilter, setSubmitFilter] = useState(false)
     const menuItems = [
-        { type: "Select a Category", value: "" },
+        { type: "Select all category", value: "all" },
         { type: "Solar Panels", value: "solar-panels" },
         { type: "Battery Storage", value: "battery-storage" },
         { type: "Hybrid Inverters", value: "inverters" }
     ];
 
     useEffect(() => {
+        async function fetchFilteredProducts() {
+            await axios
+                .post(`${endpoints.product.getFiltered}`, filters)
+                .then((res) => {
+                    console.log(res);
+                    setAllItems(res.data);
+                })
+                .catch((error) => {
+                    console.log("Error fetching data : ", error);
+                });
+        }
+        
         async function fetchAllProducts() {
             await axios
-                .get(`${endpoints.product.get}/${filter}`)
+                .get(`${endpoints.product.getAll}`)
                 .then((res) => {
                     console.log(res);
                     setAllItems(res.data);
@@ -40,10 +57,15 @@ function ProductShowcase() {
                 });
         }
 
-        if(filter != "") {
+        if (submitFilter) {
+            fetchFilteredProducts();
+            setSubmitFilter(false)
+        }
+
+        if(!submitFilter && filters.category == 'all') {
             fetchAllProducts();
         }
-    }, [filter]);
+    }, [submitFilter]);
 
     // Get current items
     const getCurrentItems = () => {
@@ -100,10 +122,10 @@ function ProductShowcase() {
     };
 
     return (
-        <div className="w-full h-full p-10">
+        <div className="w-full h-full p-3 md:p-5 overflow-y-scroll scrollbar-hide">
 
             {!isOpen && (
-                <div className="fixed top-25 w-2/3 h-1/2 md:w-1/5 md:h-2/3 backdrop-blur-sm z-50 flex items-center justify-center">
+                <div className="fixed top-25 w-2/3 h-1/3 md:w-1/5 md:h-1/2 backdrop-blur-sm z-50 flex items-center justify-center">
                     {/* Modal container */}
                     <div className="relative w-full h-full bg-white/90 rounded-lg border-2 shadow-lg max-w-md p-6">
 
@@ -118,31 +140,88 @@ function ProductShowcase() {
                         {/* Content */}
                         <div className="text-center mt-4">
                             <h2 className="text-2xl font-bold text-gray-800">Filter Products</h2>
-                            <div className="mt-4">
+                            <div className="flex flex-col md:flex-col justify-between items-center gap-4 w-full mt-5 md:mt-10">
                                 <select
-                                    onChange={(e) => setFilter(e.target.value)}
-                                    className="w-5/6 md:w-64 px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 text-gray-700"
-                                >     
+                                    value={filters.category || ""}
+                                    onChange={(e) => setFilters({ ...filters, category: e.target.value })}
+                                    className="w-full md:w-64 px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 text-gray-700"
+                                >   
+                                    
                                     {menuItems.map((item, index) => (
-                                        <option className="w-5/6 md:w-64" key={index} value={item.value}>{item.type}</option>
+                                        <option key={index} value={item.value}>
+                                            {item.type}
+                                        </option>
                                     ))}
                                 </select>
+
+                                <input
+                                    type="text"
+                                    disabled={filters.category == 'all'}
+                                    inputMode="numeric"
+                                    pattern="[0-9]*"
+                                    placeholder="Min Price"
+                                    value={filters.minPrice || ""}
+                                    onChange={(e) => {
+                                        const value = e.target.value;
+                                        if (/^\d*$/.test(value)) {
+                                        setFilters({ ...filters, minPrice: parseInt(value) });
+                                        }
+                                    }}
+                                    className="w-full md:w-64 border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-400"
+                                />
+
+                                <input
+                                    type="text"
+                                    disabled={filters.category == 'all'}
+                                    inputMode="numeric"
+                                    pattern="[0-9]*"
+                                    placeholder="Max Price"
+                                    value={filters.maxPrice || ""}
+                                    onChange={(e) => {
+                                        const value = e.target.value;
+                                        if (/^\d*$/.test(value)) {
+                                        setFilters({ ...filters, maxPrice: parseInt(value) });
+                                        }
+                                    }}
+                                    className="w-full md:w-64 border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-400"
+                                />
+
+                                <div className="w-3/4 md:w-2/3 flex flex-row justify-between md:mt-5">
+                                    <button
+                                        onClick={() => {setSubmitFilter(true)}}
+                                    >
+                                        Set Filters
+                                    </button>
+
+                                    <button
+                                        onClick={() => {setFilters({
+                                            category: 'all',
+                                            minPrice: null,
+                                            maxPrice: null
+                                        })}}
+                                    >
+                                        Clear Filters
+                                    </button>
+                                </div>
                             </div>
+
                         </div>
                     </div>
                 </div>
             )}
 
-            <div className="flex w-full h-10 justify-center items-start">
+            <div className="flex w-full h-10 justify-start items-start">
                 <button
-                    onClick={() => { setIsOpen(!isOpen) }}
+                    onClick={() => { 
+                        setIsOpen(!isOpen)
+                    }}
                     className="text-sm md:text-lg text-center transition-all duration-300 flex items-center justify-center px-3 scale-100 hover:scale-110 -translate-y-1 font-semibold text-black"
                 >
                     Filter
                 </button>
             </div>
             {/* Grid Layout*/}
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
                 {getCurrentItems().map((item) => (
                     <div
                         key={item.productId}
@@ -150,9 +229,9 @@ function ProductShowcase() {
                         onClick={() => openModal(item)}
                     >
                         {/* Image container */}
-                        <div className="w-full h-48 bg-gray-100 overflow-hidden rounded-t-lg">
+                        <div className="w-full h-36 bg-gray-100 overflow-hidden rounded-t-lg">
                             <img
-                                src={item.imageUrl[0]}
+                                src={typeof(item.imageUrl[0]) == 'string' ? item.imageUrl[0] : item.imageUrl[0].imageUrl}
                                 alt={item.productName}
                                 className="w-full h-full object-cover"
                             />
@@ -218,7 +297,7 @@ function ProductShowcase() {
                                 <div className="relative">
                                     <div className="w-full h-80 bg-gray-100 flex items-center justify-center rounded overflow-hidden">
                                         <img
-                                            src={getCurrentImage()}
+                                            src={typeof(getCurrentImage()) == 'string' ? getCurrentImage() : getCurrentImage().imageUrl}
                                             alt={selectedItem.productName}
                                             className="max-w-full max-h-full object-contain"
                                         />
@@ -244,7 +323,7 @@ function ProductShowcase() {
 
                                 {/* Thumbnail images */}
                                 <div className="flex mt-4 space-x-2 overflow-x-auto py-2 p-1">
-                                    {selectedItem.imageUrl.map((img, index) => (
+                                    {selectedItem.imageUrl.map((img:any, index:number) => (
                                         <div
                                             key={index}
                                             className={`w-20 h-20 rounded-lg overflow-hidden border-2 transition-all duration-300 cursor-pointer ${currentImageIndex === index
@@ -254,7 +333,7 @@ function ProductShowcase() {
                                             onClick={() => selectImage(index)}
                                         >
                                             <img
-                                                src={img}
+                                                src={typeof(img) == 'string' ? img : img.imageUrl}
                                                 alt={`${selectedItem.productName} - ${index}`}
                                                 className="w-full h-full object-cover"
                                             />
