@@ -108,7 +108,7 @@ function Services() {
 
     function projectCard() {
         return (
-            <div className="w-full h-full flex items-center justify-center">
+            <div className="w-full h-full flex items-start md:items-center justify-center">
                 <div className="w-3/4 h-3/4">
                     <div className="flex flex-col h-full w-full">
                         <div className="flex flex-row">
@@ -170,7 +170,7 @@ function Services() {
 
     function productCard() {
         return (
-            <div className="w-full h-full flex items-center justify-center">
+            <div className="w-full h-full flex items-start md:items-center justify-center">
                 <div className="w-3/4 h-3/4">
                     <div className="flex flex-col h-full w-full">
                         <div className="flex flex-row">
@@ -272,12 +272,12 @@ function Services() {
                     </h2>
                 </div>
                 <div className="w-full md:w-full h-5/6 md:h-5/6 flex md:flex flex-col md:flex-row">{/*bg-color*/}
-                    <div className="w-full md:w-1/3 h-1/3 md:h-full items-center justify-center">{/*bg-color*/}
+                    <div className="w-full md:w-1/3 h-1/3 md:h-full items-start md:items-center justify-center">{/*bg-color*/}
                         {
                             !load ? projectCard() : productCard()
                         }
                     </div>
-                    <div className="w-full md:w-2/3 h-2/3 md:h-full flex flex-col 0 items-center justify-center">{/*bg-color*/}
+                    <div className="w-full md:w-2/3 h-2/3 md:h-full flex flex-col items-center justify-center">{/*bg-color*/}
                         <div className="relative w-full md:w-full h-4/6 md:h-2/3 flex md:flex items-center md:items-center justify-cente md:justify-center perspective-1000 md:perspective-1000">{/*bg-color*/}
                             {services.map((service, index) => {
                                 const position = getPosition(index);
