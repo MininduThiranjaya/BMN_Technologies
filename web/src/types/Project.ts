@@ -6,5 +6,12 @@ export interface ProjectItemType {
     projectDescription: string,
     category: string,
     projectDate: string,
-    imageUrl: string[]
+    imageUrl: any
+}
+
+export interface ProjectFilter {
+    category: string | null,
+    location: string | null,
+    projectMinDate: string | null,
+    projectMaxDate: string | null,
 }
