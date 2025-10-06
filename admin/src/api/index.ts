@@ -11,7 +11,7 @@ export const endpoints = {
   product: {
     add: `${BACKEND_BASE_URL}auth/product/add`,
     count: `${BACKEND_BASE_URL}auth/product/count`,
-    getAllProducts: `${BACKEND_BASE_URL}auth/product/all-details/get`,
+    getAllProducts: `${BACKEND_BASE_URL}auth/product/get/all`,
     deleteProduct: `${BACKEND_BASE_URL}auth/product/delete-by-id/:productId`,
   },
   project: {
