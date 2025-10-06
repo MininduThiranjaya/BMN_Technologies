@@ -38,7 +38,7 @@ export default function ForgotPassword() {
           setStep(2);
         })
         .catch((error) => {
-          toast.success("Send verification email not successfull...");
+          toast.error("Send verification email not successfull...");
           setIsLoading(false);
           console.log(error);
         });
