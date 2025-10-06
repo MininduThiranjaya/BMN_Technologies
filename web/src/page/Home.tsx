@@ -1,5 +1,4 @@
 import AboutUs from "../components/AboutUs";
-import AllServices from "../components/AllServices";
 import ContactUs from "../components/ContactUs";
 import Footer from "../components/Footer";
 import Intro from "../components/Intro";
@@ -15,7 +14,7 @@ function Home() {
   const aboutRef = useRef(null);
 
   return (
-    <div className="overflow-x-hidden w-screen h-screen scroll-smooth">{/*bg-color*/}
+    <div className="overflow-y-scroll scrollbar-hide w-screen h-screen scroll-smooth">{/*bg-color*/}
       {/* Sticky Navbar */}
       <div className="sticky top-0 z-50 w-full">
         <NavBar refs={{ introRef, servicesRef, contactRef, aboutRef }} />
@@ -31,13 +30,10 @@ function Home() {
       <div ref={aboutRef} id="about" className="h-screen w-full">{/*bg-color*/}
         <AboutUs />
       </div>
-      <div ref={servicesRef} id="serices" className="h-screen w-full">
+      <div ref={servicesRef} id="services" className="h-screen w-full">
         <Services />
       </div>
-      {/* <div ref={contactRef} id="contact" className="h-screen">
-        <AllServices />
-      </div> */}
-      <div ref={contactRef} id="contact" className="h-screen bg-green-300">
+      <div ref={contactRef} id="contact" className="h-screen">
         <ContactUs />
       </div>
 
