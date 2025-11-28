@@ -14,7 +14,7 @@ function Home() {
   const aboutRef = useRef(null);
 
   return (
-    <div className="overflow-y-scroll scrollbar-hide w-screen h-screen scroll-smooth">{/*bg-color*/}
+    <div className="overflow-y-scroll overflow-x-hidden scrollbar-hide w-screen h-screen scroll-smooth">{/*bg-color*/}
       {/* Sticky Navbar */}
       <div className="sticky top-0 z-50 w-full">
         <NavBar refs={{ introRef, servicesRef, contactRef, aboutRef }} />
@@ -22,18 +22,18 @@ function Home() {
       
       <div>
       {/* First screen: Intro fills viewport */}
-      <div ref={introRef} id="intro" className="h-[calc(100vh-64px)] flex flex-col">
+      <div ref={introRef} id="intro" className="h-[110dvh] md:h-[calc(100dvh-64px)] flex flex-col">
         <Intro />
       </div>
 
       {/* Other sections */}
-      <div ref={aboutRef} id="about" className="h-screen w-full">{/*bg-color*/}
+      <div ref={aboutRef} id="about" className="h-full w-full bg-red-700">{/*bg-color*/}
         <AboutUs />
       </div>
-      <div ref={servicesRef} id="services" className="h-screen w-full">
+      <div ref={servicesRef} id="services" className="h-full w-full bg-green-400">
         <Services />
       </div>
-      <div ref={contactRef} id="contact" className="h-screen">
+      <div ref={contactRef} id="contact" className="h-full w-full bg-lime-600">
         <ContactUs />
       </div>
 

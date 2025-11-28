@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { User, Phone, Mail, MessageSquare, Send } from "lucide-react";
 import type { FormErrors } from "../types/Form";
+
 import axios from "axios";
 import { endpoints } from "../api";
 
@@ -93,11 +94,11 @@ function ContactUs() {
     };
 
     return (
-        <div className="flex flex-col md:flex-row w-full h-screen pt-1 md:pt-6">
+        <div className="flex flex-col md:flex-row w-full h-screen pt-3 md:pt-6">
             {/*bg-color*/}
             <div className="w-full md:w-full h-full md:h-full flex-row items-center justify-center text-black gap-4">
                 {/*bg-color*/}
-                <div className="flex w-full md:w-full h-1/6 md:h-1/6 items-center justify-center">
+                <div className="flex w-full md:w-full h-auto mb-3 md:mb-0 md:h-1/6 items-center justify-center">
                     {/*bg-color*/}
                     <h2 className="text-3xl md:text-4xl text-black font-semibold text-center md:text-center font-mono">
                         CONTACT US
@@ -106,7 +107,7 @@ function ContactUs() {
                 <div className="w-full md:w-full h-5/6 md:h-5/6 flex md:flex flex-col md:flex-row">
                     
                     <div className="flex flex-col w-full md:w-1/3 h-2/6 md:h-full p-3 md:p-10  text-black">
-                        <div className="mb-4 md:pt-20">
+                        <div className="mb-2 md:pt-20">
                             <h2 className="text-xl md:text-2xl font-mono text-center">
                                 Got a Question or Something's Not Working?
                             </h2>
@@ -124,12 +125,12 @@ function ContactUs() {
                     
                     {/*bg-color*/}
                     <form
-                        className="flex w-full md:w-2/3 h-4/6 md:h-full items-start md:items-center justify-center"
+                        className="flex w-full md:w-2/3 h-4/6 md:h-full items-center justify-center"
                         onSubmit={handleSubmit}
                     >
                         {/*bg-color*/}
-                        <div className="flex flex-col w-3/4 md:w-1/2 h-5/6">
-                            <div className="mb-1 md:mb-4">
+                        <div className="flex flex-col w-3/4 md:w-1/2 h-5/6 text-sm md:text-lg">
+                            <div className="mb-4">
                                 <label
                                     htmlFor="name"
                                     className="block text-gray-700 mb-2 font-bold"

@@ -378,7 +378,7 @@ function AboutUs() {
                             <p>24/7 Support service</p>
                         </div>
                     </div>
-                    <div className="my-10 md:my-20">
+                    <div className="my-3 md:my-20">
                         <div className="flex justify-center items-center gap-3 md:flex md:justify-center md:items-center md:gap-4">
                             <div className="flex flex-col w-32 h-16 justify-center items-center md:flex md:flex-col md:w-40 md:h-20 md:justify-center md:items-center">
                                 <p className="text-sm md:text-lg">{customerRating()}</p>
@@ -396,19 +396,19 @@ function AboutUs() {
                     </div>
                 </div>
             </div>
-            <div className="w-full md:w-1/2 h-1/2 md:h-full flex-row items-center justify-center text-white gap-4">
+            <div className="w-full md:w-1/2 md:h-full flex-row items-center justify-center text-white md:gap-4 space-y-3 md:space-y-0">
                 {/*bg-color*/}
                 <div className="flex w-full h-1/6 items-center justify-center">
                     {/*bg-color*/}
-                    <h2 className="text-3xl md:text-4xl text-black font-semibold text-center md:text-center font-mono">
+                    <h2 className="text-xl md:text-4xl text-black font-semibold text-center md:text-center font-mono">
                         What was our client's ideas...
                     </h2>
                 </div>
-                <div className="relative flex w-full h-5/6 md:h-5/6 items-start justify-center">
+                <div className="relative flex w-full md:h-5/6 items-start justify-center">
                     {/*bg-color*/}
                     <div className="flex flex-col items-center justify-center">
                         {/* Carousel Content */}
-                        <div className="w-64 h-48 md:w-96 md:h-56">
+                        <div className="w-60 h-40 md:w-96 md:h-56">
                             {/* Carousel Navigation */}
                             <button
                                 onClick={handlePrevious}
@@ -446,15 +446,15 @@ function AboutUs() {
                                             <div>
                                                 <Quote
                                                     size={32}
-                                                    className="text-blue-500 mb-0 md:mb-2 shrink-0 w-7 h-7 md:w-8 md:h-8"
+                                                    className="text-blue-500 mb-0 md:mb-2 shrink-0 w-6 h-6 md:w-8 md:h-8"
                                                 />
-                                                <p className="italic text-sm md:text-lg text-gray-800">
+                                                <p className="italic text-xs md:text-lg text-gray-800">
                                                     {testimonialData[activeIndex].testimonial}
                                                 </p>
                                             </div>
                                             <div className="flex items-center justify-between mt-1 md:mt-4">
                                                 <div>
-                                                    <p className="font-bold text-sm md:text-lg">
+                                                    <p className="font-bold text-xs md:text-lg">
                                                         {testimonialData[activeIndex].name}
                                                     </p>
                                                     <p className="text-gray-600 text-xs">
@@ -471,7 +471,7 @@ function AboutUs() {
                                                             <Star
                                                                 key={i}
                                                                 size={20}
-                                                                className="text-yellow-500 fill-current"
+                                                                className="text-yellow-500 fill-current mb-0 md:mb-2 shrink-0 w-5 h-5 md:w-8 md:h-8" 
                                                             />
                                                         )
                                                     )}
@@ -481,11 +481,14 @@ function AboutUs() {
                                     ) : (
                                         <>
                                             <div>
-                                                <Quote size={28} className="text-blue-500 mb-2" />
+                                                <Quote 
+                                                    size={32}
+                                                    className="text-blue-500 mb-0 md:mb-2 shrink-0 w-6 h-6 md:w-8 md:h-8" 
+                                                />
                                             </div>
                                             <div className="flex items-center justify-between mt-4">
                                                 <div>
-                                                    <p className="font-bold text-lg text-black">
+                                                    <p className="font-bold text-xs md:text-lg text-black">
                                                         No Comments....
                                                     </p>
                                                 </div>
@@ -515,7 +518,7 @@ function AboutUs() {
 
                         <div className="flex flex-col items-center my-4 md:my-8 ">
                             <div className="mb-4 text-black">
-                                <h2 className="text-lg md:text-xl font-mono text-center">
+                                <h2 className="text-2xs md:text-xl font-mono text-center">
                                     Have something nice to say?
                                     <br></br>
                                     We'd love to hear it from you!

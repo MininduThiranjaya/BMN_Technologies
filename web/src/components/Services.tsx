@@ -119,7 +119,7 @@ function Services() {
                                     // <div className="flex flex-row">
                                     <div 
                                         key={index}
-                                        className="flex flex-row md:h-10 w-full rounded-md justify-between p-2"
+                                        className="flex flex-row h-9 md:h-10 w-full rounded-md justify-between p-2"
                                     >
                                         <div
                                             className={`text-sm md:text-lg text-center transition-all duration-300 flex items-center justify-center px-3 ${projectIndex === index
@@ -134,12 +134,12 @@ function Services() {
                                 ))
                             }
                         </div>
-                        <div className="w-full h-full p-5">{/*bg-color*/}
+                        <div className="w-full h-full p-3 md:p-5">{/*bg-color*/}
                             {
                                 <div className="w-full h-full flex md:flex flex-col md:flex-col text-black">
-                                    <div className="relative flex items-center h-10 px-4 mt-4 md:mt-10">{/*bg-color*/}
+                                    <div className="relative flex flex-col items-center h-10 px-4 mt-4 md:mt-10">{/*bg-color*/}
                                         {/* Icon (justify-start) */}
-                                        <div className="absolute left-0 md:left-1/2 md:transform md:-translate-x-1/2">
+                                        <div className="mb-2 md:absolute left-0 md:left-1/2 md:transform md:-translate-x-1/2">
                                             {projectService[projectIndex].icon}
                                         </div>
 
@@ -149,7 +149,7 @@ function Services() {
                                         </p>
                                     </div>
 
-                                    <div className="mt-0 md:mt-5">
+                                    <div className="mt-10 md:mt-5">
                                         <div className="hidden md:flex md:text-2xl justify-center font-semibold">
                                             {projectService[projectIndex].title}
                                         </div>
@@ -181,7 +181,7 @@ function Services() {
                                 productService.map((item, index) => (
 
                                     // <div className="flex flex-row">
-                                    <div className="flex flex-row md:h-10 w-full rounded-md justify-between p-2">
+                                    <div className="flex flex-row h-9 md:h-10 w-full rounded-md justify-between p-2">
                                         <div
                                             key={index}
                                             className={`text-sm md:text-lg text-center transition-all duration-300 flex items-center justify-center px-3 ${projectIndex === index
@@ -196,12 +196,12 @@ function Services() {
                                 ))
                             }
                         </div>
-                        <div className="w-full h-full p-5">{/*bg-color*/}
+                        <div className="w-full h-full p-3 md:p-5">{/*bg-color*/}
                             {
                                 <div className="w-full h-full flex md:flex flex-col md:flex-col text-black">
-                                    <div className="relative flex items-center h-10 px-4 mt-4 md:mt-10">{/*bg-color*/}
+                                    <div className="relative flex flex-col items-center h-10 px-4 mt-4 md:mt-10">{/*bg-color*/}
                                         {/* Icon (justify-start) */}
-                                        <div className="absolute left-0 md:left-1/2 md:transform md:-translate-x-1/2">
+                                        <div className="mb-2 md:absolute left-0 md:left-1/2 md:transform md:-translate-x-1/2">
                                             {productService[productIndex].icon}
                                         </div>
 
@@ -211,7 +211,7 @@ function Services() {
                                         </p>
                                     </div>
 
-                                    <div className="mt-0 md:mt-5">
+                                    <div className="mt-10 md:mt-5">
                                         <div className="hidden md:flex md:text-2xl justify-center font-semibold">
                                             {productService[productIndex].title}
                                         </div>
@@ -233,7 +233,7 @@ function Services() {
     }
 
     return (
-        <div className="flex flex-col md:flex-row w-full h-screen pt-1 md:pt-6">
+        <div className="flex flex-col md:flex-row w-full h-screen pt-3 md:pt-6">
             <>
                 {!isOpen && (
                     <div className="fixed inset-0 bg-white/50 backdrop-blur-sm z-50 flex items-center justify-center p-5">
@@ -280,7 +280,7 @@ function Services() {
                         }
                     </div>
                     <div className="w-full md:w-2/3 h-2/3 md:h-full flex flex-col items-center justify-center">{/*bg-color*/}
-                        <div className="relative w-full md:w-full h-4/6 md:h-2/3 flex md:flex items-center md:items-center justify-cente md:justify-center perspective-1000 md:perspective-1000">{/*bg-color*/}
+                        <div className="relative w-full md:w-full h-4/6 md:h-2/3 flex md:flex items-center md:items-center justify-cente md:justify-center perspective-1000 md:perspective-1000 overflow-hidden">{/*bg-color*/}
                             {services.map((service, index) => {
                                 const position = getPosition(index);
                                 const Icon = service.icon;
@@ -292,14 +292,14 @@ function Services() {
 
                                 if (position === 0) {
                                     transform = isSmallScreen
-                                        ? "translateX(10px) translateZ(0) rotateY(0deg)" // Center for small screens
+                                        ? "translateX(50px) translateZ(0) rotateY(0deg)" // Center for small screens
                                         : "translateX(-100px) translateZ(0) rotateY(0deg)";
                                     zIndex = 30;
                                     opacity = 1;
                                     scale = 1;
                                 } else if (position === 1) {
                                     transform = isSmallScreen
-                                        ? "translateX(155px) translateZ(-50px) rotateY(-10deg)"
+                                        ? "translateX(200px) translateZ(-75px) rotateY(-15deg)"
                                         : "translateX(280px) translateZ(-100px) rotateY(-15deg)";
                                     zIndex = 20;
                                     opacity = 0.8;
@@ -308,7 +308,7 @@ function Services() {
                                 return (
                                     <div
                                         key={index}
-                                        className="absolute transition-all duration-700 ease-out"
+                                        className="absolute transition-all duration-[1400ms] md:duration-700 ease-out"
                                         style={{
                                             transform: `${transform} scale(${scale})`,
                                             zIndex,
@@ -317,10 +317,10 @@ function Services() {
                                         }}
                                     >
                                         <div
-                                            className={`w-64 h-80 md:w-80 md:h-96 bg-gradient-to-br ${service.color} rounded-2xl shadow-2xl p-8 flex flex-col items-center justify-center text-white backdrop-blur-sm bg-opacity-90 border border-white/20`}
+                                            className={`w-60 h-72 md:w-80 md:h-96 bg-gradient-to-br ${service.color} rounded-2xl shadow-2xl p-8 flex flex-col items-center justify-center text-white backdrop-blur-sm bg-opacity-90 border border-white/20`}
                                         >
-                                            <div className="bg-white/20 rounded-full p-5 mb-5 md:p-6 md:mb-6 backdrop-blur-sm">
-                                                <Icon className="w-7 h-7 md:w-12 md:h-12" />
+                                            <div className="bg-white/20 rounded-full p-4 mb-4 md:p-6 md:mb-6 backdrop-blur-sm">
+                                                <Icon className="w-6 h-6 md:w-12 md:h-12" />
                                             </div>
                                             <h3 className="text-lg md:text-2xl font-bold mb-4 text-center">
                                                 {service.title}
@@ -330,7 +330,7 @@ function Services() {
                                             </p>
                                             <button
                                                 disabled={position !== 0}
-                                                className="text-sm md:text-sm mt-6 px-6 py-3 bg-white/20 hover:bg-white/30 rounded-full font-semibold transition-colors backdrop-blur-sm border border-white/30 disabled:opacity-50 disabled:cursor-not-allowed"
+                                                className="text-sm md:text-sm mt-4 px-5 py-3 bg-white/20 hover:bg-white/30 rounded-full font-semibold transition-colors backdrop-blur-sm border border-white/30 disabled:opacity-50 disabled:cursor-not-allowed"
                                                 onClick={() => {
                                                     setServiceType(service.title.toLowerCase())
                                                     setIsOpen(!isOpen)
