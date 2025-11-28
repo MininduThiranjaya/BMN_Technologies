@@ -9,7 +9,7 @@ import { endpoints } from "../api";
 export default function LoginPage() {
   const { login } = useAuth();
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({ email: "", password: "" });
+  const [formData, setFormData] = useState({ email: "thiranjaya2017@gmail.com", password: "Abcd@1234" });
   const [errors, setErrors] = useState<{
     email?: string;
     password?: string;

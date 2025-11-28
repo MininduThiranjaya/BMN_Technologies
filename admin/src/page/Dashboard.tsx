@@ -10,11 +10,12 @@ import {
   Settings,
   Home,
   DollarSign,
-  TrendingUp,
   LogOut,
   Edit3,
   X,
   Folder,
+  AlertTriangle,
+  ThumbsUp
 } from "lucide-react";
 import { useAuth } from "../context/AuthProvider";
 import { toast } from "react-toastify";
@@ -29,6 +30,7 @@ import {
   StatCard,
 } from "../interfaces/Dashboard_Interfaces";
 import { endpoints } from "../api";
+import { UserIssue } from "../interfaces/Common_Interfaces";
 
 interface NotificationType {
   id: number | null | undefined,
@@ -59,19 +61,19 @@ const Dashboard: React.FC = () => {
       url: endpoints.project.count,
     },
     {
-      title: "Total Sales",
+      title: "Customer Complains",
       value: 0,
       change: "",
-      icon: DollarSign,
+      icon: AlertTriangle,
       color: "bg-purple-50 text-purple-600",
       iconBg: "bg-purple-100",
       url: null,
     },
     {
-      title: "Growth",
+      title: "Customer Testimonials",
       value: 0,
       change: "",
-      icon: TrendingUp,
+      icon: ThumbsUp,
       color: "bg-orange-50 text-orange-600",
       iconBg: "bg-orange-100",
       url: null,
@@ -84,6 +86,7 @@ const Dashboard: React.FC = () => {
   const [showUserDropdown, setShowUserDropdown] = useState<boolean>(false);
   const [showEditProfile, setShowEditProfile] = useState<boolean>(false);
   const [activeView, setActiveView] = useState<string>("Dashboard");
+  const [userIssues, setUserIssues] = useState<UserIssue[]>([]);
 
   const [adminUser, setAdminUser] = useState({
     email: "",
@@ -127,6 +130,30 @@ const Dashboard: React.FC = () => {
     }
   };
 
+  const fetchUserIssuesInform = async () => {
+    const token = localStorage.getItem("accessToken");
+    if (!token) {
+      console.error("No token found");
+      return;
+    }
+    try {
+      await axios.get(endpoints.contactUs.getIssues, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+        .then((res: any) => {
+          setUserIssues(res.data)
+          console.log(res)
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+    } catch (err) {
+      console.error("Failed to fetch count details", err);
+    }
+  };
+
   useEffect(() => {
     const fetchUser = async () => {
       const token = localStorage.getItem("accessToken");
@@ -162,6 +189,7 @@ const Dashboard: React.FC = () => {
 
     fetchUser();
     fetchCountDetails();
+    fetchUserIssuesInform()
   }, []);
 
   if (!adminUser) return <p>Loading...</p>;
@@ -205,8 +233,6 @@ const Dashboard: React.FC = () => {
         return <Bell className="w-4 h-4 text-gray-500" />;
     }
   };
-
-  const recentSales: Sale[] = [];
 
   const menuItems: MenuItem[] = [
     { icon: Home, label: "Dashboard", active: activeView === "Dashboard" },
@@ -303,7 +329,7 @@ const Dashboard: React.FC = () => {
             <div className="bg-white rounded-lg shadow-sm border">
               <div className="p-6 border-b flex items-center justify-between">
                 <h3 className="text-lg font-semibold text-gray-800">
-                  Recent Sales
+                  Customer Complain Notifications
                 </h3>
                 {/* <button className="flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
                   <Plus className="w-4 h-4" />
@@ -316,21 +342,24 @@ const Dashboard: React.FC = () => {
                   <thead className="bg-gray-50">
                     <tr>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Customer
+                        Customer Name
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Product
+                        Phone Number
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Amount
+                        Email Address
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Time
+                        Issue
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Inform Date
                       </th>
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
-                    {recentSales.length > 0 ? (recentSales.map((sale, index) => (
+                    {userIssues ? (userIssues.map((item, index) => (
                       <tr key={index}>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="flex items-center">
@@ -338,18 +367,21 @@ const Dashboard: React.FC = () => {
                               <User className="w-4 h-4 text-gray-500" />
                             </div>
                             <span className="text-sm font-medium text-gray-900">
-                              {sale.customer}
+                              {item.userName}
                             </span>
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                          {sale.product}
+                          {item.phoneNumber}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-green-600">
-                          {sale.amount}
+                          {item.email}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {sale.time}
+                          {item.issue}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          {item.createdAt}
                         </td>
                       </tr>
                     ))) : (
@@ -383,8 +415,8 @@ const Dashboard: React.FC = () => {
               key={index}
               onClick={() => handleMenuClick(item.label)}
               className={`w-full flex items-center px-6 py-3 text-sm font-medium transition-colors text-left ${item.active
-                  ? "bg-blue-50 text-blue-700 border-r-2 border-blue-700"
-                  : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                ? "bg-blue-50 text-blue-700 border-r-2 border-blue-700"
+                : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
                 }`}
             >
               <item.icon className="w-5 h-5 mr-3" />
@@ -529,8 +561,8 @@ const Dashboard: React.FC = () => {
                                 <div className="flex-1">
                                   <p
                                     className={`text-sm ${!notification.read
-                                        ? "font-medium text-gray-900"
-                                        : "text-gray-800"
+                                      ? "font-medium text-gray-900"
+                                      : "text-gray-800"
                                       }`}
                                   >
                                     {notification.text}
@@ -541,20 +573,20 @@ const Dashboard: React.FC = () => {
                                     </p>
                                     <span
                                       className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${notification.type === "order"
-                                          ? "bg-blue-100 text-blue-800"
-                                          : notification.type === "payment"
-                                            ? "bg-green-100 text-green-800"
-                                            : notification.type === "support"
-                                              ? "bg-orange-100 text-orange-800"
-                                              : notification.type === "user"
-                                                ? "bg-purple-100 text-purple-800"
-                                                : notification.type === "inventory"
-                                                  ? "bg-red-100 text-red-800"
-                                                  : notification.type === "system"
-                                                    ? "bg-gray-100 text-gray-800"
-                                                    : notification.type === "review"
-                                                      ? "bg-indigo-100 text-indigo-800"
-                                                      : "bg-gray-100 text-gray-800"
+                                        ? "bg-blue-100 text-blue-800"
+                                        : notification.type === "payment"
+                                          ? "bg-green-100 text-green-800"
+                                          : notification.type === "support"
+                                            ? "bg-orange-100 text-orange-800"
+                                            : notification.type === "user"
+                                              ? "bg-purple-100 text-purple-800"
+                                              : notification.type === "inventory"
+                                                ? "bg-red-100 text-red-800"
+                                                : notification.type === "system"
+                                                  ? "bg-gray-100 text-gray-800"
+                                                  : notification.type === "review"
+                                                    ? "bg-indigo-100 text-indigo-800"
+                                                    : "bg-gray-100 text-gray-800"
                                         }`}
                                     >
                                       {notification.type}

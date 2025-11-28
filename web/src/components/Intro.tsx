@@ -1,6 +1,6 @@
 function Intro() {
     return (
-        <div className="bg-white w-full h-full text-white p-3 md:p-5 font-mono mt-10">
+        <div className="bg-white w-full h-full text-white p-3 md:p-5 font-mono mt-11">
             <div className=" w-full flex flex-1 flex-row md:flex-1 md:flex-col relative text-black h-full">
                 {/*bg-color*/}
                 <div className="w-full h-1/2 bottom-0 absolute md:w-2/3 md:right-0 md:h-full">
@@ -11,17 +11,17 @@ function Intro() {
                         </div>
                     </div>
                     {/* Overlay Box */}
-                    <div className="absolute right-0 bottom-10 w-36 h-20 rounded-md shadow-lg flex justify-center tems-center md:absolute md:right-0 md:top-10 md:w-40 md:h-20 md:rounded-md md:shadow-lg md:flex md:justify-center md:items-center">
+                    <div className="absolute right-0 bottom-12 w-36 h-20 rounded-md shadow-lg flex justify-center tems-center md:absolute md:right-0 md:top-14 md:w-40 md:h-20 md:rounded-md md:shadow-lg md:flex md:justify-center md:items-center">
                         <div className="w-full h-full bg-black rounded-md bg-opacity-90 p-4 text-center">
-                            <h2 className="text-xl md:text-2xl font-bold text-white">8+</h2>
-                            <p className="text-xs md:text-sm text-gray-200">Years Experience</p>
+                            <h2 className="text-sm sm:text-lg md:text-2xl font-bold text-white">8+</h2>
+                            <p className="text-xs  sm:text-xs md:text-sm text-gray-200">Years Experience</p>
                         </div>
                     </div>
                 </div>
-                <div className="absolute w-full h-2/3 md:absolute md:w-2/3 md:left-0 md:h-full">
+                <div className="absolute w-full md:absolute md:w-2/3 md:left-0 md:h-full">
                     {/*bg-color*/}
                     <div className="flex flex-1 flex-col w-full h-full md:flex md:flex-1 md:flex-col md:h-full">
-                        <div className="w-full h-1/3 flex items-center md:h-1/3 md:flex md:items-center">
+                        <div className="w-full flex items-center md:h-1/3 md:flex md:items-center">
                             {/*bg-color*/}
                             <div className="w-full h-full flex flex-col justify-center items-center md:w-3/4 md:h-full md:flex md:flex-col md:justify-center md:items-center md:gap-1">
                                 {/*bg-color*/}
@@ -30,7 +30,7 @@ function Intro() {
                                 <span className="text-xl p-1 self-end md:text-3xl md:p-2 md:self-end">WITH SOLAR ENERGY</span>
                             </div>
                         </div>
-                        <div className="w-full h-2/3 flex justify-start md:h-2/3 md:flex md:justify-start">
+                        <div className="w-full flex justify-start md:h-2/3 md:flex md:justify-start">
                             {/*bg-color*/}
                             <div className="w-full h-full flex flex-col justify-start gap-1 md:w-2/3 md:h-full md:flex md:flex-col md:justify-start md:gap-4">
                                 {/* Text section */}

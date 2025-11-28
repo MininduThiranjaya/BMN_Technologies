@@ -15,5 +15,8 @@ export const endpoints = {
   testimonial: {
     get: `${BACKEND_BASE_URL}user-testimonial/get`,
     submit: `${BACKEND_BASE_URL}user-testimonial/submit`,
+  },
+  contactUs: {
+    inform: `${BACKEND_BASE_URL}user-contact/inform`
   }
 };
