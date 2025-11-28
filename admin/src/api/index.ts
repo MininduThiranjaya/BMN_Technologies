@@ -17,7 +17,10 @@ export const endpoints = {
   project: {
     add: `${BACKEND_BASE_URL}auth/project/add`,
     count: `${BACKEND_BASE_URL}auth/project/count`,
-    getAllProjects: `${BACKEND_BASE_URL}auth/project/all-details/get`,
+    getAllProjects: `${BACKEND_BASE_URL}auth/project/get/all`,
     deleteProject: `${BACKEND_BASE_URL}auth/project/delete-by-id/:projectId`,
   },
+  contactUs: {
+    getIssues: `${BACKEND_BASE_URL}user-contact/get-issues`
+  }
 };
