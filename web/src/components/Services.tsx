@@ -8,7 +8,7 @@ function Services() {
     const [current, setCurrent] = useState(0);
     const [projectIndex, setProjectIndex] = useState(0);
     const [productIndex, setProductIndex] = useState(0);
-    const [load, setLoad] = useState(false)
+    const [load, setLoad] = useState(true)
     const [isOpen, setIsOpen] = useState(true);
     const [serviceType, setServiceType] = useState('')
 
@@ -25,10 +25,10 @@ function Services() {
         // Big item changes every 15s (3 × 5s)
         const mainInterval = setInterval(() => {
             setCurrent((prev) => (prev + 1) % services.length);
-            setLoad(!load)
+            setLoad((pre) => !pre)   
         }, 15000);
 
-        // Clear both on unmount
+        // Clear all on unmount
         return () => {
             clearInterval(projectInterval);
             clearInterval(productInterval);
@@ -117,9 +117,11 @@ function Services() {
                                 projectService.map((item, index) => (
 
                                     // <div className="flex flex-row">
-                                    <div className="flex flex-row md:h-10 w-full rounded-md justify-between p-2">
+                                    <div 
+                                        key={index}
+                                        className="flex flex-row md:h-10 w-full rounded-md justify-between p-2"
+                                    >
                                         <div
-                                            key={index}
                                             className={`text-sm md:text-lg text-center transition-all duration-300 flex items-center justify-center px-3 ${projectIndex === index
                                                 ? "scale-100 -translate-y-1 text-black font-semibold"
                                                 : "text-black"
@@ -274,7 +276,7 @@ function Services() {
                 <div className="w-full md:w-full h-5/6 md:h-5/6 flex md:flex flex-col md:flex-row">{/*bg-color*/}
                     <div className="w-full md:w-1/3 h-1/3 md:h-full items-start md:items-center justify-center">{/*bg-color*/}
                         {
-                            !load ? projectCard() : productCard()
+                            load ? projectCard() : productCard()
                         }
                     </div>
                     <div className="w-full md:w-2/3 h-2/3 md:h-full flex flex-col items-center justify-center">{/*bg-color*/}
@@ -317,8 +319,8 @@ function Services() {
                                         <div
                                             className={`w-64 h-80 md:w-80 md:h-96 bg-gradient-to-br ${service.color} rounded-2xl shadow-2xl p-8 flex flex-col items-center justify-center text-white backdrop-blur-sm bg-opacity-90 border border-white/20`}
                                         >
-                                            <div className="bg-white/20 rounded-full p-6 mb-6 backdrop-blur-sm">
-                                                <Icon size={48} />
+                                            <div className="bg-white/20 rounded-full p-5 mb-5 md:p-6 md:mb-6 backdrop-blur-sm">
+                                                <Icon className="w-7 h-7 md:w-12 md:h-12" />
                                             </div>
                                             <h3 className="text-lg md:text-2xl font-bold mb-4 text-center">
                                                 {service.title}
