@@ -13,19 +13,19 @@ function Footer() {
                         <div className="mb-6">
                             <div className="flex items-start mb-2">
                                 <MapPin size={18} className="mr-2 mt-1 flex-shrink-0" />
-                                <span><span className='font-mono'>123</span> Business Avenue, City, Country</span>
+                                <span className='text-sms md:text-lg'><span className='font-mono text-sm md:text-lg'>123</span > Business Avenue, City, Country</span>
                             </div>
                             <div className="flex items-center mb-2">
                                 <Phone size={18} className="mr-2 flex-shrink-0" />
-                                <span className='font-mono'>+1 (555) 123-4567</span>
+                                <span className='font-mono text-sm md:text-lg'>+1 (555) 123-4567</span>
                             </div>
                             <div className="flex items-center mb-4">
                                 <Mail size={18} className="mr-2 flex-shrink-0" />
-                                <span>contact@yourcompany.com</span>
+                                <span className='text-sm md:text-lg'>contact@yourcompany.com</span>
                             </div>
                         </div>
                         <div className="mb-6">
-                            <h4 className="text-lg font-semibold mb-3">Connect With Us</h4>
+                            <h4 className="text-lg md:text-xl font-semibold mb-3">Connect With Us</h4>
                             <div className="flex space-x-4">
                                 <a href="#" aria-label='facebook' className="hover:text-blue-400 transition-colors"><Facebook size={24} /></a>
                                 <a href="#" aria-label='twitter' className="hover:text-blue-400 transition-colors"><Twitter size={24} /></a>
@@ -38,7 +38,7 @@ function Footer() {
                     {/* Column 2: Quick Links */}
                     <div className="w-full md:w-1/3 mb-6 md:mb-0 md:pr-6">
                         <div>
-                            <h4 className="text-lg font-semibold mb-3">Quick Links</h4>
+                            <h4 className="text-lg md:text-xl font-semibold mb-3">Quick Links</h4>
                             <div className="grid grid-cols-2 gap-2">
                                 <a href="#intro" className="hover:text-blue-300 transition-colors">Home</a>
                                 <a href="#about" className="hover:text-blue-300 transition-colors">About Us</a>
@@ -50,7 +50,7 @@ function Footer() {
 
                     {/* Column 3: Map */}
                     <div className="w-full md:w-1/3">
-                        <h3 className="text-xl font-bold mb-4">Find Us</h3>
+                        <h3 className="text-lg md:text-xl font-bold mb-4">Find Us</h3>
                         <div className="h-64 bg-gray-200 relative rounded-lg overflow-hidden">
                             <iframe
                                 title='map'

@@ -206,13 +206,13 @@ function AboutUs() {
                         {/* Close button */}
                         <button
                             onClick={() => setIsTestimonialFormOpen(!isTestimonialFormOpen)}
-                            className="absolute top-4 right-4 p-2 hover:bg-gray-100 rounded-full transition-colors"
+                            className="absolute top-0 md:top-4 right-0 md:right-4 p-0 md:p-2 hover:bg-gray-100 rounded-full transition-colors"
                         >
                             <X size={28} className="text-gray-800" />
                         </button>
 
-                        <div className="text-center mt-6">
-                            <h2 className="text-3xl font-bold text-gray-800 font-mono">
+                        <div className="text-center mt-5 md:mt-6">
+                            <h2 className="text-xl md:text-3xl font-bold text-gray-800 font-mono">
                                 Let Us Know How You Feel
                             </h2>
                         </div>
@@ -220,7 +220,7 @@ function AboutUs() {
                         {/* Content */}
                         <div className="flex-1 w-full h-full bg-white mt-4 rounded-b-2xl p-4">
                             {/* Your form content here */}
-                            <form className='w-full h-full' onSubmit={handleSubmit}>
+                            <form className='w-full h-full  text-sm' onSubmit={handleSubmit}>
                                 <div className="mb-2">
                                     <label htmlFor="name" className="block text-gray-700 mb-2 font-medium">Full Name {errors.name && <span className="mt-1 text-red-500 text-sm font-normal">- {errors.name}</span>}</label>
                                     <div className="relative">
