@@ -26,11 +26,12 @@ import Projects from "../components/Projects";
 import {
   AdminUser,
   MenuItem,
-  Sale,
   StatCard,
 } from "../interfaces/Dashboard_Interfaces";
 import { endpoints } from "../api";
 import { UserIssue } from "../interfaces/Common_Interfaces";
+import CustomerComplains from "../components/CustomerComplains";
+import CustomerTestimonials from "../components/CustomerTestimonials";
 
 interface NotificationType {
   id: number | null | undefined,
@@ -67,7 +68,7 @@ const Dashboard: React.FC = () => {
       icon: AlertTriangle,
       color: "bg-purple-50 text-purple-600",
       iconBg: "bg-purple-100",
-      url: null,
+      url: endpoints.contactUs.count,
     },
     {
       title: "Customer Testimonials",
@@ -76,9 +77,10 @@ const Dashboard: React.FC = () => {
       icon: ThumbsUp,
       color: "bg-orange-50 text-orange-600",
       iconBg: "bg-orange-100",
-      url: null,
+      url: endpoints.testimonial.count,
     },
   ]);
+
   const { logout } = useAuth();
   const [notifications, setNotifications] = useState(0);
   const [showNotifications, setShowNotifications] = useState(false);
@@ -236,17 +238,11 @@ const Dashboard: React.FC = () => {
 
   const menuItems: MenuItem[] = [
     { icon: Home, label: "Dashboard", active: activeView === "Dashboard" },
-    // { icon: ShoppingCart, label: "Sales", active: activeView === "Sales" },
-    // { icon: Users, label: "Customers", active: activeView === "Customers" },
     { icon: Package, label: "Products", active: activeView === "Products" },
     { icon: Folder, label: "Projects", active: activeView === "Projects" },
-    // { icon: BarChart3, label: "Analytics", active: activeView === "Analytics" },
-    {
-      icon: User,
-      label: "User Registration",
-      active: activeView === "User Registration",
-    },
-    // { icon: Settings, label: "Settings", active: activeView === "Settings" },
+    { icon: User, label: "User Registration", active: activeView === "User Registration" },
+    { icon: AlertTriangle, label: "Customer Complains", active: activeView === "Customer Complains" },
+    { icon: ThumbsUp, label: "Customer Testimonials", active: activeView === "Customer Testimonials" },
   ];
 
   const handleLogout = (): void => {
@@ -274,11 +270,6 @@ const Dashboard: React.FC = () => {
 
   const renderContent = (): JSX.Element => {
     switch (activeView) {
-      // case "Sales":
-      //   return <Sales />;
-
-      // case "Customers":
-      //   return <Customers />;
 
       case "Products":
         return <Products onSuccess={fetchCountDetails} />;
@@ -286,14 +277,14 @@ const Dashboard: React.FC = () => {
       case "Projects":
         return <Projects onSuccess={fetchCountDetails} />;
 
-      // case "Analytics":
-      //   return <Analytics />;
-
       case "User Registration":
         return <AdminUserRegistration />;
 
-      // case "Settings":
-      //   return <SettingsPage />;
+      case "Customer Complains":
+        return <CustomerComplains />
+
+      case "Customer Testimonials":
+        return <CustomerTestimonials />
 
       default:
         return (
