@@ -50,7 +50,7 @@ export default function Products({ onSuccess }: ProductPropsType) {
               <span>Add Product</span>
             </button>
           </div>
-          <div className="p-6">
+          <div className="p-6 h-[30rem] overflow-y-scroll">
               <ProductManagement 
                 products={allProducts}
                 deleteProduct={deleteProduct}

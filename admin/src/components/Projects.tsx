@@ -60,7 +60,7 @@ export default function Projects({ onSuccess }: ProjectPropsType) {
               <span>Add Project</span>
             </button>
           </div>
-          <div className="p-6">
+          <div className="p-6 h-[30rem] overflow-y-scroll">
             <ProjectManagement
               projects={allProjects}
               deleteProduct={deleteProduct}
