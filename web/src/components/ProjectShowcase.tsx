@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import type { ProjectFilter, ProjectItemType } from "../types/Project";
+import type { ProjectFilter, ProjectItemType } from "../interfaces/Project";
 import { endpoints } from "../api";
 import axios from "axios";
 import { X, ChevronLeft, ChevronRight, Folder, User, Tags, Calendar, MapPin, FileText } from "lucide-react";

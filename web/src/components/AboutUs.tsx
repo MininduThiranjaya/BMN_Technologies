@@ -14,8 +14,8 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { endpoints } from "../api";
-import type { Testimonial } from "../types/Testimonial";
-import type { FormErrors } from "../types/Form";
+import type { Testimonial } from "../interfaces/Testimonial";
+import type { FormErrors } from "../interfaces/Form";
 
 function AboutUs() {
     const [activeIndex, setActiveIndex] = useState(0);
