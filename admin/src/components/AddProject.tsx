@@ -47,11 +47,25 @@ export default function AddProject({
     projectId: existFormData?.projectId,
     projectName: existFormData?.personName,
     personName: existFormData?.personName,
+    province: existFormData?.province,
     location: existFormData?.location,
     projectDescription: existFormData?.projectDescription,
     category: existFormData?.category,
     projectDate: existFormData?.projectDate,
   });
+
+  const provinces = [
+        { type: "All Provinces", value: "all" },
+        { type: "Central Province", value: "central" },
+        { type: "Eastern Province", value: "eastern" },
+        { type: "Northern Province", value: "northern" },
+        { type: "North Central Province", value: "north_central" },
+        { type: "North Western Province", value: "north_western" },
+        { type: "Sabaragamuwa Province", value: "sabaragamuwa" },
+        { type: "Southern Province", value: "southern" },
+        { type: "Uva Province", value: "uva" },
+        { type: "Western Province", value: "western" }
+    ];
 
   const [mainThumbnail, setMainThumbnail] = useState<ImageType>({
     file: null,
@@ -233,6 +247,7 @@ export default function AddProject({
       projectId: "",
       projectName: "",
       personName: "",
+      province: "",
       location: "",
       projectDescription: "",
       category: "",
@@ -437,6 +452,24 @@ export default function AddProject({
                         required
                       />
                     </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Province
+                    </label>
+                    <select
+                      name="province"
+                      value={formData.province ?? ""}
+                      onChange={handleInputChange}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                    > 
+                      {
+                        provinces.map((province, key) => (
+                          <option key={key} value={province.value}>{province.type}</option>
+                        ))
+                      }
+                    </select>
                   </div>
 
                   <div>
