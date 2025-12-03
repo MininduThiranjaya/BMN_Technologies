@@ -14,6 +14,7 @@ import lk.bmn_technologies.backend.dto.ApiResponseDTO;
 import lk.bmn_technologies.backend.model.UserContactModel;
 import lk.bmn_technologies.backend.services.UserContactService;
 
+
 @RestController
 @RequestMapping("api/user-contact")
 public class UserContactController {
@@ -36,5 +37,15 @@ public class UserContactController {
     @GetMapping("/get-issues")
     public List<UserContactModel> getIssues() {
         return service.getUserIssue();
+    }
+
+    @GetMapping("/get-all-issues")
+    public List<UserContactModel> getAllIssues() {
+        return service.getAllUserIssue();
+    }
+
+    @GetMapping("count")
+    public long countUserContactInDatabase() {
+        return service.countUserContacts();
     }
 }
