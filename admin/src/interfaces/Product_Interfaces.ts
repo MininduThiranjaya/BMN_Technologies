@@ -46,7 +46,12 @@ export interface formDataType {
   productDescription: string | null | undefined;
   category: string | null | undefined;
 }
-
 export interface ProductPropsType {
   onSuccess: () => void;
+}
+
+export interface ProductFilter {
+  category: string | null;
+  minPrice: number | null;
+  maxPrice: number | null;
 }

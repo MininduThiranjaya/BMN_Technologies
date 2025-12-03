@@ -18,6 +18,7 @@ export interface ProjectType {
   projectId: string | null;
   projectName: string | null;
   personName: string | null;
+  province: string | null;
   location: string | null;
   projectDescription: string | null;
   category: string | null;
@@ -49,8 +50,16 @@ export interface FormDataType {
   projectId: string | null | undefined;
   projectName: string | null | undefined;
   personName: string | null | undefined;
+  province: string | null | undefined;
   location: string | null | undefined;
   projectDescription: string | null | undefined;
   category: string | null | undefined;
   projectDate: string | null | undefined;
+}
+
+export interface ProjectFilter {
+    category: string | null,
+    location: string | null,
+    projectMinDate: string | null,
+    projectMaxDate: string | null,
 }
