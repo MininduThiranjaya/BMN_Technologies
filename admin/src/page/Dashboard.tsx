@@ -378,7 +378,7 @@ const Dashboard: React.FC = () => {
                     ))) : (
                       <tr className="p-5">
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-center" colSpan={4}>
-                          No Sales is Available
+                          No Customer Complain Available
                         </td>
                       </tr>
                     )}
