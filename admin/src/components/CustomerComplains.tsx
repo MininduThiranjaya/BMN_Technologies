@@ -1,12 +1,13 @@
-import React, { useEffect, useState } from "react";
-import { User, Mail, Lock, Phone, Shield, Eye, EyeOff } from "lucide-react";
+import { useEffect, useState } from "react";
+import { User, Search } from "lucide-react";
 import { toast } from "react-toastify";
 import axios from "axios";
 import { endpoints } from "../api";
 import { UserIssue } from "../interfaces/Common_Interfaces";
 
 export default function CustomerComplains() {
-  const [userIssues, setUserIssues] = useState<UserIssue[]>([]);
+  const [userIssues, setUserIssues] = useState<UserIssue[]>([])
+  const [filteredComplain, setFilteredComplain] = useState<UserIssue[]>([])
 
   const fetchUserIssuesInform = async () => {
     const token = localStorage.getItem("accessToken");
@@ -23,7 +24,7 @@ export default function CustomerComplains() {
         })
         .then((res: any) => {
           setUserIssues(res.data);
-          console.log(res);
+          setFilteredComplain(res.data)
         })
         .catch((err) => {
           console.log(err);
@@ -33,16 +34,65 @@ export default function CustomerComplains() {
     }
   };
 
+  const makeAction = async (id: number) => {
+    let fromData = { id: id };
+
+    const token = localStorage.getItem("accessToken");
+    if (!token) {
+      console.error("No token found");
+      return;
+    }
+    await axios
+      .put(endpoints.contactUs.getAction, fromData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((res) => {
+        console.log(res);
+        toast.success("Changing action success...");
+        fetchUserIssuesInform();
+      })
+      .catch((error) => {
+        console.log(error);
+        toast.error("Changing action not success...");
+      });
+  };
+
   useEffect(() => {
     fetchUserIssuesInform();
   }, []);
+
+  function searchForComplain(char: string) {
+    console.log(char)
+    if(!char) {
+      setFilteredComplain(userIssues)
+      return
+    }
+    const searchData = userIssues.filter((item) => (
+      item.phoneNumber?.startsWith(char) || item.email?.startsWith(char)
+    ))
+    console.log(searchData)
+    setFilteredComplain(searchData)
+  }
 
   return (
     <div className="bg-white rounded-lg shadow-sm border">
       <div className="p-6 border-b flex items-center justify-between">
         <h3 className="text-lg font-semibold text-gray-800">
-          Customer Complain Notifications
+          Customer Complain
         </h3>
+
+        {/* Search */}
+        <div className="relative">
+          <Search className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+          <input
+            onChange={(e) => searchForComplain(e.target.value)}
+            type="text"
+            placeholder="Email or Phone Number"
+            className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          />
+        </div>
         {/* <button className="flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
                       <Plus className="w-4 h-4" />
                       <span>New Sale</span>
@@ -75,8 +125,8 @@ export default function CustomerComplains() {
           </thead>
 
           <tbody className="bg-white divide-y divide-gray-200">
-            {userIssues && userIssues.length > 0 ? (
-              userIssues.map((item, index) => (
+            {filteredComplain ? (
+              filteredComplain.map((item, index) => (
                 <tr key={index}>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center">
@@ -101,7 +151,11 @@ export default function CustomerComplains() {
                     {new Date(item.createdAt).toLocaleString()}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    Action
+                    <button
+                      onClick={() => makeAction(item.id)}
+                    >
+                      {item.action ? "Solved" : "Pending"}
+                    </button>
                   </td>
                 </tr>
               ))
