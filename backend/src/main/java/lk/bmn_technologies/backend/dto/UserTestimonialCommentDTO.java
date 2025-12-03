@@ -12,8 +12,9 @@ public class UserTestimonialCommentDTO {
     private String testimonial;
     private int rating;
     private Date date;
+    private int isAvailable;
 
-    public UserTestimonialCommentDTO(Long id, String name, String company, String position, String email, String testimonial, int rating, Date date) {
+    public UserTestimonialCommentDTO(Long id, String name, String company, String position, String email, String testimonial, int rating, Date date, int isAvailable) {
         this.id = id;
         this.name = name;
         this.company = company;
@@ -22,6 +23,7 @@ public class UserTestimonialCommentDTO {
         this.testimonial = testimonial;
         this.rating = rating;
         this.date = date;
+        this.isAvailable = isAvailable;
     }
 
     public Long getId() {
@@ -54,5 +56,9 @@ public class UserTestimonialCommentDTO {
 
     public Date getDate() {
         return date;
+    }
+
+    public int getIsAvailable() {
+        return isAvailable;
     }
 }

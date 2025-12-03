@@ -27,13 +27,13 @@ function Home() {
       </div>
 
       {/* Other sections */}
-      <div ref={aboutRef} id="about" className="h-full w-full bg-red-700">{/*bg-color*/}
+      <div ref={aboutRef} id="about" className="h-full w-full">{/*bg-color*/}
         <AboutUs />
       </div>
-      <div ref={servicesRef} id="services" className="h-full w-full bg-green-400">
+      <div ref={servicesRef} id="services" className="h-full w-full">
         <Services />
       </div>
-      <div ref={contactRef} id="contact" className="h-full w-full bg-lime-600">
+      <div ref={contactRef} id="contact" className="h-full w-full">
         <ContactUs />
       </div>
 

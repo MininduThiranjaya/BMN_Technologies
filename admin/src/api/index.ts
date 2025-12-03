@@ -21,6 +21,13 @@ export const endpoints = {
     deleteProject: `${BACKEND_BASE_URL}auth/project/delete-by-id/:projectId`,
   },
   contactUs: {
-    getIssues: `${BACKEND_BASE_URL}user-contact/get-issues`
+    getIssues: `${BACKEND_BASE_URL}user-contact/get-issues`,
+    getAllIssues: `${BACKEND_BASE_URL}user-contact/get-all-issues`,
+    count: `${BACKEND_BASE_URL}user-contact/count`,
+  },
+  testimonial: {
+    get: `${BACKEND_BASE_URL}user-testimonial/get-all`,
+    count: `${BACKEND_BASE_URL}user-testimonial/count`,
+    changeStatus: `${BACKEND_BASE_URL}user-testimonial/change-state`
   }
 };

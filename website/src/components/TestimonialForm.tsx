@@ -55,14 +55,6 @@ export default function TestimonialForm() {
             newErrors.name = 'Name is required';
         }
 
-        // if (!formData.company.trim()) {
-        //     newErrors.company = 'Company name is required';
-        // }
-
-        // if (!formData.position.trim()) {
-        //     newErrors.position = 'Position is required';
-        // }
-
         if (!formData.email.trim()) {
             newErrors.email = 'Email is required';
         } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {

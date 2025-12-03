@@ -1,12 +1,12 @@
 package lk.bmn_technologies.backend.controller;
 
-import org.eclipse.angus.mail.iap.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,8 +20,6 @@ import lk.bmn_technologies.backend.model.AdminUserModel;
 import lk.bmn_technologies.backend.security.AdminUserDetails;
 import lk.bmn_technologies.backend.services.AdminUserService;
 import lk.bmn_technologies.backend.services.AuthenticationService;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 
 
 
@@ -75,7 +73,7 @@ public class AdminUserController {
                 user.getAdminUser().getEmail(), 
                 user.getAdminUser().getUserName(), 
                 user.getAdminUser().getPhoneNumber(), 
-                user.getAdminUser().getLastLogin(), 
+                user.getAdminUser().getLastLogin(),
                 user.getAdminUser().getUpdateAt(), 
                 user.getAdminUser().getCreatedAt()
             ));
@@ -84,7 +82,7 @@ public class AdminUserController {
         else {
             return ResponseEntity
                 .status(401)
-                .body(new ApiResponseDTO(false, "Error registration of admin user: "));
+                .body(new ApiResponseDTO(false, "Admin user not found"));
         }
     }
 

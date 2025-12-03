@@ -12,5 +12,5 @@ export interface UserIssue {
   email: string | null,
   issue: string | null,
   isAvailable: boolean | null,
-  createdAt: string | null
+  createdAt: string | number
 }

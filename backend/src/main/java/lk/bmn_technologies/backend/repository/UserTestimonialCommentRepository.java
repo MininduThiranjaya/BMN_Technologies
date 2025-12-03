@@ -12,6 +12,9 @@ import lk.bmn_technologies.backend.model.UserTestimonialCommentModel;
 @Repository
 public interface UserTestimonialCommentRepository extends JpaRepository<UserTestimonialCommentModel, Long>{
 
-    @Query("select t from UserTestimonialCommentModel t")
+    @Query("select t from UserTestimonialCommentModel t where t.isAvailable = 1")
     public List<UserTestimonialCommentModel> getUserTestimonialComment(Pageable pageable);
+
+    @Query("select t from UserTestimonialCommentModel t order by t.date desc")
+    public List<UserTestimonialCommentModel> getAllUserTestimonialComment();
 }

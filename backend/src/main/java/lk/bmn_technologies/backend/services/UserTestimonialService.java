@@ -26,6 +26,7 @@ public class UserTestimonialService {
     public ApiResponseDTO submitTestimonialCommentService(UserTestimonialCommentModel data) {
 
         data.setDate(Date.valueOf(LocalDate.now()));
+        data.setIsAvailable(1);
         repo.save(data);
         return (new ApiResponseDTO(true, "Saved successfully"));
     }
@@ -45,7 +46,48 @@ public class UserTestimonialService {
                 commentEntity.getEmail(),
                 commentEntity.getTestimonial(),
                 commentEntity.getRating(),
-                commentEntity.getDate()
+                commentEntity.getDate(),
+                commentEntity.getIsAvailable()
+            ))
+            .collect(Collectors.toList());
+
+        return (new ApiResponseDTO(true, "Fetched successfully", testimonialComments));
+    }
+
+    public long countUserTestimonial() {
+        return repo.count();
+    }
+
+    public String changeState(long id) {
+        System.out.println(id);
+        UserTestimonialCommentModel tempData = repo.getById(id);
+        if(tempData.getIsAvailable() == 1) {
+            tempData.setIsAvailable(0);
+            repo.save(tempData);
+            return "Dissable the testimonial comment";
+        }
+        else {
+            tempData.setIsAvailable(1);
+            repo.save(tempData);
+            return "Enable the testimonial comment";
+        }
+    }
+
+    public ApiResponseDTO getAllTestimonialCommentService() {
+        
+        List<UserTestimonialCommentDTO> testimonialComments = repo
+            .getAllUserTestimonialComment()
+            .stream()
+            .map((commentEntity) -> new UserTestimonialCommentDTO(
+                commentEntity.getId(),
+                commentEntity.getName(),
+                commentEntity.getCompany(),
+                commentEntity.getPosition(), // still from entity
+                commentEntity.getEmail(),
+                commentEntity.getTestimonial(),
+                commentEntity.getRating(),
+                commentEntity.getDate(),
+                commentEntity.getIsAvailable()
             ))
             .collect(Collectors.toList());
 

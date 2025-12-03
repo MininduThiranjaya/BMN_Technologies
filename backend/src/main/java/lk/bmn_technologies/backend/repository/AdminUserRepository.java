@@ -1,5 +1,6 @@
 package lk.bmn_technologies.backend.repository;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -21,4 +22,9 @@ public interface AdminUserRepository extends JpaRepository<AdminUserModel, Long>
     @Modifying
     @Query("update AdminUserModel a set a.password = ?2 where a.email = ?1")
     public int changePassword(String email, String encodedPassword);
+
+    @Transactional
+    @Modifying
+    @Query("update AdminUserModel a set a.lastLogin = ?2 where a.email = ?1")
+    public int updateLastLoginTime(String email, LocalDateTime lastLogin);
 }

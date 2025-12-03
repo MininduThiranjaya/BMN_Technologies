@@ -1,6 +1,6 @@
 package lk.bmn_technologies.backend.model;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -18,13 +18,13 @@ public class UserContactModel {
     private Long id;
     private String userName;
     private String email;
-    private Date createdAt;
+    private LocalDateTime createdAt;
     private String phoneNumber;
     private String issue;
-    private boolean isAvailable;
+    private int isAvailable;
     
 
-    public UserContactModel(Date createdAt, String email, Long id, boolean isAvailable, String issue, String phoneNumber, String userName) {
+    public UserContactModel(LocalDateTime createdAt, String email, Long id, int isAvailable, String issue, String phoneNumber, String userName) {
         this.createdAt = createdAt;
         this.email = email;
         this.id = id;
@@ -61,11 +61,11 @@ public class UserContactModel {
         this.email = email;
     }
 
-    public Date getCreatedAt() {
+    public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(Date createdAt) {
+    public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
 
@@ -85,11 +85,11 @@ public class UserContactModel {
         this.issue = issue;
     }
 
-    public boolean isIsAvailable() {
+    public int isIsAvailable() {
         return isAvailable;
     }
 
-    public void setIsAvailable(boolean isAvailable) {
+    public void setIsAvailable(int isAvailable) {
         this.isAvailable = isAvailable;
     }
 }

@@ -4,12 +4,10 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import lk.bmn_technologies.backend.dto.ApiResponseDTO;
-import lk.bmn_technologies.backend.dto.requestDTO.AdminLoginDTO;
 import lk.bmn_technologies.backend.dto.requestDTO.ForgetPassword_ChangePassword_DTO;
 import lk.bmn_technologies.backend.model.AdminUserModel;
 import lk.bmn_technologies.backend.repository.AdminUserRepository;
@@ -36,22 +34,21 @@ public class AdminUserService {
         }
     }
 
-    public ApiResponseDTO adminUserLoginService(AdminLoginDTO data) {
+    // public ApiResponseDTO adminUserLoginService(AdminLoginDTO data) {
 
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-        Optional<AdminUserModel> user = repo.getAdminUserByEmail(data.getEmail());
-        if (user.isPresent()) {
-            boolean isMatch = encoder.matches(data.getPassword(), user.get().getPassword());
-            if (user.get().getEmail().equals(data.getEmail()) && isMatch) {
-                user.get().setLastLogin(LocalDateTime.now());
-                return (new ApiResponseDTO(true, "Admin User login success", user));
-            } else {
-                return (new ApiResponseDTO(false, "Invalied credentials"));
-            }
-        } else {
-            return (new ApiResponseDTO(false, "Admin user not exsists"));
-        }
-    }
+    //     BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+    //     Optional<AdminUserModel> user = repo.getAdminUserByEmail(data.getEmail());
+    //     if (user.isPresent()) {
+    //         boolean isMatch = encoder.matches(data.getPassword(), user.get().getPassword());
+    //         if (user.get().getEmail().equals(data.getEmail()) && isMatch) {
+    //             return (new ApiResponseDTO(true, "Admin User login success", user));
+    //         } else {
+    //             return (new ApiResponseDTO(false, "Invalied credentials"));
+    //         }
+    //     } else {
+    //         return (new ApiResponseDTO(false, "Admin user not exsists"));
+    //     }
+    // }
 
     public ApiResponseDTO forgetPassword_changePassword_service(ForgetPassword_ChangePassword_DTO data) {
         Optional<AdminUserModel> user = repo.getAdminUserByEmail(data.getEmail());
@@ -67,5 +64,10 @@ public class AdminUserService {
         else {
             return (new ApiResponseDTO(false, "Failed changing password"));
         }
+    }
+
+    public int setLastLoginTime(String email,LocalDateTime lastLogin) {
+        int isUpdated = repo.updateLastLoginTime(email, lastLogin);
+        return isUpdated;
     }
 }

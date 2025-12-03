@@ -19,6 +19,7 @@ public class UserTestimonialCommentModel {
     private String testimonial;
     private int rating;
     private Date date;
+    private int isAvailable;
 
     public Long getId() {
         return id;
@@ -82,6 +83,14 @@ public class UserTestimonialCommentModel {
 
     public void setDate(Date date) {
         this.date = date;
+    }
+
+    public int getIsAvailable() {
+        return isAvailable;
+    }
+
+    public void setIsAvailable(int isAvailable) {
+        this.isAvailable = isAvailable;
     }
 
     
