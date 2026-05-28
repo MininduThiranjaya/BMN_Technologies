@@ -6,6 +6,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
@@ -27,6 +28,9 @@ public class AdminUserModel {
     private LocalDateTime updateAt;
     private int phoneNumber;
     private String password;
+    private String role;
+    @Column(nullable = false)
+    private boolean isSuspended = false;
 
     public String getPassword() {
         return password;
@@ -75,5 +79,17 @@ public class AdminUserModel {
     }
     public void setPhoneNumber(int phoneNumber) {
         this.phoneNumber = phoneNumber;
+    }
+    public String getRole() {
+        return role;
+    }
+    public void setRole(String role) {
+        this.role = role;
+    }
+    public boolean isSuspended() {
+        return isSuspended;
+    }
+    public void setSuspended(boolean isSuspended) {
+        this.isSuspended = isSuspended;
     }
 }

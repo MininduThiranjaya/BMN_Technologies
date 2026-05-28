@@ -7,6 +7,10 @@ export const endpoints = {
     verifyCode: `${BACKEND_BASE_URL}verification-code/check-code`,
     forgetPassword_changePassword: `${BACKEND_BASE_URL}admin/auth/forget-password/change-password`,
     dashboardUserProfile: `${BACKEND_BASE_URL}admin/auth/user/profile`,
+    getAllUsers: `${BACKEND_BASE_URL}admin/auth/user/get-all`,
+    deleteUser: `${BACKEND_BASE_URL}admin/auth/user/delete-by-id/{id}`,
+    changeRole: `${BACKEND_BASE_URL}admin/auth/user/change-role/{id}`,
+    makeSuspention: `${BACKEND_BASE_URL}admin/auth/user/set-suspention/{id}`,
   },
   product: {
     add: `${BACKEND_BASE_URL}auth/product/add`,

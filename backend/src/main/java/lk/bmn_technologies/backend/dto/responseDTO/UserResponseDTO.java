@@ -2,8 +2,8 @@ package lk.bmn_technologies.backend.dto.responseDTO;
 
 import java.time.LocalDateTime;
 
-public class AdminLoginResponseDTO {
-
+public class UserResponseDTO {
+    private long id;
     private String email;
     private String userName;
     private String role;
@@ -13,18 +13,25 @@ public class AdminLoginResponseDTO {
     private LocalDateTime updatedAt;
     private boolean isSuspended;
 
-    public AdminLoginResponseDTO(String email, String userName, String role, int phoneNumber, LocalDateTime lastLogin, LocalDateTime updatedAt, LocalDateTime createdAt, boolean isSuspended) {
+    public UserResponseDTO(long id, String email, String userName, String role, int phoneNumber, LocalDateTime lastLogin, LocalDateTime updatedAt, LocalDateTime createdAt, boolean isSuspended) {
+        this.id = id;
         this.email = email;
         this.userName = userName;
         this.role = role;
         this.phoneNumber = phoneNumber;
+        this.isSuspended = isSuspended;
         this.lastLogin = lastLogin;
         this.updatedAt = updatedAt;
         this.createdAt = createdAt;
-        this.isSuspended = isSuspended;
     }
 
+    public long getId() {
+        return id;
+    }
 
+    public void setId(long id) {
+        this.id = id;
+    }
 
     public String getEmail() {
         return email;
@@ -71,7 +78,7 @@ public class AdminLoginResponseDTO {
     public boolean isSuspended() {
         return isSuspended;
     }
-    public void setSuspended(boolean isSuspended) {
+    public void setIsSuspended(boolean isSuspended) {
         this.isSuspended = isSuspended;
     }
 }

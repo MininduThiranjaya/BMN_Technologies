@@ -11,7 +11,7 @@ import { jwtDecode } from "jwt-decode";
 interface AuthContextType {
   token: string | null;
   isAuthenticated: boolean;
-  login: (token: string) => void;
+  login: (token: string, user?: any) => void;
   logout: () => void;
 }
 
@@ -48,13 +48,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setIsAuthenticated(checkTokenValidity(token));
   }, [token]);
 
-  const login = (newToken: string) => {
+  const login = (newToken: string, user: any) => {
     localStorage.setItem("accessToken", newToken);
+    localStorage.setItem("userId", user.toString());
     setToken(newToken); // Redirect to dashboard after login
   };
 
   const logout = () => {
-    localStorage.removeItem("accessToken");
+    localStorage.clear();
     setToken(null);
     setIsAuthenticated(false);
   };

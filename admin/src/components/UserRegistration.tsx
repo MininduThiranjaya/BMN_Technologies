@@ -9,6 +9,7 @@ export default function AdminUserRegistration() {
   const [formData, setFormData] = useState<FormData>({
     username: "",
     email: "",
+    role: "",
     password: "",
     confirmPassword: "",
     phoneNumber: "",
@@ -35,6 +36,14 @@ export default function AdminUserRegistration() {
       newErrors.email = "Email is required";
     } else if (!emailRegex.test(formData.email)) {
       newErrors.email = "Please enter a valid email address";
+    }
+
+    if (formData.role == "not_selected") {
+      newErrors.role = "Role is required";
+    }
+
+    if (formData.username.length < 3) {
+      newErrors.username = "Username must be at least 3 characters";
     }
 
     // Password validation
@@ -65,7 +74,7 @@ export default function AdminUserRegistration() {
     return newErrors;
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e: any) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
@@ -117,6 +126,7 @@ export default function AdminUserRegistration() {
       {
         userName: formData.username,
         email: formData.email,
+        role: formData.role,
         password: formData.password,
         phoneNumber: formData.phoneNumber,
       },
@@ -132,7 +142,8 @@ export default function AdminUserRegistration() {
       setFormData({
         username: "",
         email: "",
-        password: "",
+        role: "not_selected",
+        password: "Abcd@123",
         confirmPassword: "",
         phoneNumber: "",
       });
@@ -219,6 +230,35 @@ export default function AdminUserRegistration() {
                   </div>
                   {errors.email && (
                     <p className="mt-1 text-sm text-red-400">{errors.email}</p>
+                  )}
+                </div>
+
+                <div>
+                  <label
+                    htmlFor="role"
+                    className="block text-sm font-medium text-gray-700 mb-2"
+                  >
+                    User Role
+                  </label>
+
+                  <div className="relative">
+                    <select
+                      id="role"
+                      name="role"
+                      value={formData.role}
+                      onChange={handleInputChange}
+                      className={`w-full pl-4 pr-4 py-3 bg-white border ${
+                        errors.role ? "border-red-400" : "border-gray-300"
+                      } rounded-lg text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all`}
+                    >
+                      <option value="not_selected">Select user role</option>
+                      <option value="super_admin">Super Admin</option>
+                      <option value="admin">Admin</option>
+                    </select>
+                  </div>
+
+                  {errors.role && (
+                    <p className="mt-1 text-sm text-red-400">{errors.role}</p>
                   )}
                 </div>
 

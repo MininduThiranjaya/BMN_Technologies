@@ -1,6 +1,7 @@
 export interface FormData {
   username: string;
   email: string;
+  role: string;
   password: string;
   confirmPassword: string;
   phoneNumber: string;
@@ -9,6 +10,7 @@ export interface FormData {
 export interface FormErrors {
   username?: string;
   email?: string;
+  role?: string;
   password?: string;
   confirmPassword?: string;
   phoneNumber?: string;
