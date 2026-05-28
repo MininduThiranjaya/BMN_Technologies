@@ -1,7 +1,9 @@
 package lk.bmn_technologies.backend.services;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -9,7 +11,10 @@ import org.springframework.stereotype.Service;
 
 import lk.bmn_technologies.backend.dto.ApiResponseDTO;
 import lk.bmn_technologies.backend.dto.requestDTO.ForgetPassword_ChangePassword_DTO;
+import lk.bmn_technologies.backend.dto.responseDTO.UserResponseDTO;
 import lk.bmn_technologies.backend.model.AdminUserModel;
+import lk.bmn_technologies.backend.model.ProductModel;
+import lk.bmn_technologies.backend.model.UserContactModel;
 import lk.bmn_technologies.backend.repository.AdminUserRepository;
 
 @Service
@@ -34,22 +39,6 @@ public class AdminUserService {
         }
     }
 
-    // public ApiResponseDTO adminUserLoginService(AdminLoginDTO data) {
-
-    //     BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-    //     Optional<AdminUserModel> user = repo.getAdminUserByEmail(data.getEmail());
-    //     if (user.isPresent()) {
-    //         boolean isMatch = encoder.matches(data.getPassword(), user.get().getPassword());
-    //         if (user.get().getEmail().equals(data.getEmail()) && isMatch) {
-    //             return (new ApiResponseDTO(true, "Admin User login success", user));
-    //         } else {
-    //             return (new ApiResponseDTO(false, "Invalied credentials"));
-    //         }
-    //     } else {
-    //         return (new ApiResponseDTO(false, "Admin user not exsists"));
-    //     }
-    // }
-
     public ApiResponseDTO forgetPassword_changePassword_service(ForgetPassword_ChangePassword_DTO data) {
         Optional<AdminUserModel> user = repo.getAdminUserByEmail(data.getEmail());
         if(user.isEmpty()) {
@@ -70,4 +59,63 @@ public class AdminUserService {
         int isUpdated = repo.updateLastLoginTime(email, lastLogin);
         return isUpdated;
     }
+
+    public List<UserResponseDTO> getAllUsers() {
+        return repo.findAll()
+            .stream()
+            .map(user -> new UserResponseDTO(
+                    user.getId(),
+                    user.getEmail(),
+                    user.getUserName(),
+                    user.getRole(),
+                    user.getPhoneNumber(),
+                    user.getLastLogin(),
+                    user.getUpdateAt(),
+                    user.getCreatedAt(),
+                    user.isSuspended()
+            ))
+            .collect(Collectors.toList());
+    }
+
+    public String changeRole(long id) {
+        AdminUserModel tempData = repo.getById(id);
+        if(tempData.getRole().equals("super_admin")) {
+            tempData.setRole("admin");
+            repo.save(tempData);
+            return "Role changed to admin";
+        }
+        else {
+            tempData.setRole("super_admin");
+            repo.save(tempData);
+            return "Role changed to super_admin";
+        }
+    }
+
+    public String setSuspention(long id) {
+        AdminUserModel tempData = repo.getById(id);
+        if(tempData.isSuspended()) {
+            tempData.setSuspended(false);
+            repo.save(tempData);
+            return "User unsuspended successfully";
+        }
+        else {
+            tempData.setSuspended(true);
+            repo.save(tempData);
+            return "User suspended successfully";
+        }
+    }
+
+    public ApiResponseDTO deleteUser(long id) {
+        Optional<AdminUserModel> userOpt = repo.findById(id);
+        if (userOpt.isEmpty()) {
+            return new ApiResponseDTO(false, "Admin user not found");
+        }
+        AdminUserModel user = userOpt.get();
+        repo.deleteById(id);
+        return new ApiResponseDTO(
+                true,
+                "Admin user deleted successfully",
+                user.getEmail()
+        );
+    }   
 }
