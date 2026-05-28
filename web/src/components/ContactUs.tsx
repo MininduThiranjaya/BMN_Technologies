@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { User, Phone, Mail, MessageSquare, Send } from "lucide-react";
-import type { FormErrors } from "../types/Form";
+import type { FormErrors } from "../interfaces/Form";
 
 import axios from "axios";
 import { endpoints } from "../api";

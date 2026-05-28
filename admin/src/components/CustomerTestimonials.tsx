@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { User, Mail, Lock, Phone, Shield, Eye, EyeOff } from "lucide-react";
+import { useEffect, useState } from "react";
+import { User } from "lucide-react";
 import { toast } from "react-toastify";
 import axios from "axios";
 import { endpoints } from "../api";
@@ -8,7 +8,7 @@ import { Testimonial } from "../interfaces/Testimonial";
 export default function CustomerTestimonials() {
   const [userTestimonial, setUserTestimonial] = useState<Testimonial[]>([]);
 
-  const fetchUserIssuesInform = async () => {
+  const fetchUserTestimonial = async () => {
     const token = localStorage.getItem("accessToken");
     if (!token) {
       console.error("No token found");
@@ -34,7 +34,7 @@ export default function CustomerTestimonials() {
   };
 
   useEffect(() => {
-    fetchUserIssuesInform();
+    fetchUserTestimonial();
   }, []);
 
   const makeTestimonialEnableDisable = async (id: number) => {
@@ -54,7 +54,7 @@ export default function CustomerTestimonials() {
       .then((res) => {
         console.log(res);
         toast.success("Changing status success...");
-        fetchUserIssuesInform();
+        fetchUserTestimonial();
       })
       .catch((error) => {
         console.log(error);

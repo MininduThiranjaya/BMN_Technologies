@@ -19,6 +19,7 @@ public class ProjectModel {
     private String projectId;
     private String projectName;
     private String personName;
+    private String province;
     private String location;
     private String projectDescription;
     private String category;
@@ -56,6 +57,14 @@ public class ProjectModel {
 
     public void setPersonName(String personName) {
         this.personName = personName;
+    }
+
+    public String getProvince() {
+        return province;
+    }
+
+    public void setProvince(String province) {
+        this.province = province;
     }
 
     public String getLocation() {

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import type { ProjectFilter, ProjectItemType } from "../types/Project";
+import type { ProjectFilter, ProjectItemType } from "../interfaces/Project";
 import { endpoints } from "../api";
 import axios from "axios";
 import { X, ChevronLeft, ChevronRight, Folder, User, Tags, Calendar, MapPin, FileText } from "lucide-react";
@@ -16,7 +16,7 @@ function ProjectShowcase() {
     const [isOpen, setIsOpen] = useState(true)
     const [filters, setFilters] = useState<ProjectFilter>({
         category: 'all',
-        location: null,
+        province: null,
         projectMinDate: null,
         projectMaxDate: null,
     })
@@ -71,7 +71,8 @@ function ProjectShowcase() {
             setSubmitFilter(false)
         }
 
-        if(!submitFilter && filters.category == 'all') {
+        if(!submitFilter && filters.category == 'all' && (filters.province == null || filters.province == 'all') && filters.projectMinDate == null && filters.projectMaxDate == null) {
+            console.log(filters.projectMinDate)
             fetchAllProducts();
         }
     }, [submitFilter]);
@@ -127,6 +128,31 @@ function ProjectShowcase() {
         return selectedItem.imageUrl[currentImageIndex];
     };
 
+    const getProvinceType = (value : String) => {
+        switch (value) {
+            case "central":
+                return "Central Province";
+            case "eastern":
+                return "Eastern Province";
+            case "northern":
+                return "Northern Province";
+            case "north_central":
+                return "North Central Province";
+            case "north_western":
+                return "North Western Province";
+            case "sabaragamuwa":
+                return "Sabaragamuwa Province";
+            case "southern":
+                return "Southern Province";
+            case "uva":
+                return "Uva Province";
+            case "western":
+                return "Western Province";
+            default:
+                return "All Provinces";
+        }
+    };
+
 
     return (
         <div className="w-full h-full p-3 md:p-5 overflow-y-scroll scrollbar-hide">
@@ -161,8 +187,8 @@ function ProjectShowcase() {
                                 </select>
 
                                 <select
-                                    value={filters.location || ""}
-                                    onChange={(e) => setFilters({ ...filters, location: e.target.value })}
+                                    value={filters.province || ""}
+                                    onChange={(e) => setFilters({ ...filters, province: e.target.value })}
                                     className="w-full md:w-64 px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 text-gray-700"
                                 >   
                                     {provinces.map((item, index) => (
@@ -172,19 +198,36 @@ function ProjectShowcase() {
                                     ))}
                                 </select>
 
-                                <input
-                                    type="date"
-                                    value={filters.projectMinDate || ""}
-                                    onChange={(e) => setFilters({...filters, projectMinDate: e.target.value})}
-                                    className="border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-400 w-full md:w-64"
-                                />
+                                <div className="relative w-full md:w-64">
+    <input
+        type="date"
+        value={filters.projectMinDate || ""}
+        onChange={(e) =>
+            setFilters({ ...filters, projectMinDate: e.target.value })
+        }
+        className="peer w-full border border-gray-300 rounded-md px-3 pt-5 pb-2 focus:ring-2 focus:ring-blue-400"
+    />
 
-                                <input
-                                    type="date"
-                                    value={filters.projectMaxDate || ""}
-                                    onChange={(e) => setFilters({...filters, projectMaxDate: e.target.value})}
-                                    className="border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-400 w-full md:w-64"
-                                />
+    <label className="absolute left-3 top-1 text-xs text-gray-900 transition-all
+        peer-focus:text-blue-500">
+        Min Date
+    </label>
+</div>
+
+                                <div className="relative w-full md:w-64">
+    <input
+        type="date"
+        value={filters.projectMaxDate || ""}
+        onChange={(e) =>
+            setFilters({ ...filters, projectMaxDate: e.target.value })
+        }
+        className="peer w-full border border-gray-300 rounded-md px-3 pt-5 pb-2 focus:ring-2 focus:ring-blue-400"
+    />
+
+    <label className="absolute left-3 top-1 text-xs text-gray-900 transition-all peer-focus:text-blue-500">
+        Max Date
+    </label>
+</div>
 
                                 <div className="w-3/4 md:w-2/3 flex flex-row justify-between md:mt-5">
                                     <button
@@ -196,7 +239,7 @@ function ProjectShowcase() {
                                     <button
                                         onClick={() => {setFilters({
                                             category: 'all',
-                                            location: null,
+                                            province: null,
                                             projectMinDate: null,
                                             projectMaxDate: null,
                                         })}}
@@ -344,7 +387,7 @@ function ProjectShowcase() {
                                         <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wide">Location</h3>
                                         <div className="mt-1 flex items-center">
                                             <MapPin className="h-5 w-5 text-gray-400 mr-2" />
-                                            <p className="text-gray-900 font-semibold">{selectedItem.location || 'N/A'}</p>
+                                            <p className="text-gray-900 font-semibold">{getProvinceType(selectedItem.province) || 'N/A'}</p>
                                         </div>
                                     </div>
 

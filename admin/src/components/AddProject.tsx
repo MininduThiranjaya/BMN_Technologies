@@ -19,6 +19,7 @@ import {
   AddProjectProps,
   FormDataType,
   ImageType,
+  ProjectImages,
   ProjectImage
 } from "../interfaces/Project_Interfaces";
 import { endpoints } from "../api";
@@ -47,23 +48,78 @@ export default function AddProject({
     projectId: existFormData?.projectId,
     projectName: existFormData?.personName,
     personName: existFormData?.personName,
+    province: existFormData?.province,
     location: existFormData?.location,
     projectDescription: existFormData?.projectDescription,
     category: existFormData?.category,
     projectDate: existFormData?.projectDate,
   });
 
+  const provinces = [
+        { type: "All Provinces", value: "all" },
+        { type: "Central Province", value: "central" },
+        { type: "Eastern Province", value: "eastern" },
+        { type: "Northern Province", value: "northern" },
+        { type: "North Central Province", value: "north_central" },
+        { type: "North Western Province", value: "north_western" },
+        { type: "Sabaragamuwa Province", value: "sabaragamuwa" },
+        { type: "Southern Province", value: "southern" },
+        { type: "Uva Province", value: "uva" },
+        { type: "Western Province", value: "western" }
+    ];
+
   const [mainThumbnail, setMainThumbnail] = useState<ImageType>({
+    id: existFormData?.imageUrl[0]
+      ? existFormData?.imageUrl[0].id
+      : null,
     file: null,
-    preview: existFormData?.imageUrl[0] ? existFormData.imageUrl[0].imageUrl : null,
+    preview: existFormData?.imageUrl[0]
+      ? existFormData.imageUrl[0].imageUrl
+      : null,
     name: null,
   });
 
   const [additionalImages, setAdditionalImages] = useState<ImageType[]>([
-    { file: null, preview: existFormData?.imageUrl[1] ? existFormData.imageUrl[1].imageUrl : null, name: null },
-    { file: null, preview: existFormData?.imageUrl[2] ? existFormData.imageUrl[2].imageUrl : null, name: null },
-    { file: null, preview: existFormData?.imageUrl[3] ? existFormData.imageUrl[3].imageUrl : null, name: null },
-    { file: null, preview: existFormData?.imageUrl[4] ? existFormData.imageUrl[4].imageUrl : null, name: null },
+    {
+      id: existFormData?.imageUrl[1]
+      ? existFormData?.imageUrl[1].id
+      : null,
+      file: null,
+      preview: existFormData?.imageUrl[1]
+        ? existFormData.imageUrl[1].imageUrl
+        : null,
+      name: null,
+    },
+    {
+      id: existFormData?.imageUrl[2]
+      ? existFormData?.imageUrl[2].id
+      : null,
+      file: null,
+      preview: existFormData?.imageUrl[2]
+        ? existFormData.imageUrl[2].imageUrl
+        : null,
+      name: null,
+    },
+    {
+      id: existFormData?.imageUrl[3]
+      ? existFormData?.imageUrl[3].id
+      : null,
+      file: null,
+      preview: existFormData?.imageUrl[3]
+        ? existFormData.imageUrl[3].imageUrl
+        : null,
+      name: null,
+    },
+    {
+      id: existFormData?.imageUrl[4]
+      ? existFormData?.imageUrl[4].id
+      : null,
+      file: null,
+      preview: existFormData?.imageUrl[4]
+        ? existFormData.imageUrl[4].imageUrl
+        : null,
+      name: null,
+    },
   ]);
   const [dragOver, setDragOver] = useState(false);
   const [previewMode, setPreviewMode] = useState(false);
@@ -79,8 +135,10 @@ export default function AddProject({
   const handleMainThumbnailUpload = (file: any) => {
     if (file && file.type.startsWith("image/")) {
       const reader = new FileReader();
+      const id = mainThumbnail.id
       reader.onload = (e: any) => {
         setMainThumbnail({
+          id: id,
           file: file,
           preview: e.target?.result,
           name: file.name,
@@ -96,6 +154,7 @@ export default function AddProject({
       reader.onload = (e: any) => {
         const newImages = [...additionalImages];
         newImages[index] = {
+          id: newImages[index].id,
           file: file,
           preview: e.target?.result,
           name: file.name,
@@ -108,12 +167,13 @@ export default function AddProject({
 
   const removeImage = (index: any) => {
     const newImages = [...additionalImages];
-    newImages[index] = { file: null, preview: null, name: null };
+    newImages[index] = { id:newImages[index].id, file: null, preview: null, name: null };
     setAdditionalImages(newImages);
   };
 
   const removeMainThumbnail = () => {
-    setMainThumbnail({ file: null, preview: null, name: null });
+    const id = mainThumbnail.id
+    setMainThumbnail({ id:id, file: null, preview: null, name: null });
   };
 
   const handleDrop = (e: any, callback: any, index: number) => {
@@ -139,8 +199,66 @@ export default function AddProject({
     setDragOver(false);
   };
 
-  const handleSubmit = async (e: any) => {
-    e.preventDefault();
+  const handleEditSubmit = async () => {
+    if (mainThumbnail?.preview) {
+      setIsLoading(true);
+      const allImages: ImageType[] = [...(mainThumbnail.file ? [mainThumbnail] : []), ...additionalImages.filter((img) => img.file !== null)];
+      const compressedImages = (
+        await Promise.all(
+          allImages.map(async (img) => {
+            if (img.file instanceof File && img.name && img.preview) {
+              const compressed = await imageCompression(img.file, options);
+              return { id: img.id, file: compressed };
+            }
+            return { id: img.id, file: null };
+          })
+        )
+      );
+      console.log(compressedImages);
+      uploadEditImage(compressedImages);
+    } else {
+      toast.error("No Main Thumbnail Selected...");
+    }
+  }
+
+  const uploadEditImage = async (allImages: any) => {
+    const imageUrl: ProjectImages[] = [];
+
+    try {
+      const uploadPromises = allImages.map(async (img:any) => {
+        const tempImage = new FormData();
+        tempImage.append("file", img.file);
+        tempImage.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
+        tempImage.append("folder", "bmn_technologies/products");
+
+        const res = await axios.post(CLOUDINARY_UPLOAD_URL, tempImage, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
+
+        const data = res.data;
+        return {id: img.id, imageUrl: data.secure_url};
+      });
+
+      const editedImages = await Promise.all(uploadPromises);
+      imageUrl.push(...editedImages.map((img) => ({ id: img.id, imageUrl: img.imageUrl })));
+    } catch (error) {
+      console.error("Image upload failed:", error);
+      toast.error("Image upload failed.");
+    } finally {
+      setIsLoading(false);
+      const updatedFormData = {
+        ...formData,
+        imageUrl,
+      };
+      console.log("All Uploaded URLs:", updatedFormData);
+      addProjectIntoDatabase(updatedFormData);
+      handleClose();
+    }
+  };
+
+  const handleSubmit = async () => {
     if (mainThumbnail?.file && mainThumbnail?.name && mainThumbnail?.preview) {
       setIsLoading(true);
       const allImages: ImageType[] = [mainThumbnail, ...additionalImages];
@@ -156,6 +274,17 @@ export default function AddProject({
       ).filter((img): img is File => img !== null);
       // console.log(compressedImages);
       uploadImage(compressedImages);
+    } else if (mainThumbnail?.preview) {
+      const allExistImages = [mainThumbnail, ...additionalImages]
+        .map((img) => img.preview)
+        .filter((url) => url !== null);
+      setIsLoading(false);
+      const updatedFormData = {
+        ...formData,
+        allExistImages
+      };
+      addProjectIntoDatabase(updatedFormData);
+      handleClose();
     } else {
       toast.error("No Main Thumbnail Selected...");
     }
@@ -202,7 +331,28 @@ export default function AddProject({
     try {
       const token = localStorage.getItem("accessToken");
       console.log(updatedFormData);
-      axios
+      if(type == 'Edit') {
+        axios
+        .put(endpoints.project.edit.replace(
+          ":projectId",
+          String(existFormData?.id ?? "")),
+          updatedFormData,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          })
+          .then((response) => {
+            console.log("Project edited successfully:", response.data);
+            onSuccess();
+            toast.success("Project edited successfully!");
+          })
+          .catch((error) => {
+            console.error("Error editing Project:", error);
+            toast.error("Failed to edit Project. Please try again.");
+          });
+      } else {
+        axios
         .post(endpoints.project.add, updatedFormData, {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -217,9 +367,10 @@ export default function AddProject({
           console.error("Error adding Project:", error);
           toast.error("Failed to add Project. Please try again.");
         });
+      }
     } catch (error) {
-      console.error("Error adding Project to database:", error);
-      toast.error("Failed to add Project. Please try again.");
+      console.error("Error adding/editing Project to database:", error);
+      toast.error("Failed to add/edit Project. Please try again.");
     }
   };
 
@@ -233,17 +384,18 @@ export default function AddProject({
       projectId: "",
       projectName: "",
       personName: "",
+      province: "",
       location: "",
       projectDescription: "",
       category: "",
       projectDate: "",
     });
-    setMainThumbnail({ file: null, preview: null, name: null });
+    setMainThumbnail({ id: null, file: null, preview: null, name: null });
     setAdditionalImages([
-      { file: null, preview: null, name: null },
-      { file: null, preview: null, name: null },
-      { file: null, preview: null, name: null },
-      { file: null, preview: null, name: null },
+      { id: null, file: null, preview: null, name: null },
+      { id: null, file: null, preview: null, name: null },
+      { id: null, file: null, preview: null, name: null },
+      { id: null, file: null, preview: null, name: null },
     ]);
     setPreviewMode(false);
     onClose();
@@ -437,6 +589,24 @@ export default function AddProject({
                         required
                       />
                     </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Province
+                    </label>
+                    <select
+                      name="province"
+                      value={formData.province ?? ""}
+                      onChange={handleInputChange}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                    > 
+                      {
+                        provinces.map((province, key) => (
+                          <option key={key} value={province.value}>{province.type}</option>
+                        ))
+                      }
+                    </select>
                   </div>
 
                   <div>
@@ -640,12 +810,17 @@ export default function AddProject({
             <button
               type="button"
               className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+              onClick={handleClose}
             >
               Cancel
             </button>
             <button
               type="submit"
-              onClick={handleSubmit}
+              onClick={(e) => {
+                  e.preventDefault();
+                  type != "Edit" ? handleSubmit() : handleEditSubmit();
+                }
+              }
               className="flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
             >
               <Save className="w-4 h-4 mr-2" />

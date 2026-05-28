@@ -4,14 +4,14 @@ import java.sql.Date;
 
 public class ProjectFilterDTO {
     private String category;
-    private String location;
+    private String province;
     private Date projectMinDate;
-    private Date projectMaxnDate;
+    private Date projectMaxDate;
 
-    public ProjectFilterDTO(String category, String location, Date projectMaxnDate, Date projectMinDate) {
+    public ProjectFilterDTO(String category, String province, Date projectMaxDate, Date projectMinDate) {
         this.category = category;
-        this.location = location;
-        this.projectMaxnDate = projectMaxnDate;
+        this.province = province;
+        this.projectMaxDate = projectMaxDate;
         this.projectMinDate = projectMinDate;
     }
 
@@ -23,12 +23,12 @@ public class ProjectFilterDTO {
         this.category = category;
     }
 
-    public String getLocation() {
-        return location;
+    public String getProvince() {
+        return province;
     }
 
-    public void setLocation(String location) {
-        this.location = location;
+    public void setProvince(String province) {
+        this.province = province;
     }
 
     public Date getProjectMinDate() {
@@ -39,11 +39,11 @@ public class ProjectFilterDTO {
         this.projectMinDate = projectMinDate;
     }
 
-    public Date getProjectMaxnDate() {
-        return projectMaxnDate;
+    public Date getProjectMaxDate() {
+        return projectMaxDate;
     }
 
-    public void setProjectMaxnDate(Date projectMaxnDate) {
-        this.projectMaxnDate = projectMaxnDate;
+    public void setProjectMaxDate(Date projectMaxDate) {
+        this.projectMaxDate = projectMaxDate;
     }
 }

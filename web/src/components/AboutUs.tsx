@@ -14,8 +14,8 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { endpoints } from "../api";
-import type { Testimonial } from "../types/Testimonial";
-import type { FormErrors } from "../types/Form";
+import type { Testimonial } from "../interfaces/Testimonial";
+import type { FormErrors } from "../interfaces/Form";
 
 function AboutUs() {
     const [activeIndex, setActiveIndex] = useState(0);
@@ -32,6 +32,7 @@ function AboutUs() {
         testimonial: '',
         rating: 5
     });
+    const [animKey, setAnimKey] = useState(0);
 
     useEffect(() => {
         function getTestimonialData() {
@@ -70,12 +71,14 @@ function AboutUs() {
             (prevIndex) =>
                 (prevIndex - 1 + testimonialData.length) % testimonialData.length
         );
+        setAnimKey((prev) => prev + 1);
     };
 
     const handleNext = () => {
         setIsAutoPlaying(false);
         setSlideDirection("next");
         setActiveIndex((prevIndex) => (prevIndex + 1) % testimonialData.length);
+        setAnimKey((prev) => prev + 1);
     };
 
     const customerRating = () => {
@@ -434,6 +437,7 @@ function AboutUs() {
                                 key={activeIndex}
                             >
                                 <div
+                                    key={animKey}
                                     className={`bg-white p-6 rounded-lg shadow-md flex flex-col w-full h-full
                                     transform transition-all duration-700
                                     ${slideDirection === "next"

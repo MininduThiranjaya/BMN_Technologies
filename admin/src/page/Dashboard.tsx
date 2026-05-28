@@ -3,19 +3,14 @@ import {
   Search,
   Bell,
   User,
-  ShoppingCart,
-  Users,
   Package,
-  BarChart3,
-  Settings,
   Home,
-  DollarSign,
   LogOut,
   Edit3,
   X,
   Folder,
   AlertTriangle,
-  ThumbsUp
+  ThumbsUp,
 } from "lucide-react";
 import { useAuth } from "../context/AuthProvider";
 import { toast } from "react-toastify";
@@ -34,11 +29,10 @@ import CustomerComplains from "../components/CustomerComplains";
 import CustomerTestimonials from "../components/CustomerTestimonials";
 
 interface NotificationType {
-  id: number | null | undefined,
-  text: string | null | undefined,
-  time: string | null | undefined,
-  type: string | null | undefined,
-  read: boolean | null | undefined,
+  id: number | null | undefined;
+  issue: string | null | undefined;
+  createdAt: Date;
+  userName: string | null | undefined;
 }
 
 const Dashboard: React.FC = () => {
@@ -124,7 +118,7 @@ const Dashboard: React.FC = () => {
           } else {
             return { ...data };
           }
-        })
+        }),
       );
       setStats(updatedStats);
     } catch (err) {
@@ -139,18 +133,20 @@ const Dashboard: React.FC = () => {
       return;
     }
     try {
-      await axios.get(endpoints.contactUs.getIssues, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
+      await axios
+        .get(endpoints.contactUs.getIssues, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
         .then((res: any) => {
-          setUserIssues(res.data)
-          console.log(res)
+          setUserIssues(res.data);
+          setNotifications(res.data.length);
+          console.log(res);
         })
         .catch((err) => {
-          console.log(err)
-        })
+          console.log(err);
+        });
     } catch (err) {
       console.error("Failed to fetch count details", err);
     }
@@ -191,12 +187,18 @@ const Dashboard: React.FC = () => {
 
     fetchUser();
     fetchCountDetails();
-    fetchUserIssuesInform()
+    fetchUserIssuesInform();
   }, []);
 
   if (!adminUser) return <p>Loading...</p>;
 
-  const notificationItems: NotificationType[] = [];
+  const notificationItems: NotificationType[] = userIssues.map((issue) => ({
+    id: issue.id,
+    issue: issue.issue,
+    userName: issue.userName,
+    createdAt: new Date(issue.createdAt),
+    isAvailable: issue.isAvailable,
+  }));
 
   const handleNotificationClick = () => {
     setShowNotifications(!showNotifications);
@@ -215,34 +217,25 @@ const Dashboard: React.FC = () => {
     setShowAllNotifications(false);
   };
 
-  const getNotificationIcon = (type: any) => {
-    switch (type) {
-      case "order":
-        return <ShoppingCart className="w-4 h-4 text-blue-500" />;
-      case "payment":
-        return <DollarSign className="w-4 h-4 text-green-500" />;
-      case "support":
-        return <User className="w-4 h-4 text-orange-500" />;
-      case "user":
-        return <Users className="w-4 h-4 text-purple-500" />;
-      case "inventory":
-        return <Package className="w-4 h-4 text-red-500" />;
-      case "system":
-        return <Settings className="w-4 h-4 text-gray-500" />;
-      case "review":
-        return <BarChart3 className="w-4 h-4 text-indigo-500" />;
-      default:
-        return <Bell className="w-4 h-4 text-gray-500" />;
-    }
-  };
-
   const menuItems: MenuItem[] = [
     { icon: Home, label: "Dashboard", active: activeView === "Dashboard" },
     { icon: Package, label: "Products", active: activeView === "Products" },
     { icon: Folder, label: "Projects", active: activeView === "Projects" },
-    { icon: User, label: "User Registration", active: activeView === "User Registration" },
-    { icon: AlertTriangle, label: "Customer Complains", active: activeView === "Customer Complains" },
-    { icon: ThumbsUp, label: "Customer Testimonials", active: activeView === "Customer Testimonials" },
+    {
+      icon: User,
+      label: "User Registration",
+      active: activeView === "User Registration",
+    },
+    {
+      icon: AlertTriangle,
+      label: "Customer Complains",
+      active: activeView === "Customer Complains",
+    },
+    {
+      icon: ThumbsUp,
+      label: "Customer Testimonials",
+      active: activeView === "Customer Testimonials",
+    },
   ];
 
   const handleLogout = (): void => {
@@ -254,7 +247,6 @@ const Dashboard: React.FC = () => {
   const handleSaveProfile = (): void => {
     setShowEditProfile(false);
     setShowUserDropdown(false);
-    alert("Profile updated successfully!");
   };
 
   const handleInputChange = (field: keyof AdminUser, value: string): void => {
@@ -270,7 +262,6 @@ const Dashboard: React.FC = () => {
 
   const renderContent = (): JSX.Element => {
     switch (activeView) {
-
       case "Products":
         return <Products onSuccess={fetchCountDetails} />;
 
@@ -281,10 +272,10 @@ const Dashboard: React.FC = () => {
         return <AdminUserRegistration />;
 
       case "Customer Complains":
-        return <CustomerComplains />
+        return <CustomerComplains />;
 
       case "Customer Testimonials":
-        return <CustomerTestimonials />
+        return <CustomerTestimonials />;
 
       default:
         return (
@@ -322,10 +313,6 @@ const Dashboard: React.FC = () => {
                 <h3 className="text-lg font-semibold text-gray-800">
                   Customer Complain Notifications
                 </h3>
-                {/* <button className="flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
-                  <Plus className="w-4 h-4" />
-                  <span>New Sale</span>
-                </button> */}
               </div>
 
               <div className="overflow-x-auto">
@@ -350,35 +337,48 @@ const Dashboard: React.FC = () => {
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
-                    {userIssues ? (userIssues.map((item, index) => (
-                      <tr key={index}>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="flex items-center">
-                            <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center mr-3">
-                              <User className="w-4 h-4 text-gray-500" />
+                    {userIssues ? (
+                      userIssues.map((item, index) => (
+                        <tr key={index}>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div className="flex items-center">
+                              <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center mr-3">
+                                <User className="w-4 h-4 text-gray-500" />
+                              </div>
+                              <span className="text-sm font-medium text-gray-900">
+                                {item.userName}
+                              </span>
                             </div>
-                            <span className="text-sm font-medium text-gray-900">
-                              {item.userName}
-                            </span>
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                          {item.phoneNumber}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-green-600">
-                          {item.email}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {item.issue}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {item.createdAt}
-                        </td>
-                      </tr>
-                    ))) : (
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                            {item.phoneNumber}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-green-600">
+                            {item.email}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {item.issue}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {new Date(item.createdAt).toLocaleString("en-US", {
+                              year: "numeric",
+                              month: "2-digit",
+                              day: "2-digit",
+                              hour: "numeric",
+                              minute: "numeric",
+                              second: "numeric",
+                              hour12: true,
+                            })}
+                          </td>
+                        </tr>
+                      ))
+                    ) : (
                       <tr className="p-5">
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-center" colSpan={4}>
-                          No Sales is Available
+                        <td
+                          className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-center"
+                          colSpan={4}
+                        >
+                          No Customer Complain Available
                         </td>
                       </tr>
                     )}
@@ -405,10 +405,11 @@ const Dashboard: React.FC = () => {
             <button
               key={index}
               onClick={() => handleMenuClick(item.label)}
-              className={`w-full flex items-center px-6 py-3 text-sm font-medium transition-colors text-left ${item.active
-                ? "bg-blue-50 text-blue-700 border-r-2 border-blue-700"
-                : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-                }`}
+              className={`w-full flex items-center px-6 py-3 text-sm font-medium transition-colors text-left ${
+                item.active
+                  ? "bg-blue-50 text-blue-700 border-r-2 border-blue-700"
+                  : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+              }`}
             >
               <item.icon className="w-5 h-5 mr-3" />
               {item.label}
@@ -466,18 +467,23 @@ const Dashboard: React.FC = () => {
                           className="p-4 border-b hover:bg-gray-50"
                         >
                           <div className="flex items-start space-x-3">
-                            {getNotificationIcon(notification.type)}
+                            <User className="w-4 h-4 text-orange-500" />
                             <div className="flex-1">
                               <p className="text-sm text-gray-800">
-                                {notification.text}
+                                {notification.issue}
                               </p>
                               <p className="text-xs text-gray-500 mt-1">
-                                {notification.time}
+                                {new Date(
+                                  notification.createdAt,
+                                ).toLocaleString("en-GB", {
+                                  day: "2-digit",
+                                  month: "short",
+                                  year: "numeric",
+                                  hour: "2-digit",
+                                  minute: "2-digit",
+                                })}
                               </p>
                             </div>
-                            {!notification.read && (
-                              <div className="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
-                            )}
                           </div>
                         </div>
                       ))}
@@ -510,10 +516,6 @@ const Dashboard: React.FC = () => {
                         <h2 className="text-xl font-semibold text-gray-800">
                           All Notifications
                         </h2>
-                        <p className="text-sm text-gray-500 mt-1">
-                          {notificationItems.filter((n) => !n.read).length}{" "}
-                          unread notifications
-                        </p>
                       </div>
                       <button
                         onClick={handleCloseAllNotifications}
@@ -540,55 +542,39 @@ const Dashboard: React.FC = () => {
                       {notificationItems.map((notification) => (
                         <div
                           key={notification.id}
-                          className={`p-4 border-b hover:bg-gray-50 transition-colors ${!notification.read ? "bg-blue-50" : ""
-                            }`}
+                          className={`p-4 border-b hover:bg-gray-50 transition-colors bg-blue-50`}
                         >
                           <div className="flex items-start space-x-4">
                             <div className="flex-shrink-0 mt-1">
-                              {getNotificationIcon(notification.type)}
+                              <User className="w-4 h-4 text-orange-500" />
                             </div>
                             <div className="flex-1 min-w-0">
                               <div className="flex items-start justify-between">
                                 <div className="flex-1">
                                   <p
-                                    className={`text-sm ${!notification.read
-                                      ? "font-medium text-gray-900"
-                                      : "text-gray-800"
-                                      }`}
+                                    className={`text-sm font-medium text-gray-900`}
                                   >
-                                    {notification.text}
+                                    {notification.issue}
                                   </p>
                                   <div className="flex items-center mt-2 space-x-4">
                                     <p className="text-xs text-gray-500">
-                                      {notification.time}
+                                      {new Date(
+                                        notification.createdAt,
+                                      ).toLocaleString("en-GB", {
+                                        day: "2-digit",
+                                        month: "short",
+                                        year: "numeric",
+                                        hour: "2-digit",
+                                        minute: "2-digit",
+                                      })}
                                     </p>
                                     <span
-                                      className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${notification.type === "order"
-                                        ? "bg-blue-100 text-blue-800"
-                                        : notification.type === "payment"
-                                          ? "bg-green-100 text-green-800"
-                                          : notification.type === "support"
-                                            ? "bg-orange-100 text-orange-800"
-                                            : notification.type === "user"
-                                              ? "bg-purple-100 text-purple-800"
-                                              : notification.type === "inventory"
-                                                ? "bg-red-100 text-red-800"
-                                                : notification.type === "system"
-                                                  ? "bg-gray-100 text-gray-800"
-                                                  : notification.type === "review"
-                                                    ? "bg-indigo-100 text-indigo-800"
-                                                    : "bg-gray-100 text-gray-800"
-                                        }`}
+                                      className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-800`}
                                     >
-                                      {notification.type}
+                                      Support
                                     </span>
                                   </div>
                                 </div>
-                                {!notification.read && (
-                                  <div className="flex-shrink-0 ml-4">
-                                    <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                                  </div>
-                                )}
                               </div>
                             </div>
                           </div>
@@ -598,9 +584,6 @@ const Dashboard: React.FC = () => {
 
                     {/* Modal Footer */}
                     <div className="p-4 border-t bg-gray-50 flex justify-between items-center">
-                      <button className="text-sm text-blue-600 hover:text-blue-800 font-medium">
-                        Mark all as read
-                      </button>
                       <button
                         onClick={handleCloseAllNotifications}
                         className="px-4 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-900 transition-colors"
@@ -725,27 +708,12 @@ const Dashboard: React.FC = () => {
                   </label>
                   <input
                     type="email"
+                    disabled = {true}
                     value={adminUser.email}
                     onChange={(e) => handleInputChange("email", e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent cursor-not-allowed"
                   />
                 </div>
-
-                {/* <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Role
-                  </label>
-                  <select
-                    value={userDetails.role}
-                    onChange={(e) => handleInputChange("role", e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  >
-                    <option value="Super Admin">Super Admin</option>
-                    <option value="Admin">Admin</option>
-                    <option value="Manager">Manager</option>
-                    <option value="User">User</option>
-                  </select>
-                </div> */}
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">

@@ -6,7 +6,7 @@ import {
     ChevronLeft,
     ChevronRight
 } from "lucide-react";
-import type { ProductFilter, ProductItemType } from "../types/Product";
+import type { ProductFilter, ProductItemType } from "../interfaces/Product";
 
 function ProductShowcase() {
     // State variables
