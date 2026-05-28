@@ -10,6 +10,7 @@ import {
   formDataType,
   ImageType,
   ProductImage,
+  ProductImages,
 } from "../interfaces/Product_Interfaces";
 import { endpoints } from "../api";
 const options = {
@@ -42,6 +43,9 @@ export default function AddProduct({
   });
 
   const [mainThumbnail, setMainThumbnail] = useState<ImageType>({
+    id: existFormData?.imageUrl[0]
+      ? existFormData?.imageUrl[0].id
+      : null,
     file: null,
     preview: existFormData?.imageUrl[0]
       ? existFormData.imageUrl[0].imageUrl
@@ -51,6 +55,9 @@ export default function AddProduct({
 
   const [additionalImages, setAdditionalImages] = useState<ImageType[]>([
     {
+      id: existFormData?.imageUrl[1]
+      ? existFormData?.imageUrl[1].id
+      : null,
       file: null,
       preview: existFormData?.imageUrl[1]
         ? existFormData.imageUrl[1].imageUrl
@@ -58,6 +65,9 @@ export default function AddProduct({
       name: null,
     },
     {
+      id: existFormData?.imageUrl[2]
+      ? existFormData?.imageUrl[2].id
+      : null,
       file: null,
       preview: existFormData?.imageUrl[2]
         ? existFormData.imageUrl[2].imageUrl
@@ -65,6 +75,9 @@ export default function AddProduct({
       name: null,
     },
     {
+      id: existFormData?.imageUrl[3]
+      ? existFormData?.imageUrl[3].id
+      : null,
       file: null,
       preview: existFormData?.imageUrl[3]
         ? existFormData.imageUrl[3].imageUrl
@@ -72,6 +85,9 @@ export default function AddProduct({
       name: null,
     },
     {
+      id: existFormData?.imageUrl[4]
+      ? existFormData?.imageUrl[4].id
+      : null,
       file: null,
       preview: existFormData?.imageUrl[4]
         ? existFormData.imageUrl[4].imageUrl
@@ -93,8 +109,10 @@ export default function AddProduct({
   const handleMainThumbnailUpload = (file: any) => {
     if (file && file.type.startsWith("image/")) {
       const reader = new FileReader();
+      const id = mainThumbnail.id
       reader.onload = (e: any) => {
         setMainThumbnail({
+          id: id,
           file: file,
           preview: e.target?.result,
           name: file.name,
@@ -110,6 +128,7 @@ export default function AddProduct({
       reader.onload = (e: any) => {
         const newImages = [...additionalImages];
         newImages[index] = {
+          id: newImages[index].id,
           file: file,
           preview: e.target?.result,
           name: file.name,
@@ -122,12 +141,13 @@ export default function AddProduct({
 
   const removeImage = (index: any) => {
     const newImages = [...additionalImages];
-    newImages[index] = { file: null, preview: null, name: null };
+    newImages[index] = { id:newImages[index].id, file: null, preview: null, name: null };
     setAdditionalImages(newImages);
   };
 
   const removeMainThumbnail = () => {
-    setMainThumbnail({ file: null, preview: null, name: null });
+    const id = mainThumbnail.id
+    setMainThumbnail({ id:id, file: null, preview: null, name: null });
   };
 
   const handleDrop = (e: any, callback: any, index: number) => {
@@ -153,8 +173,66 @@ export default function AddProduct({
     setDragOver(false);
   };
 
-  const handleSubmit = async (e: any) => {
-    e.preventDefault();
+  const handleEditSubmit = async () => {
+    if (mainThumbnail?.preview) {
+      setIsLoading(true);
+      const allImages: ImageType[] = [...(mainThumbnail.file ? [mainThumbnail] : []), ...additionalImages.filter((img) => img.file !== null)];
+      const compressedImages = (
+        await Promise.all(
+          allImages.map(async (img) => {
+            if (img.file instanceof File && img.name && img.preview) {
+              const compressed = await imageCompression(img.file, options);
+              return { id: img.id, file: compressed };
+            }
+            return { id: img.id, file: null };
+          })
+        )
+      );
+      console.log(compressedImages);
+      uploadEditImage(compressedImages);
+    } else {
+      toast.error("No Main Thumbnail Selected...");
+    }
+  }
+
+  const uploadEditImage = async (allImages: any) => {
+    const imageUrl: ProductImages[] = [];
+
+    try {
+      const uploadPromises = allImages.map(async (img:any) => {
+        const tempImage = new FormData();
+        tempImage.append("file", img.file);
+        tempImage.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
+        tempImage.append("folder", "bmn_technologies/products");
+
+        const res = await axios.post(CLOUDINARY_UPLOAD_URL, tempImage, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
+
+        const data = res.data;
+        return {id: img.id, imageUrl: data.secure_url};
+      });
+
+      const editedImages = await Promise.all(uploadPromises);
+      imageUrl.push(...editedImages.map((img) => ({ id: img.id, imageUrl: img.imageUrl })));
+    } catch (error) {
+      console.error("Image upload failed:", error);
+      toast.error("Image upload failed.");
+    } finally {
+      setIsLoading(false);
+      const updatedFormData = {
+        ...formData,
+        imageUrl,
+      };
+      console.log("All Uploaded URLs:", updatedFormData);
+      addProductIntoDatabase(updatedFormData);
+      handleClose();
+    }
+  };
+
+  const handleSubmit = async () => {
     if (mainThumbnail?.file && mainThumbnail?.name && mainThumbnail?.preview) {
       setIsLoading(true);
       const allImages: ImageType[] = [mainThumbnail, ...additionalImages];
@@ -206,6 +284,7 @@ export default function AddProduct({
         ...formData,
         imageUrl,
       };
+      // console.log(updatedFormData);
       addProductIntoDatabase(updatedFormData);
       handleClose();
     }
@@ -216,7 +295,28 @@ export default function AddProduct({
     try {
       const token = localStorage.getItem("accessToken");
       console.log(updatedFormData);
-      axios
+      if(type == 'Edit') {
+        axios
+        .put(endpoints.product.edit.replace(
+          ":productId",
+          String(existFormData?.id ?? "")),
+          updatedFormData,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          })
+          .then((response) => {
+            console.log("Project edited successfully:", response.data);
+            onSuccess();
+            toast.success("Project edited successfully!");
+          })
+          .catch((error) => {
+            console.error("Error editing Project:", error);
+            toast.error("Failed to edit Project. Please try again.");
+          });
+      } else {
+        axios
         .post(endpoints.product.add, updatedFormData, {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -231,6 +331,7 @@ export default function AddProduct({
           console.error("Error adding product:", error);
           toast.error("Failed to add product. Please try again.");
         });
+      }
     } catch (error) {
       console.error("Error adding product to database:", error);
       toast.error("Failed to add product. Please try again.");
@@ -250,12 +351,12 @@ export default function AddProduct({
       productDescription: "",
       category: "",
     });
-    setMainThumbnail({ file: null, preview: null, name: null });
+    setMainThumbnail({ id: null, file: null, preview: null, name: null });
     setAdditionalImages([
-      { file: null, preview: null, name: null },
-      { file: null, preview: null, name: null },
-      { file: null, preview: null, name: null },
-      { file: null, preview: null, name: null },
+      { id: null, file: null, preview: null, name: null },
+      { id: null, file: null, preview: null, name: null },
+      { id: null, file: null, preview: null, name: null },
+      { id: null, file: null, preview: null, name: null },
     ]);
     setPreviewMode(false);
     onClose();
@@ -616,7 +717,8 @@ export default function AddProduct({
             <button
               type="submit"
               onClick={(e) => {
-                handleSubmit(e);
+                e.preventDefault();
+                type != "Edit" ? handleSubmit(): handleEditSubmit()
               }}
               className="flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
             >

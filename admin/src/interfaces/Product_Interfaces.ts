@@ -1,4 +1,5 @@
 export interface ImageType {
+  id: number | null
   file: File | null;
   preview: string | null | undefined;
   name: string | null;
@@ -28,9 +29,9 @@ export interface ProductImage {
   imageUrl: String;
 }
 
-interface ProductImages {
-  id: number;
-  imageUrl: string;
+export interface ProductImages {
+  id: number | null;
+  imageUrl: string | undefined;
 }
 
 export interface ProductDetailsProps {
