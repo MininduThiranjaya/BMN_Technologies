@@ -23,7 +23,7 @@ public class AdminUserDetails implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority("ROLE.USER"));
+        return List.of(new SimpleGrantedAuthority(adminUserModel.getRole()));
     }
 
     @Override
