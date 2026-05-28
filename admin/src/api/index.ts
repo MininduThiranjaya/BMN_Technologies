@@ -10,6 +10,7 @@ export const endpoints = {
   },
   product: {
     add: `${BACKEND_BASE_URL}auth/product/add`,
+    edit: `${BACKEND_BASE_URL}auth/product/edit/:productId`,
     count: `${BACKEND_BASE_URL}auth/product/count`,
     getAllProducts: `${BACKEND_BASE_URL}auth/product/get/all`,
     deleteProduct: `${BACKEND_BASE_URL}auth/product/delete-by-id/:productId`,
@@ -17,6 +18,7 @@ export const endpoints = {
   },
   project: {
     add: `${BACKEND_BASE_URL}auth/project/add`,
+    edit: `${BACKEND_BASE_URL}auth/project/edit/:projectId`,
     count: `${BACKEND_BASE_URL}auth/project/count`,
     getAllProjects: `${BACKEND_BASE_URL}auth/project/get/all`,
     deleteProject: `${BACKEND_BASE_URL}auth/project/delete-by-id/:projectId`,
