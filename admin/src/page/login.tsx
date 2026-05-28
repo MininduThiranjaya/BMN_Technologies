@@ -43,14 +43,21 @@ export default function LoginPage() {
     try {
       const res = await axios.post(endpoints.user.login, formData);
       if (res.data.success) {
-        login(res.data.token); // Assuming the token is returned in the response
+        login(res.data.token, res.data.user); // Assuming the token is returned in the response
         navigate("/dashboard");
         toast.success("Login Successful..."); // Redirect to dashboard after login
       }
     } catch (err) {
-      toast.error("Invalid Username or Password")
-      setSubmitStatus("error");
-      setErrors({ password: "Invalid username or password" });
+      const status = (err as any)?.response?.status;
+      if (status == 403) {
+        toast.error("Your account is suspended. Please contact support.");
+        setSubmitStatus("error");
+        setErrors({ password: "Your account is suspended. Please contact support." });
+      } else {
+        toast.error("Invalid Username or Password")
+        setSubmitStatus("error");
+        setErrors({ password: "Invalid username or password" });
+      }
     } finally {
       setSubmitStatus("idle");
     }
