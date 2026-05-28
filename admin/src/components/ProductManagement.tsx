@@ -58,7 +58,7 @@ const ProductManagement = ({
         .delete(
           endpoints.product.deleteProduct.replace(
             ":productId",
-            deleteConfirmation.id ?? ""
+            String(deleteConfirmation.id ?? "")
           ),
           {
             headers: {
