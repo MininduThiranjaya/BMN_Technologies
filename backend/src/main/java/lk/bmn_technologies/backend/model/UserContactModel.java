@@ -22,9 +22,10 @@ public class UserContactModel {
     private String phoneNumber;
     private String issue;
     private int isAvailable;
+    private int action;
     
 
-    public UserContactModel(LocalDateTime createdAt, String email, Long id, int isAvailable, String issue, String phoneNumber, String userName) {
+    public UserContactModel(LocalDateTime createdAt, String email, Long id, int isAvailable, String issue, String phoneNumber, String userName, int action) {
         this.createdAt = createdAt;
         this.email = email;
         this.id = id;
@@ -32,6 +33,7 @@ public class UserContactModel {
         this.issue = issue;
         this.phoneNumber = phoneNumber;
         this.userName = userName;
+        this.action = action;
     }
 
     public UserContactModel() {
@@ -85,11 +87,19 @@ public class UserContactModel {
         this.issue = issue;
     }
 
-    public int isIsAvailable() {
+    public int getIsIsAvailable() {
         return isAvailable;
     }
 
     public void setIsAvailable(int isAvailable) {
         this.isAvailable = isAvailable;
+    }
+
+    public int getAction() {
+        return action;
+    }
+
+    public void setAction(int action) {
+        this.action = action;
     }
 }

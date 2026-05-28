@@ -20,6 +20,7 @@ public class UserContactService {
     public ApiResponseDTO submitUserIssue(UserContactModel data) {
 
         data.setCreatedAt(LocalDateTime.now());
+        data.setAction(0);
         data.setIsAvailable(1);
         repo.save(data);
         return (new ApiResponseDTO(true, "Saved successfully"));
@@ -47,5 +48,19 @@ public class UserContactService {
 
     public long countUserContacts() {
         return repo.count();
+    }
+
+    public String changeAction(long id) {
+        UserContactModel tempData = repo.getById(id);
+        if(tempData.getAction() == 0) {
+            tempData.setAction(1);
+            repo.save(tempData);
+            return "Took an action";
+        }
+        else {
+            tempData.setAction(0);
+            repo.save(tempData);
+            return "Dint took an action";
+        }
     }
 }
