@@ -6,18 +6,22 @@ public class AdminLoginResponseDTO {
 
     private String email;
     private String userName;
+    private String role;
     private int phoneNumber;
     private LocalDateTime lastLogin;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private boolean isSuspended;
 
-    public AdminLoginResponseDTO(String email, String userName, int phoneNumber, LocalDateTime lastLogin, LocalDateTime updatedAt, LocalDateTime createdAt) {
+    public AdminLoginResponseDTO(String email, String userName, String role, int phoneNumber, LocalDateTime lastLogin, LocalDateTime updatedAt, LocalDateTime createdAt, boolean isSuspended) {
         this.email = email;
         this.userName = userName;
+        this.role = role;
         this.phoneNumber = phoneNumber;
         this.lastLogin = lastLogin;
         this.updatedAt = updatedAt;
         this.createdAt = createdAt;
+        this.isSuspended = isSuspended;
     }
 
 
@@ -57,5 +61,17 @@ public class AdminLoginResponseDTO {
     }
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+    public String getRole() {
+        return role;
+    }
+    public void setRole(String role) {
+        this.role = role;
+    }
+    public boolean isSuspended() {
+        return isSuspended;
+    }
+    public void setSuspended(boolean isSuspended) {
+        this.isSuspended = isSuspended;
     }
 }
