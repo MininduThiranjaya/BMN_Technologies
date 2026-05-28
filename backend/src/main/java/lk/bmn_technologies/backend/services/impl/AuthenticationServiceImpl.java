@@ -16,6 +16,8 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import lk.bmn_technologies.backend.model.AdminUserModel;
+import lk.bmn_technologies.backend.security.AdminUserDetails;
 import lk.bmn_technologies.backend.services.AuthenticationService;
 
 @Service
@@ -24,7 +26,12 @@ public class AuthenticationServiceImpl implements  AuthenticationService{
     @Override
     public UserDetails validateToken(String token) {
         String userName = extractUserName(token);
-        return userDetailsService.loadUserByUsername(userName);
+        UserDetails userDetails = userDetailsService.loadUserByUsername(userName);
+        AdminUserModel user = ((AdminUserDetails) userDetails).getAdminUserModel();
+        if (user.isSuspended()) {
+            throw new RuntimeException("User account is suspended");
+        }
+        return userDetails;
     }
 
     private String extractUserName(String token) {
