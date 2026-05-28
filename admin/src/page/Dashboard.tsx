@@ -2,7 +2,9 @@ import React, { JSX, useEffect, useState } from "react";
 import {
   Search,
   Bell,
+  Users,
   User,
+  UserPlus,
   Package,
   Home,
   LogOut,
@@ -27,6 +29,7 @@ import { endpoints } from "../api";
 import { UserIssue } from "../interfaces/Common_Interfaces";
 import CustomerComplains from "../components/CustomerComplains";
 import CustomerTestimonials from "../components/CustomerTestimonials";
+import AdminUserManagement from "../components/UserManagement";
 
 interface NotificationType {
   id: number | null | undefined;
@@ -87,10 +90,12 @@ const Dashboard: React.FC = () => {
   const [adminUser, setAdminUser] = useState({
     email: "",
     userName: "",
+    role: "",
     phoneNumber: "",
     lastLogin: "",
     createdAt: "",
     updatedAt: "",
+    isSuspended: ""
   });
 
   const fetchCountDetails = async () => {
@@ -168,16 +173,20 @@ const Dashboard: React.FC = () => {
           },
         });
 
-        if (res.data.success) {
+        if (res.data.success && res.data.object.suspended == false) {
           setAdminUser({
             email: res.data.object.email,
             userName: res.data.object.userName,
+            role: res.data.object.role,
             phoneNumber: res.data.object.phoneNumber,
             lastLogin: res.data.object.lastLogin,
             createdAt: res.data.object.createdAt,
             updatedAt: res.data.object.updateAt,
+            isSuspended: res.data.object.suspended,
           });
           console.log("User profile fetched successfully", res.data);
+        } else {
+          logout();
         }
       } catch (err) {
         console.error("Failed to fetch user profile", err);
@@ -221,11 +230,20 @@ const Dashboard: React.FC = () => {
     { icon: Home, label: "Dashboard", active: activeView === "Dashboard" },
     { icon: Package, label: "Products", active: activeView === "Products" },
     { icon: Folder, label: "Projects", active: activeView === "Projects" },
-    {
-      icon: User,
-      label: "User Registration",
-      active: activeView === "User Registration",
-    },
+    ...(adminUser.role === "super_admin"
+    ? [
+        {
+          icon: UserPlus,
+          label: "User Registration",
+          active: activeView === "User Registration",
+        },
+        {
+          icon: Users,
+          label: "User Management",
+          active: activeView === "User Management",
+        },
+      ]
+    : []),
     {
       icon: AlertTriangle,
       label: "Customer Complains",
@@ -269,7 +287,10 @@ const Dashboard: React.FC = () => {
         return <Projects onSuccess={fetchCountDetails} />;
 
       case "User Registration":
-        return <AdminUserRegistration />;
+        return adminUser.role === "super_admin" ? <AdminUserRegistration /> : <></>;
+      
+      case "User Management":
+        return adminUser.role === "super_admin" ? <AdminUserManagement /> : <></>;
 
       case "Customer Complains":
         return <CustomerComplains />;
