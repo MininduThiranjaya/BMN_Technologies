@@ -3,14 +3,12 @@ package lk.bmn_technologies.backend.services;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import lk.bmn_technologies.backend.dto.ApiResponseDTO;
 import lk.bmn_technologies.backend.dto.requestDTO.ProductFilterDTO;
-import lk.bmn_technologies.backend.dto.responseDTO.ProductDTO;
 import lk.bmn_technologies.backend.model.ProductImageModel;
 import lk.bmn_technologies.backend.model.ProductModel;
 import lk.bmn_technologies.backend.repository.ProductImageRepo;
@@ -38,24 +36,71 @@ public class ProductService {
         repo.save(data);
     }
 
-    public List<ProductDTO> getProduct(String category) {
+    public void editProduct(Long id, ProductModel data) {
 
-        String filter;
+        if(repo.existsById(id)) {
+            
+            Optional<ProductModel> existing = repo.findById(id);
+            ProductModel existingObject = existing.get();
 
-        filter = switch (category) {
-            case "solar-panels" -> "Sola Panels";
-            case "battery-storage" -> "Battery Storage";
-            case "smart-energy" -> "Smart Energy System";
-            default -> "Hybrid Inverters";
-        };
+            if (data.getProductId() != null) {
+                existingObject.setProductId(data.getProductId());
+            }
 
-        return repo.findAll().stream()
-            .filter((product) -> product.getCategory().equals(filter))
-            .map(ProductDTO::new)
-            .collect(Collectors.toList());
-    }
+            if (data.getProductName() != null) {
+                existingObject.setProductName(data.getProductName());
+            }
 
-    public List<ProductDTO> getFilteredProduct(ProductFilterDTO productFilter) {
+            if (data.getProductDescription() != null) {
+                existingObject.setProductDescription(data.getProductDescription());
+            }
+
+            if (data.getProductPrice() != null) {
+                existingObject.setProductPrice(data.getProductPrice());
+            }
+
+            if (data.getCategory() != null) {
+                existingObject.setCategory(data.getCategory());
+            }
+
+            // Images handling (replace strategy)
+            if (data.getImageUrl() != null) {
+
+                // remove old images
+                if (existingObject.getImageUrl() != null) {
+                    existingObject.getImageUrl().clear();
+                }
+
+                // add new images
+                for (ProductImageModel img : data.getImageUrl()) {
+                    img.setProduct(existingObject);
+                }
+
+                existingObject.setImageUrl(data.getImageUrl());
+            }
+
+            repo.save(existingObject);    
+        }
+    }   
+
+    // public List<ProductDTO> getProduct(String category) {
+
+    //     String filter;
+
+    //     filter = switch (category) {
+    //         case "solar-panels" -> "Sola Panels";
+    //         case "battery-storage" -> "Battery Storage";
+    //         case "smart-energy" -> "Smart Energy System";
+    //         default -> "Hybrid Inverters";
+    //     };
+
+    //     return repo.findAll().stream()
+    //         .filter((product) -> product.getCategory().equals(filter))
+    //         .map(ProductDTO::new)
+    //         .collect(Collectors.toList());
+    // }
+
+    public List<ProductModel> getFilteredProduct(ProductFilterDTO productFilter) {
 
         String filter;
 
@@ -66,7 +111,7 @@ public class ProductService {
             default -> "Hybrid Inverters";
         };
 
-        List<ProductDTO> filteredProductList = repo.getFilteredProducts(filter, productFilter.getMinPrice(), productFilter.getMaxPrice());
+        List<ProductModel> filteredProductList = repo.getFilteredProducts(filter, productFilter.getMinPrice(), productFilter.getMaxPrice());
 
         return filteredProductList;
     }

@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,6 +17,7 @@ import lk.bmn_technologies.backend.dto.ApiResponseDTO;
 import lk.bmn_technologies.backend.dto.requestDTO.ProductFilterDTO;
 import lk.bmn_technologies.backend.dto.responseDTO.ProductDTO;
 import lk.bmn_technologies.backend.model.ProductModel;
+import lk.bmn_technologies.backend.model.ProjectModel;
 import lk.bmn_technologies.backend.services.ProductService;
 
 
@@ -33,13 +35,18 @@ public class ProductController {
         service.addProduct(data);
     }
 
-    @GetMapping("/get/{category}")
-    public List<ProductDTO> getProductsFromDatabase(@PathVariable("category") String category) {
-        return service.getProduct(category);
+    @PutMapping("/edit/{id}")
+    public void editProductInDatabase(@PathVariable("id") long id, @RequestBody ProductModel data) {
+        service.editProduct(id, data);
     }
+
+    // @GetMapping("/get/{category}")
+    // public List<ProductDTO> getProductsFromDatabase(@PathVariable("category") String category) {
+    //     return service.getProduct(category);
+    // }
     
     @PostMapping("/get/filter")
-    public List<ProductDTO> getFilteredProductsFromDatabase(@RequestBody ProductFilterDTO filters) {
+    public List<ProductModel> getFilteredProductsFromDatabase(@RequestBody ProductFilterDTO filters) {
         return service.getFilteredProduct(filters);
     }
 
