@@ -3,16 +3,12 @@ package lk.bmn_technologies.backend.services;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import lk.bmn_technologies.backend.dto.ApiResponseDTO;
-import lk.bmn_technologies.backend.dto.requestDTO.ProductFilterDTO;
 import lk.bmn_technologies.backend.dto.requestDTO.ProjectFilterDTO;
-import lk.bmn_technologies.backend.dto.responseDTO.ProductDTO;
-import lk.bmn_technologies.backend.dto.responseDTO.ProjectDTO;
 import lk.bmn_technologies.backend.model.ProjectImageModel;
 import lk.bmn_technologies.backend.model.ProjectModel;
 import lk.bmn_technologies.backend.repository.ProjectImageRepo;
@@ -40,33 +36,93 @@ public class ProjectService {
         repo.save(data);
     }
 
-    public List<ProjectDTO> getProjects(String category) {
+    public void editProject(Long id, ProjectModel data) {
 
-        String filter;
+        if(repo.existsById(id)) {
+            
+            Optional<ProjectModel> existing = repo.findById(id);
+            ProjectModel existingObject = existing.get();
+            
+            if (data.getProjectId() != null) {
+                existingObject.setProjectId(data.getProjectId());
+            }
 
-        filter = switch (category) {
-            case "residential" -> "Residential Solar";
-            case "commercial" -> "Commercial Buildings";
-            default -> "Industrial Solutions";
-        };
+            if (data.getProjectName() != null) {
+                existingObject.setProjectName(data.getProjectName());
+            }
 
-        return repo.findAll().stream()
-            .filter(project -> project.getCategory().equals(filter))
-            .map(ProjectDTO::new)
-            .collect(Collectors.toList());
+            if (data.getPersonName() != null) {
+                existingObject.setPersonName(data.getPersonName());
+            }
+
+            if (data.getProvince() != null) {
+                existingObject.setProvince(data.getProvince());
+            }
+
+            if (data.getLocation() != null) {
+                existingObject.setLocation(data.getLocation());
+            }
+
+            if (data.getProjectDescription() != null) {
+                existingObject.setProjectDescription(data.getProjectDescription());
+            }
+
+            if (data.getCategory() != null) {
+                existingObject.setCategory(data.getCategory());
+            }
+
+            if (data.getProjectDate() != null) {
+                existingObject.setProjectDate(data.getProjectDate());
+            }
+
+            // Images handling (replace strategy)
+            if (data.getImageUrl() != null) {
+
+                // remove old images
+                if (existingObject.getImageUrl() != null) {
+                    existingObject.getImageUrl().clear();
+                }
+                
+                // add new images
+                for (ProjectImageModel img : data.getImageUrl()) {
+                    img.setProject(existingObject);
+                }
+
+                existingObject.setImageUrl(data.getImageUrl());
+            }
+
+            repo.save(existingObject);
+        }
     }
 
-    public List<ProjectDTO> getFilteredProject(ProjectFilterDTO projectFilter) {
+    // public List<ProjectDTO> getProjects(String category) {
+
+    //     String filter;
+
+    //     filter = switch (category) {
+    //         case "residential" -> "Residential Solar";
+    //         case "commercial" -> "Commercial Buildings";
+    //         default -> "Industrial Solutions";
+    //     };
+
+    //     return repo.findAll().stream()
+    //         .filter(project -> project.getCategory().equals(filter))
+    //         .map(ProjectDTO::new)
+    //         .collect(Collectors.toList());
+    // }
+
+    public List<ProjectModel> getFilteredProject(ProjectFilterDTO projectFilter) {
 
         String filter;
 
         filter = switch (projectFilter.getCategory()) {
+            case "all" -> "all";
             case "residential" -> "Residential Solar";
             case "commercial" -> "Commercial Buildings";
             default -> "Industrial Solutions";
         };
-
-        List<ProjectDTO> filteredProjectList = repo.getFilteredProjects(filter, projectFilter.getLocation(), projectFilter.getProjectMinDate(), projectFilter.getProjectMaxnDate());
+        System.out.println("Filter: " + projectFilter.getProvince());
+        List<ProjectModel> filteredProjectList = repo.getFilteredProjects(filter, projectFilter.getProvince(), projectFilter.getProjectMinDate(), projectFilter.getProjectMaxDate());
 
         return filteredProjectList;
     }
