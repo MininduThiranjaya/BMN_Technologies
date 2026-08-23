@@ -23,7 +23,6 @@ interface AuthProviderProps {
 
 interface JwtPayload {
   exp: number;
-  // add other fields if you want
 }
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {

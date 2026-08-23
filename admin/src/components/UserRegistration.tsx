@@ -1,10 +1,47 @@
-import React, { useState } from "react";
+import { useEffect, useState } from "react";
 import { User, Mail, Lock, Phone, Shield, Eye, EyeOff } from "lucide-react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { FormData, FormErrors } from "../interfaces/User_Interface"
+import { useAuth } from "../context/AuthProvider";
+import { useNavigate } from "react-router-dom";
+import { endpoints } from "../api";
 
-export default function AdminUserRegistration() {
+interface AdminUserRegistrationProps {
+  darkMode?: boolean;
+}
+
+export default function AdminUserRegistration({ darkMode = false }: AdminUserRegistrationProps) {
+
+  const navigate = useNavigate();
+  const { logout } = useAuth();
+
+  const fetchUser = async () => {
+    const token = localStorage.getItem("accessToken");
+    if (!token) {
+      return;
+    }
+    try {
+      const res = await axios.get(endpoints.user.dashboardUserProfile, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!res.data.success && !res.data.object.suspended == false) {
+        logout();
+        navigate("/");
+      }
+    } catch (err) {
+      logout(); // Ensure to log out if fetching fails
+      navigate("/");
+    }
+  };
+
+  useEffect(() => {
+    fetchUser();
+  },[]);
+
 
   const [formData, setFormData] = useState<FormData>({
     username: "",
@@ -19,6 +56,43 @@ export default function AdminUserRegistration() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Theme tokens — mirrors the Dashboard's theme pattern so this stays in sync visually
+  const theme = darkMode
+    ? {
+        panel: "bg-[#111827]",
+        panelBorder: "border-white/10",
+        innerPanel: "bg-[#0d1420]",
+        innerBorder: "border-white/10",
+        text: "text-white",
+        textSub: "text-gray-300",
+        textMuted: "text-gray-400",
+        inputBg: "bg-black/20",
+        inputBorder: "border-white/10",
+        inputBorderError: "border-red-500",
+        inputText: "text-white",
+        placeholder: "placeholder-gray-500",
+        iconColor: "text-gray-500",
+        iconHover: "hover:text-gray-300",
+        badgeBg: "bg-blue-500/10",
+      }
+    : {
+        panel: "bg-white",
+        panelBorder: "border-gray-200",
+        innerPanel: "bg-white",
+        innerBorder: "border-gray-200",
+        text: "text-gray-800",
+        textSub: "text-gray-700",
+        textMuted: "text-gray-600",
+        inputBg: "bg-white",
+        inputBorder: "border-gray-300",
+        inputBorderError: "border-red-400",
+        inputText: "text-gray-800",
+        placeholder: "placeholder-gray-400",
+        iconColor: "text-gray-400",
+        iconHover: "hover:text-gray-600",
+        badgeBg: "bg-blue-50",
+      };
 
   const validateForm = (): FormErrors => {
     const newErrors: FormErrors = {};
@@ -105,22 +179,6 @@ export default function AdminUserRegistration() {
 
     setIsSubmitting(true);
 
-    // Simulate API call
-    // setTimeout(() => {
-    //   console.log('Admin user registration data:', formData);
-    //   alert('Admin user registered successfully!');
-    //   setIsSubmitting(false);
-
-    //   // Reset form
-    //   setFormData({
-    //     username: '',
-    //     email: '',
-    //     password: '',
-    //     confirmPassword: '',
-    //     phoneNumber: ''
-    //   });
-    // }, 2000);
-
     const res = await axios.post(
       "http://localhost:8080/api/admin/auth/register",
       {
@@ -147,55 +205,62 @@ export default function AdminUserRegistration() {
         confirmPassword: "",
         phoneNumber: "",
       });
+      setIsSubmitting(false);
     } else {
       toast.error("Failed to register admin user");
       setErrors({ username: res.data.message });
+      setIsSubmitting(false)
     }
   };
 
   return (
     <div className="space-y-6">
-      <div className="bg-white rounded-lg shadow-sm border">
-        <div className="p-6 border-b">
-          <h3 className="text-xl font-semibold text-gray-800">
+      <div className={`${theme.panel} rounded-lg shadow-sm border ${theme.panelBorder} flex flex-col`}>
+        <div className={`p-6 border-b ${theme.panelBorder} shrink-0`}>
+          <h3 className={`text-xl font-semibold ${theme.text}`}>
             Admin User Registration
           </h3>
         </div>
-        <div className=" grid grid-flow-col-1 h-[30rem] overflow-y-scroll bg-white p-6">
-          <div className="flex flex-col items-center justify-start space-y-4">
-            <div className="w-1/2 bg-white rounded-lg shadow-lg border border-gray-200 p-8">
-              <div className="text-center mb-8">
-                <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-500 rounded-full mb-4">
-                  <Shield className="w-8 h-8 text-white" />
-                </div>
-                <h2 className="text-3xl font-bold text-gray-800 mb-2">
-                  Admin Registration
-                </h2>
-                <p className="text-gray-600">
-                  Create your administrator account
-                </p>
+        <div
+          className={`p-4 sm:p-8 ${theme.panel} flex flex-col items-center justify-start overflow-y-auto`}
+          style={{ maxHeight: "calc(100vh - 14rem)" }}
+        >
+          <div
+            className={`w-full max-w-2xl ${theme.innerPanel} rounded-xl shadow-lg border ${theme.innerBorder} p-6 sm:p-10`}
+          >
+            <div className="text-center mb-8">
+              <div className={`inline-flex items-center justify-center w-16 h-16 rounded-full mb-4`} style={{ background: "linear-gradient(135deg, #3b82f6, #2563eb)" }}>
+                <Shield className="w-8 h-8 text-white" />
               </div>
+              <h2 className={`text-2xl sm:text-3xl font-bold ${theme.text} mb-2`}>
+                Admin Registration
+              </h2>
+              <p className={`text-sm sm:text-base ${theme.textMuted}`}>
+                Create your administrator account
+              </p>
+            </div>
 
-              <div className="space-y-6">
+            <div className="space-y-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                 {/* Username Field */}
                 <div>
                   <label
                     htmlFor="username"
-                    className="block text-sm font-medium text-gray-700 mb-2"
+                    className={`block text-sm font-medium ${theme.textSub} mb-2`}
                   >
                     Username
                   </label>
                   <div className="relative">
-                    <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                    <User className={`absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 ${theme.iconColor}`} />
                     <input
                       type="text"
                       id="username"
                       name="username"
                       value={formData.username}
                       onChange={handleInputChange}
-                      className={`w-full pl-10 pr-4 py-3 bg-white border ${
-                        errors.username ? "border-red-400" : "border-gray-300"
-                      } rounded-lg text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all`}
+                      className={`w-full pl-10 pr-4 py-3 ${theme.inputBg} border ${
+                        errors.username ? theme.inputBorderError : theme.inputBorder
+                      } rounded-lg ${theme.inputText} ${theme.placeholder} focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all`}
                       placeholder="Enter username"
                     />
                   </div>
@@ -210,21 +275,21 @@ export default function AdminUserRegistration() {
                 <div>
                   <label
                     htmlFor="email"
-                    className="block text-sm font-medium text-gray-700 mb-2"
+                    className={`block text-sm font-medium ${theme.textSub} mb-2`}
                   >
                     Email Address
                   </label>
                   <div className="relative">
-                    <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                    <Mail className={`absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 ${theme.iconColor}`} />
                     <input
                       type="email"
                       id="email"
                       name="email"
                       value={formData.email}
                       onChange={handleInputChange}
-                      className={`w-full pl-10 pr-4 py-3 bg-white border ${
-                        errors.email ? "border-red-400" : "border-gray-300"
-                      } rounded-lg text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all`}
+                      className={`w-full pl-10 pr-4 py-3 ${theme.inputBg} border ${
+                        errors.email ? theme.inputBorderError : theme.inputBorder
+                      } rounded-lg ${theme.inputText} ${theme.placeholder} focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all`}
                       placeholder="Enter email address"
                     />
                   </div>
@@ -232,61 +297,63 @@ export default function AdminUserRegistration() {
                     <p className="mt-1 text-sm text-red-400">{errors.email}</p>
                   )}
                 </div>
+              </div>
 
-                <div>
-                  <label
-                    htmlFor="role"
-                    className="block text-sm font-medium text-gray-700 mb-2"
+              <div>
+                <label
+                  htmlFor="role"
+                  className={`block text-sm font-medium ${theme.textSub} mb-2`}
+                >
+                  User Role
+                </label>
+
+                <div className="relative">
+                  <select
+                    id="role"
+                    name="role"
+                    value={formData.role}
+                    onChange={handleInputChange}
+                    className={`w-full pl-4 pr-4 py-3 ${theme.inputBg} border ${
+                      errors.role ? theme.inputBorderError : theme.inputBorder
+                    } rounded-lg ${theme.inputText} focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all`}
                   >
-                    User Role
-                  </label>
-
-                  <div className="relative">
-                    <select
-                      id="role"
-                      name="role"
-                      value={formData.role}
-                      onChange={handleInputChange}
-                      className={`w-full pl-4 pr-4 py-3 bg-white border ${
-                        errors.role ? "border-red-400" : "border-gray-300"
-                      } rounded-lg text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all`}
-                    >
-                      <option value="not_selected">Select user role</option>
-                      <option value="super_admin">Super Admin</option>
-                      <option value="admin">Admin</option>
-                    </select>
-                  </div>
-
-                  {errors.role && (
-                    <p className="mt-1 text-sm text-red-400">{errors.role}</p>
-                  )}
+                    <option value="not_selected">Select user role</option>
+                    <option value="super_admin">Super Admin</option>
+                    <option value="admin">Admin</option>
+                  </select>
                 </div>
 
+                {errors.role && (
+                  <p className="mt-1 text-sm text-red-400">{errors.role}</p>
+                )}
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                 {/* Password Field */}
                 <div>
                   <label
                     htmlFor="password"
-                    className="block text-sm font-medium text-gray-700 mb-2"
+                    className={`block text-sm font-medium ${theme.textSub} mb-2`}
                   >
                     Password
                   </label>
                   <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                    <Lock className={`absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 ${theme.iconColor}`} />
                     <input
                       type={showPassword ? "text" : "password"}
                       id="password"
                       name="password"
                       value={formData.password}
                       onChange={handleInputChange}
-                      className={`w-full pl-10 pr-12 py-3 bg-white border ${
-                        errors.password ? "border-red-400" : "border-gray-300"
-                      } rounded-lg text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all`}
+                      className={`w-full pl-10 pr-12 py-3 ${theme.inputBg} border ${
+                        errors.password ? theme.inputBorderError : theme.inputBorder
+                      } rounded-lg ${theme.inputText} ${theme.placeholder} focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all`}
                       placeholder="Enter password"
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                      className={`absolute right-3 top-1/2 transform -translate-y-1/2 ${theme.iconColor} ${theme.iconHover} transition-colors`}
                     >
                       {showPassword ? (
                         <EyeOff className="w-5 h-5" />
@@ -306,23 +373,23 @@ export default function AdminUserRegistration() {
                 <div>
                   <label
                     htmlFor="confirmPassword"
-                    className="block text-sm font-medium text-gray-700 mb-2"
+                    className={`block text-sm font-medium ${theme.textSub} mb-2`}
                   >
                     Confirm Password
                   </label>
                   <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                    <Lock className={`absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 ${theme.iconColor}`} />
                     <input
                       type={showConfirmPassword ? "text" : "password"}
                       id="confirmPassword"
                       name="confirmPassword"
                       value={formData.confirmPassword}
                       onChange={handleInputChange}
-                      className={`w-full pl-10 pr-12 py-3 bg-white border ${
+                      className={`w-full pl-10 pr-12 py-3 ${theme.inputBg} border ${
                         errors.confirmPassword
-                          ? "border-red-400"
-                          : "border-gray-300"
-                      } rounded-lg text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all`}
+                          ? theme.inputBorderError
+                          : theme.inputBorder
+                      } rounded-lg ${theme.inputText} ${theme.placeholder} focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all`}
                       placeholder="Confirm password"
                     />
                     <button
@@ -330,7 +397,7 @@ export default function AdminUserRegistration() {
                       onClick={() =>
                         setShowConfirmPassword(!showConfirmPassword)
                       }
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                      className={`absolute right-3 top-1/2 transform -translate-y-1/2 ${theme.iconColor} ${theme.iconHover} transition-colors`}
                     >
                       {showConfirmPassword ? (
                         <EyeOff className="w-5 h-5" />
@@ -345,55 +412,59 @@ export default function AdminUserRegistration() {
                     </p>
                   )}
                 </div>
-
-                {/* Phone Number Field */}
-                <div>
-                  <label
-                    htmlFor="phoneNumber"
-                    className="block text-sm font-medium text-gray-700 mb-2"
-                  >
-                    Phone Number
-                  </label>
-                  <div className="relative">
-                    <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-                    <input
-                      type="tel"
-                      id="phoneNumber"
-                      name="phoneNumber"
-                      value={formData.phoneNumber}
-                      onChange={handleInputChange}
-                      className={`w-full pl-10 pr-4 py-3 bg-white border ${
-                        errors.phoneNumber
-                          ? "border-red-400"
-                          : "border-gray-300"
-                      } rounded-lg text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all`}
-                      placeholder="Enter phone number"
-                    />
-                  </div>
-                  {errors.phoneNumber && (
-                    <p className="mt-1 text-sm text-red-400">
-                      {errors.phoneNumber}
-                    </p>
-                  )}
-                </div>
-
-                {/* Submit Button */}
-                <button
-                  type="button"
-                  onClick={handleSubmit}
-                  disabled={isSubmitting}
-                  className="w-full bg-blue-500 text-white font-semibold py-3 px-6 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
-                >
-                  {isSubmitting ? (
-                    <div className="flex items-center justify-center">
-                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
-                      Creating Account...
-                    </div>
-                  ) : (
-                    "Create Admin Account"
-                  )}
-                </button>
               </div>
+
+              {/* Phone Number Field */}
+              <div>
+                <label
+                  htmlFor="phoneNumber"
+                  className={`block text-sm font-medium ${theme.textSub} mb-2`}
+                >
+                  Phone Number
+                </label>
+                <div className="relative">
+                  <Phone className={`absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 ${theme.iconColor}`} />
+                  <input
+                    type="tel"
+                    id="phoneNumber"
+                    name="phoneNumber"
+                    value={formData.phoneNumber}
+                    onChange={handleInputChange}
+                    className={`w-full pl-10 pr-4 py-3 ${theme.inputBg} border ${
+                      errors.phoneNumber
+                        ? theme.inputBorderError
+                        : theme.inputBorder
+                    } rounded-lg ${theme.inputText} ${theme.placeholder} focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all`}
+                    placeholder="Enter phone number"
+                  />
+                </div>
+                {errors.phoneNumber && (
+                  <p className="mt-1 text-sm text-red-400">
+                    {errors.phoneNumber}
+                  </p>
+                )}
+              </div>
+
+              {/* Submit Button */}
+              <button
+                type="button"
+                onClick={handleSubmit}
+                disabled={isSubmitting}
+                className="w-full text-white font-semibold py-3.5 px-6 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 hover:opacity-90"
+                style={{
+                  background: "linear-gradient(135deg, #3b82f6, #2563eb)",
+                  boxShadow: "0 8px 24px rgba(59,130,246,0.25)",
+                }}
+              >
+                {isSubmitting ? (
+                  <div className="flex items-center justify-center">
+                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+                    Creating Account...
+                  </div>
+                ) : (
+                  "Create Admin Account"
+                )}
+              </button>
             </div>
           </div>
         </div>
