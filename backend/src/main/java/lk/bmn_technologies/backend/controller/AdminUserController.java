@@ -26,21 +26,16 @@ import lk.bmn_technologies.backend.model.AdminUserModel;
 import lk.bmn_technologies.backend.security.AdminUserDetails;
 import lk.bmn_technologies.backend.services.AdminUserService;
 import lk.bmn_technologies.backend.services.AuthenticationService;
-
+import lombok.AllArgsConstructor;
 
 
 @RestController
 @RequestMapping("api/admin/auth")
+@AllArgsConstructor
 public class AdminUserController {
 
     private final AuthenticationService authenticationService;
-
-    public AdminUserController(AuthenticationService authenticationService) {
-        this.authenticationService = authenticationService;
-    }
-
-    @Autowired
-    private AdminUserService service;
+    private final AdminUserService service;
 
     @PostMapping("/register")
     public ResponseEntity<ApiResponseDTO> adminUserRegistration(@RequestBody AdminUserModel data) {

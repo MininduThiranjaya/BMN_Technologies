@@ -6,7 +6,6 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -16,12 +15,13 @@ import lk.bmn_technologies.backend.dto.ApiResponseDTO;
 import lk.bmn_technologies.backend.dto.UserTestimonialCommentDTO;
 import lk.bmn_technologies.backend.model.UserTestimonialCommentModel;
 import lk.bmn_technologies.backend.repository.UserTestimonialCommentRepository;
+import lombok.AllArgsConstructor;
 
 @Service
+@AllArgsConstructor
 public class UserTestimonialService {
 
-    @Autowired
-    private UserTestimonialCommentRepository repo;
+    private final UserTestimonialCommentRepository repo;
 
     public ApiResponseDTO submitTestimonialCommentService(UserTestimonialCommentModel data) {
 

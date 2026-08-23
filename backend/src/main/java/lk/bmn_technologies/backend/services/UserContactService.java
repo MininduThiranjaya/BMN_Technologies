@@ -1,21 +1,20 @@
 package lk.bmn_technologies.backend.services;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import lk.bmn_technologies.backend.dto.ApiResponseDTO;
 import lk.bmn_technologies.backend.model.UserContactModel;
 import lk.bmn_technologies.backend.repository.UserContactRepository;
+import lombok.AllArgsConstructor;
 
 @Service
+@AllArgsConstructor
 public class UserContactService {
     
-    @Autowired
-    private UserContactRepository repo;
+    private final UserContactRepository repo;
 
     public ApiResponseDTO submitUserIssue(UserContactModel data) {
 

@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import lk.bmn_technologies.backend.dto.ApiResponseDTO;
@@ -13,18 +12,15 @@ import lk.bmn_technologies.backend.model.ProductImageModel;
 import lk.bmn_technologies.backend.model.ProductModel;
 import lk.bmn_technologies.backend.repository.ProductImageRepo;
 import lk.bmn_technologies.backend.repository.ProductRepo;
+import lombok.AllArgsConstructor;
 
 @Service
+@AllArgsConstructor
 public class ProductService {
 
-    @Autowired
-    private ProductRepo repo;
-
-    @Autowired
-    private CloudinaryService cloudinaryService;
-
-    @Autowired
-    private ProductImageRepo productImageRepo;
+    private final ProductRepo repo;
+    private final CloudinaryService cloudinaryService;
+    private final ProductImageRepo productImageRepo;
 
     public void addProduct(ProductModel data) {
 

@@ -2,10 +2,12 @@ package lk.bmn_technologies.backend.security;
 
 import java.io.IOException;
 
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.security.authentication.BadCredentialsException;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -35,9 +37,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
                 }
             }
         } 
-        catch (Exception e) {
+        catch (BadCredentialsException e) {
             // do not trowing an exception just dont authenticate the user
             System.out.println("Received invalied auth token");
+            throw e;
         }
 
         filterChain.doFilter(request, response);

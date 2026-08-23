@@ -6,12 +6,10 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import lk.bmn_technologies.backend.model.AdminUserModel;
 
-@Repository
 public interface AdminUserRepository extends JpaRepository<AdminUserModel, Long>{
     // Optional<AdminUserModel> findByUsername(String username);
 

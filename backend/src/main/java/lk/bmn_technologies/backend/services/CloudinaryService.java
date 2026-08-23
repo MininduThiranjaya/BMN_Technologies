@@ -4,18 +4,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Service;
 
 import com.cloudinary.utils.ObjectUtils;
 
 import lk.bmn_technologies.backend.config.CloudinaryConfig;
+import lombok.AllArgsConstructor;
 
 @Service
+@AllArgsConstructor
 public class CloudinaryService {
 
-    @Autowired
-    private CloudinaryConfig cloudinaryConfig;
+    private final CloudinaryConfig cloudinaryConfig;
 
     public Map<String, Boolean> deleteImagesFromCloudinary(List<String> imagePublicIdList) {
 

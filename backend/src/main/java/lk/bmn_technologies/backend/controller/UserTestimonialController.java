@@ -14,16 +14,16 @@ import org.springframework.web.bind.annotation.RestController;
 import lk.bmn_technologies.backend.dto.ApiResponseDTO;
 import lk.bmn_technologies.backend.model.UserTestimonialCommentModel;
 import lk.bmn_technologies.backend.services.UserTestimonialService;
-
+import lombok.AllArgsConstructor;
 
 
 
 @RestController
 @RequestMapping("api/user-testimonial")
+@AllArgsConstructor
 public class UserTestimonialController {
 
-    @Autowired
-    private UserTestimonialService service;
+    private final UserTestimonialService service;
     
     @PostMapping("submit")
     public ResponseEntity<ApiResponseDTO> submitTestimonialComment(@RequestBody UserTestimonialCommentModel data) {

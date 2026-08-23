@@ -15,20 +15,18 @@ import org.springframework.web.bind.annotation.RestController;
 
 import lk.bmn_technologies.backend.dto.ApiResponseDTO;
 import lk.bmn_technologies.backend.dto.requestDTO.ProductFilterDTO;
-import lk.bmn_technologies.backend.dto.responseDTO.ProductDTO;
 import lk.bmn_technologies.backend.model.ProductModel;
-import lk.bmn_technologies.backend.model.ProjectModel;
 import lk.bmn_technologies.backend.services.ProductService;
-
+import lombok.AllArgsConstructor;
 
 
 
 @RestController
 @RequestMapping("/api/auth/product")
+@AllArgsConstructor
 public class ProductController {
 
-    @Autowired
-    private ProductService service;
+    private final ProductService service;
 
     @PostMapping("/add")
     public void addProductIntoDatabase(@RequestBody ProductModel data) {

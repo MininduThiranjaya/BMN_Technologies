@@ -6,17 +6,17 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import lk.bmn_technologies.backend.model.AdminUserModel;
 import lk.bmn_technologies.backend.repository.AdminUserRepository;
+import lombok.AllArgsConstructor;
 
 @Service
+@AllArgsConstructor
 public class VerificationCodeService {
 
-    @Autowired
-    private AdminUserRepository repo;
+    private final AdminUserRepository repo;
 
     private final Map<String, CodeData> codeStorage = new ConcurrentHashMap<>();
     private final SecureRandom random = new SecureRandom();
