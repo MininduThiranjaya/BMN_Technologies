@@ -50,6 +50,7 @@ public class SecurityConfig {
                                 .requestMatchers(HttpMethod.PUT, "api/admin/auth/forget-password/change-password").permitAll()
                                 .requestMatchers(HttpMethod.GET, "api/user-testimonial/get").permitAll()
                                 .requestMatchers(HttpMethod.POST, "api/user-testimonial/submit").permitAll()
+                                .requestMatchers(HttpMethod.POST, "api/user-solar-assessment/submit").permitAll()
                                 .requestMatchers(HttpMethod.GET, "api/auth/product/get/*").permitAll()
                                 .requestMatchers(HttpMethod.POST, "api/auth/product/get/*").permitAll()
                                 .requestMatchers(HttpMethod.GET, "api/auth/project/get/*").permitAll()
