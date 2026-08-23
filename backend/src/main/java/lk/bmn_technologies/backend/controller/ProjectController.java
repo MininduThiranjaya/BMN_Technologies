@@ -17,14 +17,14 @@ import lk.bmn_technologies.backend.dto.ApiResponseDTO;
 import lk.bmn_technologies.backend.dto.requestDTO.ProjectFilterDTO;
 import lk.bmn_technologies.backend.model.ProjectModel;
 import lk.bmn_technologies.backend.services.ProjectService;
-
+import lombok.AllArgsConstructor;
 
 @RestController
 @RequestMapping("/api/auth/project")
+@AllArgsConstructor
 public class ProjectController {
 
-    @Autowired
-    private ProjectService service;
+    private final ProjectService service;
 
     @PostMapping("/add")
     public void addProjectIntoDatabase(@RequestBody ProjectModel data) {

@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import lk.bmn_technologies.backend.dto.ApiResponseDTO;
@@ -13,18 +12,15 @@ import lk.bmn_technologies.backend.model.ProjectImageModel;
 import lk.bmn_technologies.backend.model.ProjectModel;
 import lk.bmn_technologies.backend.repository.ProjectImageRepo;
 import lk.bmn_technologies.backend.repository.ProjectRepo;
+import lombok.AllArgsConstructor;
 
 @Service
+@AllArgsConstructor
 public class ProjectService {
 
-    @Autowired
-    private ProjectRepo repo;
-
-    @Autowired
-    private CloudinaryService cloudinaryService;
-
-    @Autowired
-    private ProjectImageRepo projectImageRepo;
+    private final ProjectRepo repo;
+    private final CloudinaryService cloudinaryService;
+    private final ProjectImageRepo projectImageRepo;
     
     public void addProject(ProjectModel data) {
 

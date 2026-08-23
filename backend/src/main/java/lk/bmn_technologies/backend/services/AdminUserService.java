@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -13,18 +12,15 @@ import lk.bmn_technologies.backend.dto.ApiResponseDTO;
 import lk.bmn_technologies.backend.dto.requestDTO.ForgetPassword_ChangePassword_DTO;
 import lk.bmn_technologies.backend.dto.responseDTO.UserResponseDTO;
 import lk.bmn_technologies.backend.model.AdminUserModel;
-import lk.bmn_technologies.backend.model.ProductModel;
-import lk.bmn_technologies.backend.model.UserContactModel;
 import lk.bmn_technologies.backend.repository.AdminUserRepository;
+import lombok.AllArgsConstructor;
 
 @Service
+@AllArgsConstructor
 public class AdminUserService {
 
-    @Autowired
-    private AdminUserRepository repo;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final AdminUserRepository repo;
+    private final PasswordEncoder passwordEncoder;
 
     public ApiResponseDTO adminUserRegistrationService(AdminUserModel data) {
 

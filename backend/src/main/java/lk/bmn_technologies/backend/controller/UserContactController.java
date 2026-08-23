@@ -15,15 +15,15 @@ import org.springframework.web.bind.annotation.RestController;
 import lk.bmn_technologies.backend.dto.ApiResponseDTO;
 import lk.bmn_technologies.backend.model.UserContactModel;
 import lk.bmn_technologies.backend.services.UserContactService;
-
+import lombok.AllArgsConstructor;
 
 
 @RestController
 @RequestMapping("api/user-contact")
+@AllArgsConstructor
 public class UserContactController {
     
-    @Autowired
-    private UserContactService service;
+    private final UserContactService service;
     
     @PostMapping("/inform")
     public ResponseEntity<ApiResponseDTO> submitIssues(@RequestBody UserContactModel data) {

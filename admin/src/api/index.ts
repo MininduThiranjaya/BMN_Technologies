@@ -38,5 +38,10 @@ export const endpoints = {
     get: `${BACKEND_BASE_URL}user-testimonial/get-all`,
     count: `${BACKEND_BASE_URL}user-testimonial/count`,
     changeStatus: `${BACKEND_BASE_URL}user-testimonial/change-state`
+  },
+  solarAssessment: {
+    getAllAssessments: `${BACKEND_BASE_URL}user-solar-assessment/get-all-assessment`,
+    setAction: `${BACKEND_BASE_URL}user-solar-assessment/set-action`,
+    markAsRead: `${BACKEND_BASE_URL}user-solar-assessment/set-mark-as-read`,
   }
 };

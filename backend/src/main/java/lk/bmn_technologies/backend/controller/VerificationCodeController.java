@@ -12,17 +12,15 @@ import lk.bmn_technologies.backend.dto.requestDTO.ForgetPasswordMailDTO;
 import lk.bmn_technologies.backend.dto.requestDTO.VerifyCodeDTO;
 import lk.bmn_technologies.backend.services.EmailService;
 import lk.bmn_technologies.backend.services.VerificationCodeService;
-
+import lombok.AllArgsConstructor;
 
 @RestController
 @RequestMapping("/api/verification-code")
+@AllArgsConstructor
 public class VerificationCodeController {
 
-    @Autowired
-    private EmailService emailService;
-
-    @Autowired
-    private VerificationCodeService verificationCodeService;
+    private final EmailService emailService;
+    private final VerificationCodeService verificationCodeService;
 
      @PostMapping("forget-password/send-mail")
     public ResponseEntity<ApiResponseDTO> sendCode(@RequestBody ForgetPasswordMailDTO data) {

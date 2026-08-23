@@ -1,17 +1,17 @@
 package lk.bmn_technologies.backend.services;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 import lk.bmn_technologies.backend.dto.requestDTO.ForgetPasswordMailDTO;
+import lombok.AllArgsConstructor;
 
 @Service
+@AllArgsConstructor
 public class EmailService {
 
-    @Autowired
-    private JavaMailSender mailSender;
+    private final JavaMailSender mailSender;
 
     public boolean sendEmail(ForgetPasswordMailDTO data) {
         try {
