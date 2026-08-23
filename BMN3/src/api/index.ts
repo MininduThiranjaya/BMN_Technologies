@@ -1,0 +1,20 @@
+// const BACKEND_BASE_URL = import.meta.env.VITE_BACKEND_BASE_URL;
+const BACKEND_BASE_URL = "http://localhost:8080/api/";
+
+export const endpoints = {
+  product: {
+    getFiltered: `${BACKEND_BASE_URL}auth/product/get/filter`,
+    getAll: `${BACKEND_BASE_URL}auth/product/get/all`
+  },
+  project: {
+    getFiltered: `${BACKEND_BASE_URL}auth/project/get/filter`,
+    getAll: `${BACKEND_BASE_URL}auth/project/get/all`,
+  },
+  testimonial: {
+    get: `${BACKEND_BASE_URL}user-testimonial/get`,
+    submit: `${BACKEND_BASE_URL}user-testimonial/submit`,
+  },
+  solarAssessment: {
+    submit: `${BACKEND_BASE_URL}user-solar-assessment/submit`
+  }
+};
