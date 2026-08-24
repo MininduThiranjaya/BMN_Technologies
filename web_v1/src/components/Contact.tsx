@@ -460,7 +460,7 @@
 
 // export function Contact() {
 //   const [form, setForm] = useState({
-//     fullName: "",
+//     userName: "",
 //     phoneNumber: "",
 //     email: "",
 //     location: "",
@@ -486,7 +486,7 @@
 //   const validate = (): boolean => {
 //     const newErrors: FormContactErrors = {};
 
-//     if (!form.fullName.trim()) {
+//     if (!form.userName.trim()) {
 //       newErrors.name = "Name is required";
 //     }
 
@@ -743,7 +743,7 @@
 //                   onClick={() => {
 //                     setSubmitted(false);
 //                     setForm({
-//                       fullName: "",
+//                       userName: "",
 //                       phoneNumber: "",
 //                       email: "",
 //                       location: "",
@@ -775,7 +775,7 @@
 //                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
 //                   {[
 //                     {
-//                       id: "fullName",
+//                       id: "userName",
 //                       label: "Full Name *",
 //                       placeholder: "Your full name",
 //                       type: "text",
@@ -1019,7 +1019,7 @@ import type { SolarAssessmentForm } from "../interfaces/SolarAssessmentForm";
 // CONTACT SECTION
 
 const initialForm = {
-  fullName: "",
+  userName: "",
   phoneNumber: "",
   email: "",
   location: "",
@@ -1059,8 +1059,8 @@ export function Contact() {
   const validate = (): boolean => {
     const newErrors: FormContactErrors = {};
 
-    if (!form.fullName.trim()) {
-      newErrors.fullName = "Name is required";
+    if (!form.userName.trim()) {
+      newErrors.userName = "Name is required";
     }
 
     if (!form.phoneNumber.trim()) {
@@ -1325,7 +1325,7 @@ export function Contact() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   {[
                     {
-                      id: "fullName",
+                      id: "userName",
                       label: "Full Name *",
                       placeholder: "Your full name",
                       type: "text",
