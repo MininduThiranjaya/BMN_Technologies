@@ -6,7 +6,7 @@ import { endpoints } from "../api";
 
 export interface SolarAssessment {
   id: number;
-  fullName: string;
+  userName: string;
   phoneNumber: string;
   email: string;
   location: string;
@@ -256,7 +256,7 @@ export default function UserSolarAssessment({ darkMode = false }: UserSolarAsses
                           <User className={`w-4 h-4 ${theme.textMuted}`} />
                         </div>
                         <span className={`text-sm font-medium ${theme.text}`}>
-                          {item.fullName}
+                          {item.userName}
                         </span>
                       </div>
                     </td>
@@ -350,7 +350,7 @@ export default function UserSolarAssessment({ darkMode = false }: UserSolarAsses
               <p className={`text-sm ${theme.textMuted}`}>
                 This will mark the request from{" "}
                 <span className={`font-medium ${theme.textSub}`}>
-                  {confirmReadTarget.fullName}
+                  {confirmReadTarget.userName}
                 </span>{" "}
                 as reviewed. This can't be undone from here.
               </p>

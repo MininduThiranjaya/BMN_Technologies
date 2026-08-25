@@ -10,9 +10,9 @@ import ForgotPassword from "./components/ForgetPassword.js";
 function App() {
   return (
     <>
-      <AuthProvider>
         <ToastContainer />
         <BrowserRouter>
+      <AuthProvider>
           <Routes>
             <Route path="/" element={<LoginPage />} />
             <Route path="/forget-password" element={<ForgotPassword />} />
@@ -25,8 +25,8 @@ function App() {
               }
             />
           </Routes>
-        </BrowserRouter>
       </AuthProvider>
+        </BrowserRouter>
     </>
     // <AddProject/>
   );

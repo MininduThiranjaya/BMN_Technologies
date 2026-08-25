@@ -2,11 +2,12 @@ const BACKEND_BASE_URL = import.meta.env.VITE_BACKEND_BASE_URL;
 
 export const endpoints = {
   user: {
-    login: `${BACKEND_BASE_URL}admin/auth/login`,
+    login: `${BACKEND_BASE_URL}admin/login`,
+    userReg:  `${BACKEND_BASE_URL}admin/register`,
+    getMe:`${BACKEND_BASE_URL}admin/auth/me`, 
     fogetPasswordSendEmail: `${BACKEND_BASE_URL}verification-code/forget-password/send-mail`,
     verifyCode: `${BACKEND_BASE_URL}verification-code/check-code`,
-    forgetPassword_changePassword: `${BACKEND_BASE_URL}admin/auth/forget-password/change-password`,
-    dashboardUserProfile: `${BACKEND_BASE_URL}admin/auth/user/profile`,
+    forgetPassword_changePassword: `${BACKEND_BASE_URL}admin/auth/password/change-password`,
     getAllUsers: `${BACKEND_BASE_URL}admin/auth/user/get-all`,
     deleteUser: `${BACKEND_BASE_URL}admin/auth/user/delete-by-id/{id}`,
     changeRole: `${BACKEND_BASE_URL}admin/auth/user/change-role/{id}`,
@@ -36,8 +37,8 @@ export const endpoints = {
   },
   testimonial: {
     get: `${BACKEND_BASE_URL}user-testimonial/get-all`,
-    count: `${BACKEND_BASE_URL}user-testimonial/count`,
-    changeStatus: `${BACKEND_BASE_URL}user-testimonial/change-state`
+    count: `${BACKEND_BASE_URL}user/testimonial/count`,
+    changeStatus: `${BACKEND_BASE_URL}user/user-testimonial/change-state`
   },
   solarAssessment: {
     getAllAssessments: `${BACKEND_BASE_URL}user-solar-assessment/get-all-assessment`,
