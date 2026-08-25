@@ -11,8 +11,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ProductImage_res_dto {
+public class CloudinaryUpload_res_dto {
 
-    private Long id;
+    private String publicId;
     private String imageUrl;
 }

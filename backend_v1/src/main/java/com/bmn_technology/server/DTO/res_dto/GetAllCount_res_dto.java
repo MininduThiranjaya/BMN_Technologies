@@ -11,8 +11,11 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ProductImage_res_dto {
-
-    private Long id;
-    private String imageUrl;
+public class GetAllCount_res_dto {
+    
+    long adminUserCount;
+    long productCount;
+    long projectCount;
+    long testimonialCount;
+    long userSolarAssessmentCount;
 }

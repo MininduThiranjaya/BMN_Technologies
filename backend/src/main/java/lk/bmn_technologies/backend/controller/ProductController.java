@@ -70,6 +70,4 @@ public class ProductController {
                 .body(new ApiResponseDTO(false, "Error deleting product: " + e.getMessage()));
         }
     }
-    
-    
 }

@@ -12,6 +12,7 @@ import com.bmn_technology.server.services.AdminService;
 import com.bmn_technology.server.services.auth.AdminUserDetails;
 import com.bmn_technology.server.DTO.req_dto.AdminReg_req_dto;
 import com.bmn_technology.server.DTO.req_dto.ProductCreate_req_dto;
+import com.bmn_technology.server.DTO.req_dto.ProjectCreate_req_dto;
 import com.bmn_technology.server.DTO.req_dto.SolarAssessmentAssignment_req_dto;
 import com.bmn_technology.server.DTO.ApiResponse;
 import com.bmn_technology.server.DTO.req_dto.AdminChangePassword_req_dto;
@@ -21,10 +22,13 @@ import com.bmn_technology.server.DTO.res_dto.AdminReg_res_dto;
 import com.bmn_technology.server.DTO.res_dto.AdminUserProfile_res_dto;
 import com.bmn_technology.server.DTO.res_dto.FullAdminDetails_res_dto;
 import com.bmn_technology.server.DTO.res_dto.FullProduct_res_dto;
+import com.bmn_technology.server.DTO.res_dto.FullProject_res_dto;
+import com.bmn_technology.server.DTO.res_dto.GetAllCount_res_dto;
 import com.bmn_technology.server.DTO.res_dto.SolarAssessmentAssignment_res_dto;
 import com.bmn_technology.server.DTO.res_dto.UserSolarAssessment_res_dto;
 import com.bmn_technology.server.DTO.res_dto.UserTestimonial_res_dto;
 import com.bmn_technology.server.models.ProductModel;
+import com.bmn_technology.server.models.ProjectModel;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -42,6 +46,7 @@ public class AdminController {
 
     private final AdminService service;
     
+    // admin user associate controller
     @PostMapping("register")
     public ResponseEntity<ApiResponse> adminRegisterController(@Valid @RequestBody AdminReg_req_dto data) {
         
@@ -176,17 +181,31 @@ public class AdminController {
         return ResponseEntity.ok(response); 
     }
 
-    @GetMapping("auth/testimonial/count")
-    public ResponseEntity<ApiResponse> countUserTestimonialController() {
+    // get count of all
+    @GetMapping("auth/get-all-count-count")
+    public ResponseEntity<ApiResponse> getCountOfAllController() {
         
-        long res = service.countUserTestimonialService();
+        GetAllCount_res_dto res = service.getCountOfAllService();
         ApiResponse response = ApiResponse.builder()
             .success(true)
-            .message("User testimonial count get successfully")
+            .message("Get all count successfully")
             .data(res)
             .build();
         return ResponseEntity.ok(response);
     }
+
+    // // testimonial operation associate controllers
+    // @GetMapping("auth/testimonial/count")
+    // public ResponseEntity<ApiResponse> countUserTestimonialController() {
+        
+    //     long res = service.countUserTestimonialService();
+    //     ApiResponse response = ApiResponse.builder()
+    //         .success(true)
+    //         .message("User testimonial count get successfully")
+    //         .data(res)
+    //         .build();
+    //     return ResponseEntity.ok(response);
+    // }
 
     @PutMapping("auth/testimonila/change-state")
     public ResponseEntity<ApiResponse> changeTestimonialIsAvailableStateContoller(@RequestBody Map<String, Long> body) {
@@ -213,13 +232,14 @@ public class AdminController {
         return ResponseEntity.ok(response);
     }
 
+    // product associate controllers
     @PostMapping("auth/add-product")
     public ResponseEntity<ApiResponse> addNewProductController(@RequestBody ProductCreate_req_dto data) {
         
         FullProduct_res_dto res = service.addNewProductService(data);
         ApiResponse response = ApiResponse.builder()
             .success(true)
-            .message("All User testimonial fetch successfully")
+            .message("Add new product successfully")
             .data(res)
             .build();
         return ResponseEntity.ok(response);
@@ -263,4 +283,54 @@ public class AdminController {
     //     }
     // }
 
+    // project associate controllers
+    @PostMapping("auth/add-project")
+    public ResponseEntity<ApiResponse> addNewProjectController(@RequestBody ProjectCreate_req_dto data) {
+        
+        FullProject_res_dto res = service.addNewProjectService(data);
+        ApiResponse response = ApiResponse.builder()
+            .success(true)
+            .message("Add new project successfully")
+            .data(res)
+            .build();
+        return ResponseEntity.ok(response);
+    }
+
+    // @PutMapping("/edit/{id}")
+    // public void editProjectInDatabase(@PathVariable("id") long id, @RequestBody ProjectModel data) {
+    //     service.editProject(id, data);
+    // }
+
+    // @GetMapping("/get/{category}")
+    // public List<ProjectDTO> getProjectsFromDatabase(@PathVariable("category") String category) {
+    //     return service.getProjects(category);
+    // }
+
+    // @PostMapping("/get/filter")
+    // public List<ProjectModel> getFilteredProductsFromDatabase(@RequestBody ProjectFilterDTO filters) {
+    //     return service.getFilteredProject(filters);
+    // }
+
+    // @GetMapping("/count")
+    // public long countProjectsInDatabase() {
+    //     return service.countProjects();
+    // }
+
+    // @GetMapping("/get/all")
+    // public List<ProjectModel> getProjectWithAllDetailsFromDatabase() {
+    //     return service.getProjectWithAllDetails();
+    // }
+
+    // @DeleteMapping("/delete-by-id/{id}")
+    // public ResponseEntity<ApiResponseDTO> deleteProductFromDatabase(@PathVariable("id") long id) {
+    //     try{
+    //         ApiResponseDTO response = service.deleteProject(id);
+    //         return ResponseEntity.ok(response);
+    //     }
+    //     catch(Exception e) {
+    //         return ResponseEntity
+    //             .status(500)
+    //             .body(new ApiResponseDTO(false, "Error deleting product: " + e.getMessage()));
+    //     }
+    // }
 }

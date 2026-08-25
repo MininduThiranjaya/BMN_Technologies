@@ -11,7 +11,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ProductImage_res_dto {
+public class ProjectImage_res_dto {
 
     private Long id;
     private String imageUrl;
