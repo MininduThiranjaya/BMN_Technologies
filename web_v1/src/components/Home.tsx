@@ -459,7 +459,7 @@ function TestimonialsSection({
       axios
         .get(endpoints.testimonial.get)
         .then((res: any) => {
-          setTestimonials(res.data?.object || []);
+          setTestimonials(res.data?.data || []);
           setIsLoading(false);
         })
         .catch((err: String) => {
@@ -517,7 +517,7 @@ function TestimonialsSection({
 
   // ── Submission form state ──
   const [form, setForm] = useState({
-    name: "",
+    userName: "",
     company: "",
     position: "",
     email: "",
@@ -542,7 +542,7 @@ function TestimonialsSection({
   useEffect(() => () => { if (noticeTimeoutRef.current) clearTimeout(noticeTimeoutRef.current); }, []);
 
   const resetForm = () => {
-    setForm({ name: "", company: "", position: "", email: "", testimonial: "", rating: 0 });
+    setForm({ userName: "", company: "", position: "", email: "", testimonial: "", rating: 0 });
     setHoverRating(0);
     setErrors({});
   };
@@ -558,7 +558,7 @@ function TestimonialsSection({
   const validate = (): boolean => {
     const newErrors: FormTestimonialErrors = {};
 
-    if (!form.name.trim()) {
+    if (!form.userName.trim()) {
       newErrors.name = "Name is required";
     }
 
@@ -752,10 +752,10 @@ function TestimonialsSection({
                     className="w-12 h-12 accent-gradient rounded-full flex items-center justify-center text-(--accent-fg) font-black shrink-0"
                     style={{ fontFamily: "Outfit, sans-serif" }}
                   >
-                    {getInitials(t.name)}
+                    {getInitials(t.userName)}
                   </div>
                   <div>
-                    <div className={`font-bold ${S.text}`} style={{ fontFamily: "Outfit, sans-serif" }}>{t.name}</div>
+                    <div className={`font-bold ${S.text}`} style={{ fontFamily: "Outfit, sans-serif" }}>{t.userName}</div>
                     <div className={`text-sm ${S.textSec}`} style={{ fontFamily: "Inter, sans-serif" }}>{t.position}</div>
                     {t.company && (
                       <div className={`text-xs text-(--accent) mt-0.5`} style={{ fontFamily: "Inter, sans-serif" }}>{t.company}</div>
@@ -834,8 +834,8 @@ function TestimonialsSection({
                 <div className="flex flex-col gap-2">
                   <label className={`text-xs font-medium ${S.textSec}`} style={{ fontFamily: "Inter, sans-serif" }}>Your Name *</label>
                   <input
-                    value={form.name}
-                    onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))}
+                    value={form.userName}
+                    onChange={(e) => setForm((p) => ({ ...p, userName: e.target.value }))}
                     placeholder="Your full name"
                     className={`${S.surface2} border ${errors.name ? "border-red-500" : S.border} rounded-lg px-4 py-2.5 text-sm ${S.text} focus:outline-none`}
                     style={{ fontFamily: "Inter, sans-serif" }}

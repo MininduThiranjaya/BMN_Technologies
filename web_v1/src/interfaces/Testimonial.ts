@@ -1,6 +1,6 @@
 export interface Testimonial {
   id: number;
-  name: string;
+  userName: string;
   company: string;
   position: string;
   email: string;

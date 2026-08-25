@@ -1,5 +1,5 @@
 export interface SolarAssessmentForm {
-    fullName: string;
+    userName: string;
     phoneNumber: string;
     email: string;
     location: string;
