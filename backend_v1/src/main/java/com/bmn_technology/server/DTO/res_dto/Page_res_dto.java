@@ -1,5 +1,7 @@
 package com.bmn_technology.server.DTO.res_dto;
 
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -11,8 +13,11 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ProductImage_res_dto {
+public class Page_res_dto<T> {
 
-    private Long id;
-    private String imageUrl;
+    private List<T> items;
+    private int currentPage;
+    private int pageSize;
+    private long totalItems;
+    private int totalPages;
 }
