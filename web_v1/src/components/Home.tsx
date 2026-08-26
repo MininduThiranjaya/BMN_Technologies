@@ -277,14 +277,14 @@ function WhyChooseUsSection() {
               style={{ fontFamily: "Outfit, sans-serif" }}
             >
               Why Choose{" "}
-              <span className="text-(--accent)">BMN-Technology?</span>
+              <span className="text-(--accent)">BMN Technologies?</span>
             </h2>
             <p
               className={`${S.textSec} leading-relaxed mb-8`}
               style={{ fontFamily: "Inter, sans-serif" }}
             >
               We are not just solar installers. We are your long-term energy
-              partner — from the first consultation to decades of after-sales
+              partner from the first consultation to decades of after-sales
               support.
             </p>
             <div className="relative rounded-2xl overflow-hidden border border-(--border)">
@@ -379,7 +379,7 @@ function ProcessSection() {
             className={`mt-4 ${S.textSec} max-w-xl mx-auto`}
             style={{ fontFamily: "Inter, sans-serif" }}
           >
-            From first call to commissioned system — a clear, professional
+            From first call to commissioned system a clear, professional
             process every step of the way.
           </p>
         </div>
@@ -974,7 +974,7 @@ function FinalCTASection() {
           className={`text-4xl lg:text-5xl font-black ${S.text} mb-5`}
           style={{ fontFamily: "Outfit, sans-serif" }}
         >
-          Ready to Switch to <span className="text-(--accent)">Solar?</span>
+          Ready to Switch to <span className="text-(--accent)">Solar? Bg image ekak danna</span>
         </h2>
         <p
           className={`${S.textSec} text-lg leading-relaxed mb-10`}

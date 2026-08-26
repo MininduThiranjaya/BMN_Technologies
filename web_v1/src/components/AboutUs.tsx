@@ -16,18 +16,18 @@ export function AboutUs() {
       <div className="max-w-7xl mx-auto px-6 lg:px-12">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center mb-24">
           <div className="flex flex-col gap-6">
-            <SectionLabel label="About BMN-Technology" />
+            <SectionLabel label="About BMN Technologies" />
             <h1 className={`text-5xl lg:text-6xl font-black ${S.text}`} style={{ fontFamily: "Outfit, sans-serif" }}>
               Who <span className="text-(--accent)">We Are</span>
             </h1>
             <p className={`${S.textSec} leading-relaxed text-lg`} style={{ fontFamily: "Inter, sans-serif" }}>
-              BMN-Technology is a solar energy company specializing in the design, supply, and installation of on-grid, off-grid, and hybrid solar systems for residential, commercial, and industrial customers.
+              BMN Technologies is a solar energy company specializing in the design, supply, and installation of on-grid, off-grid, and hybrid solar systems for residential, commercial, and industrial customers.
             </p>
             <p className={`${S.textSec} leading-relaxed`} style={{ fontFamily: "Inter, sans-serif" }}>
               We combine technical expertise with genuine commitment to customer satisfaction. Our experienced team has completed hundreds of installations across the country, from small rooftop systems for family homes to large commercial arrays for businesses and institutions.
             </p>
             <p className={`${S.textSec} leading-relaxed`} style={{ fontFamily: "Inter, sans-serif" }}>
-              We serve customers in Jaffna, Colombo, Kandy, Mannar, Trincomalee, Vavuniya, and across the island — bringing reliable, affordable solar energy to every corner of the country.
+              We serve customers across the island bringing reliable, affordable solar energy to every corner of the country.
             </p>
           </div>
           <div className="relative">
@@ -48,7 +48,7 @@ export function AboutUs() {
               <Target size={30} className="text-(--accent) mb-4" />
               <h2 className={`text-2xl font-black ${S.text} mb-4`} style={{ fontFamily: "Outfit, sans-serif" }}>Our Mission</h2>
               <p className={`${S.textSec} leading-relaxed`} style={{ fontFamily: "Inter, sans-serif" }}>
-                To make reliable, high-quality solar energy accessible to every home, business, and community — reducing electricity costs, empowering energy independence, and contributing to a sustainable future for Sri Lanka.
+                To make reliable, high-quality solar energy accessible to every home, business, and community reducing electricity costs, empowering energy independence, and contributing to a sustainable future for Sri Lanka.
               </p>
             </div>
           </div>
@@ -58,7 +58,7 @@ export function AboutUs() {
               <Sparkles size={30} className="text-emerald-500 mb-4" />
               <h2 className={`text-2xl font-black ${S.text} mb-4`} style={{ fontFamily: "Outfit, sans-serif" }}>Our Vision</h2>
               <p className={`${S.textSec} leading-relaxed`} style={{ fontFamily: "Inter, sans-serif" }}>
-                To be the most trusted solar energy company in Sri Lanka — known for quality installations, honest service, and long-term partnerships with our customers as we move together toward a clean, renewable energy future.
+                To be the most trusted solar energy company in Sri Lanka known for quality installations, honest service, and long-term partnerships with our customers as we move together toward a clean, renewable energy future.
               </p>
             </div>
           </div>
