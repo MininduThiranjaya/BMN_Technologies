@@ -66,7 +66,7 @@ export function Footer() {
                 className="font-black text-xl tracking-tight"
                 style={{ fontFamily: "Outfit, sans-serif" }}
               >
-                BMN<span className="text-(--accent)">-</span>Technology
+                BMN Technologies
               </span>
             </button>
             <p
@@ -78,9 +78,9 @@ export function Footer() {
             </p>
             <div className="flex flex-col gap-2">
               {[
-                { icon: Phone, val: "+94 77 123 4567" },
-                { icon: Mail, val: "info@bmntech.lk" },
-                { icon: MessageCircle, val: "WhatsApp: +94 77 123 4567" },
+                { icon: Phone, val: "+94 76 233 9108" },
+                { icon: Mail, val: "technologiesbmn@gmail.com" },
+                { icon: MessageCircle, val: "WhatsApp: +94 76 233 9108" },
               ].map((c) => (
                 <div
                   key={c.val}
@@ -93,7 +93,7 @@ export function Footer() {
               ))}
             </div>
             <div className="flex items-center gap-3">
-              {["facebook", "instagram", "youtube", "linkedin"].map((s) => (
+              {["facebook", "linkedin"].map((s) => (
                 <div
                   key={s}
                   className={`w-9 h-9 border ${S.border} rounded-lg flex items-center justify-center ${S.textMuted} hover:text-(--accent) hover:border-(--accent) transition-all cursor-pointer`}
@@ -106,30 +106,6 @@ export function Footer() {
                   >
                     {s === "facebook" && (
                       <path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z" />
-                    )}
-                    {s === "instagram" && (
-                      <>
-                        <rect
-                          x="2"
-                          y="2"
-                          width="20"
-                          height="20"
-                          rx="5"
-                          ry="5"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                        />
-                        <path
-                          d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                        />
-                      </>
-                    )}
-                    {s === "youtube" && (
-                      <path d="M22.54 6.42a2.78 2.78 0 00-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46a2.78 2.78 0 00-1.95 1.96A29 29 0 001 12a29 29 0 00.46 5.58A2.78 2.78 0 003.41 19.6C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 001.95-1.95A29 29 0 0023 12a29 29 0 00-.46-5.58zM9.75 15.02V8.98L15.5 12l-5.75 3.02z" />
                     )}
                     {s === "linkedin" && (
                       <path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z M4 6a2 2 0 100-4 2 2 0 000 4z" />
