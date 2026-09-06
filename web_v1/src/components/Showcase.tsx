@@ -2,12 +2,22 @@ import { useState, useEffect } from "react";
 import { S, scrollToSection, SectionLabel } from "../utils/utils";
 import axios from "axios";
 import { endpoints } from "../api";
-import type { ProductFilter, ProductItemType } from "../interfaces/Product";
-import type { ProjectFilter, ProjectItemType } from "../interfaces/Project";
+import type {
+  Product,
+  ProductCategory,
+  ProductsPageResponse,
+} from "../interfaces/Product";
+import type {
+  ProjectCategory,
+  ProjectItemType,
+  PropertyType,
+  ProjectsPageResponse,
+} from "../interfaces/Project";
+import { type ApiResponse } from "../interfaces/ApiResponse";
 
 // SHOWCASE SECTION
 
-const PAGE_SIZE = 8; // 4 cols x 3 rows
+const PAGE_SIZE = 12; // 4 cols x 3 rows
 
 // ── Formatting helpers ──────────────────────────────────────────────────────
 
@@ -40,6 +50,88 @@ const provinces = [
 
 const formatProvince = (value: string) =>
   provinces.find((p) => p.value === value)?.type ?? value;
+
+// Backend product category options (matches ProductCategory exactly)
+const productCategoryOptions: {
+  type: string;
+  value: "all" | ProductCategory;
+}[] = [
+  { type: "All Categories", value: "all" },
+  { type: "Solar Panel", value: "solar" },
+  { type: "On Grid Inverter", value: "on_grid_inverter" },
+  { type: "Off Grid Inverter", value: "off_grid_inverter" },
+  { type: "Hybrid Inverter", value: "hybrid_inverter" },
+  { type: "On Grid Battery", value: "on_grid_battery" },
+  { type: "Off Grid Battery", value: "off_grid_battery" },
+  { type: "Hybrid Battery", value: "hybrid_battery" },
+];
+
+const formatProductCategory = (value: string) =>
+  productCategoryOptions.find((c) => c.value === value)?.type ?? value;
+
+// Backend project category options (matches ProjectCategory exactly)
+const projectCategoryOptions: {
+  type: string;
+  value: "all" | ProjectCategory;
+}[] = [
+  { type: "All Categories", value: "all" },
+  { type: "On-Grid", value: "on_grid" },
+  { type: "Off-Grid", value: "off_grid" },
+  { type: "Hybrid", value: "hybrid" },
+];
+
+const formatProjectCategory = (value: string) =>
+  projectCategoryOptions.find((c) => c.value === value)?.type ?? value;
+
+// Backend property type options (matches PropertyType exactly)
+const propertyTypeOptions: {
+  type: string;
+  value: "all" | PropertyType;
+}[] = [
+  { type: "All Property Types", value: "all" },
+  { type: "Residential", value: "residential" },
+  { type: "Commercial", value: "commercial" },
+  { type: "Industrial", value: "industrial" },
+  { type: "Agricultural", value: "agricultural" },
+  { type: "Other", value: "other" },
+];
+
+const formatPropertyType = (value: string) =>
+  propertyTypeOptions.find((t) => t.value === value)?.type ?? value;
+
+async function fetchProductsPage(
+  page: number,
+): Promise<ProductsPageResponse> {
+  const params = new URLSearchParams({
+    page: String(page),
+    size: String(PAGE_SIZE),
+    sortBy: "createdAt",
+    direction: "desc",
+  });
+
+  const res = await axios.get<ApiResponse<ProductsPageResponse>>(
+    `${endpoints.product.getAll}?${params.toString()}`,
+  );
+
+  return res.data.data;
+}
+
+async function fetchProjectsPage(
+  page: number,
+): Promise<ProjectsPageResponse> {
+  const params = new URLSearchParams({
+    page: String(page),
+    size: String(PAGE_SIZE),
+    sortBy: "createdAt",
+    direction: "desc",
+  });
+
+  const res = await axios.get<ApiResponse<ProjectsPageResponse>>(
+    `${endpoints.project.getAll}?${params.toString()}`,
+  );
+
+  return res.data.data;
+}
 
 // ── Small presentational pieces ─────────────────────────────────────────────
 
@@ -132,38 +224,38 @@ function MiniProductCard({
   p,
   onClick,
 }: {
-  p: ProductItemType;
+  p: Product;
   onClick: () => void;
 }) {
-  const firstImage = p.imageUrl?.[0]?.imageUrl;
+  const firstImage = p.images?.[0]?.imageUrl;
   return (
     <button
       onClick={onClick}
-      className={`text-left w-64 shrink-0 ${S.surface} border ${S.border} rounded-2xl overflow-hidden hover:border-(--accent) transition-all group`}
+      className={`text-left w-80 shrink-0 ${S.surface} border ${S.border} rounded-2xl overflow-hidden hover:border-(--accent) transition-all group`}
     >
       <div className="relative">
         <img
           src={firstImage}
           alt={p.productName}
-          className="w-full h-36 object-cover group-hover:scale-105 transition-transform duration-500"
+          className="w-full h-56 object-cover group-hover:scale-105 transition-transform duration-500"
           draggable={false}
         />
         <span
-          className="absolute top-2 left-2 accent-gradient text-(--accent-fg) text-[9px] font-semibold px-2 py-1 rounded-full"
+          className="absolute top-3 left-3 accent-gradient text-(--accent-fg) text-[10px] font-semibold px-2.5 py-1.5 rounded-full"
           style={{ fontFamily: "Inter, sans-serif" }}
         >
-          {p.category}
+          {formatProductCategory(p.category)}
         </span>
       </div>
-      <div className="p-4">
+      <div className="p-6">
         <h4
-          className={`text-sm font-bold ${S.text} truncate group-hover:text-(--accent) transition-colors`}
+          className={`text-lg font-bold ${S.text} truncate group-hover:text-(--accent) transition-colors`}
           style={{ fontFamily: "Outfit, sans-serif" }}
         >
           {p.productName}
         </h4>
         <p
-          className={`text-xs ${S.textSec} mt-1`}
+          className={`text-sm ${S.textSec} mt-1.5`}
           style={{ fontFamily: "Inter, sans-serif" }}
         >
           {formatCurrency(p.productPrice)}
@@ -180,35 +272,35 @@ function MiniProjectCard({
   p: ProjectItemType;
   onClick: () => void;
 }) {
-  const firstImage = p.imageUrl?.[0]?.imageUrl;
+  const firstImage = p.images?.[0]?.imageUrl;
   return (
     <button
       onClick={onClick}
-      className={`text-left w-64 shrink-0 ${S.surface} border ${S.border} rounded-2xl overflow-hidden hover:border-(--accent) transition-all group`}
+      className={`text-left w-80 shrink-0 ${S.surface} border ${S.border} rounded-2xl overflow-hidden hover:border-(--accent) transition-all group`}
     >
       <div className="relative">
         <img
           src={firstImage}
           alt={p.projectName}
-          className="w-full h-36 object-cover group-hover:scale-105 transition-transform duration-500"
+          className="w-full h-56 object-cover group-hover:scale-105 transition-transform duration-500"
           draggable={false}
         />
         <span
-          className="absolute top-2 left-2 accent-gradient text-(--accent-fg) text-[9px] font-semibold px-2 py-1 rounded-full"
+          className="absolute top-3 left-3 accent-gradient text-(--accent-fg) text-[10px] font-semibold px-2.5 py-1.5 rounded-full"
           style={{ fontFamily: "Inter, sans-serif" }}
         >
-          {p.category}
+          {formatProjectCategory(p.category)}
         </span>
       </div>
-      <div className="p-4">
+      <div className="p-6">
         <h4
-          className={`text-sm font-bold ${S.text} truncate group-hover:text-(--accent) transition-colors`}
+          className={`text-lg font-bold ${S.text} truncate group-hover:text-(--accent) transition-colors`}
           style={{ fontFamily: "Outfit, sans-serif" }}
         >
           {p.projectName}
         </h4>
         <p
-          className={`text-xs ${S.textSec} mt-1`}
+          className={`text-sm ${S.textSec} mt-1.5`}
           style={{ fontFamily: "Inter, sans-serif" }}
         >
           {formatProvince(p.province)}
@@ -431,8 +523,6 @@ function Overlay({
   );
 }
 
-// Shared detail layout used for both a single product and a single project.
-// Only content fields are shown — no internal record ids of any kind.
 function DetailView({
   onBack,
   backLabel,
@@ -507,13 +597,13 @@ function DetailView({
               {description}
             </p>
           </div>
-          <button
+          {/* <button
             onClick={() => scrollToSection("contact")}
             className="accent-gradient text-(--accent-fg) font-semibold px-7 py-3.5 rounded-lg hover:opacity-90 w-fit text-sm"
             style={{ fontFamily: "Inter, sans-serif" }}
           >
             {ctaLabel}
-          </button>
+          </button> */}
         </div>
       </div>
     </>
@@ -525,179 +615,156 @@ function DetailView({
 export function Showcase() {
   const [productsOpen, setProductsOpen] = useState(false);
   const [projectsOpen, setProjectsOpen] = useState(false);
-
-  const [allItemsProduct, setAllItemsProduct] = useState<ProductItemType[]>([]);
+  const [allItemsProduct, setAllItemsProduct] = useState<Product[]>([]);
+  const [productTotal, setProductTotal] = useState(0);
   const [allItemsProject, setAllItemsProject] = useState<ProjectItemType[]>([]);
-
-  const [selectedProduct, setSelectedProduct] = useState<ProductItemType | null>(null);
+  const [projectTotal, setProjectTotal] = useState(0);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [selectedProject, setSelectedProject] = useState<ProjectItemType | null>(null);
+  const [productCategory, setProductCategory] = useState<"all" | ProductCategory>(
+    "all",
+  );
+  const [projectCategory, setProjectCategory] = useState<"all" | ProjectCategory>(
+    "all",
+  );
+  const [projectPropertyType, setProjectPropertyType] = useState<
+    "all" | PropertyType
+  >("all");
+  const [projectProvince, setProjectProvince] = useState<string>("all");
 
-  const [submitFilterProduct, setSubmitFilterProduct] = useState(false);
-  const [submitFilterProject, setSubmitFilterProject] = useState(false);
-
-  const [filtersProduct, setFiltersProduct] = useState<ProductFilter>({
-    category: "all",
-    minPrice: null,
-    maxPrice: null,
-  });
-  const menuItemsProduct = [
-    { type: "All Categories", value: "all" },
-    { type: "Solar Panels", value: "Sola Panels" },
-    { type: "Battery Storage", value: "Battery Storage" },
-    { type: "Hybrid Inverters", value: "Hybrid Inverters" },
-  ];
-
-  const [filtersProject, setFiltersProject] = useState<ProjectFilter>({
-    category: "all",
-    province: null,
-    projectMinDate: null,
-    projectMaxDate: null,
-  });
-  const menuItemsProject = [
-    { type: "All Categories", value: "all" },
-    { type: "Residential Solar", value: "Residential Solar" },
-    { type: "Commercial Buildings", value: "Commercial Buildings" },
-    { type: "Industrial Solutions", value: "Industrial Solutions" },
-  ];
-
-  // Products page state
+  // Products page state (frontend page is 1-based, backend page is 0-based)
   const [productPage, setProductPage] = useState(1);
-  // Projects page state
+  // Projects page state (frontend page is 1-based, backend page is 0-based)
   const [projectPage, setProjectPage] = useState(1);
 
+  // ── Products: server-paginated load ───────────────────────────────────────
   useEffect(() => {
-    async function fetchFilteredProjects() {
-      await axios
-        .post(`${endpoints.project.getFiltered}`, filtersProject)
-        .then((res) => {
-          setAllItemsProject(res.data);
-        })
-        .catch((error) => {
-          console.log("Error fetching data : ", error);
-        });
+    let cancelled = false;
+
+    async function loadProducts() {
+      try {
+        // Frontend page 1 -> backend page 0, etc.
+        const backendPage = productPage - 1;
+        const page = await fetchProductsPage(backendPage);
+        const response = page;
+        if (cancelled) return;
+
+        setAllItemsProduct(
+          Array.isArray(response.items) ? response.items : [],
+        );
+
+        setProductTotal(
+          typeof response.totalItems === "number" ? response.totalItems : 0,
+        );
+      } catch (error) {
+        if (cancelled) return;
+
+        console.log("Error fetching data : ", error);
+        setAllItemsProduct([]);
+        setProductTotal(0);
+      }
     }
 
-    async function fetchAllProjects() {
-      await axios
-        .get(`${endpoints.project.getAll}`)
-        .then((res) => {
-          setAllItemsProject(res.data);
-        })
-        .catch((error) => {
-          console.log("Error fetching data : ", error);
-        });
-    }
+    loadProducts();
 
-    if (submitFilterProject) {
-      fetchFilteredProjects();
-      setSubmitFilterProject(false);
-    }
+    return () => {
+      cancelled = true;
+    };
+  }, [productPage]);
 
-    if (
-      !submitFilterProject &&
-      filtersProject.category === "all" &&
-      (filtersProject.province == null || filtersProject.province === "all") &&
-      filtersProject.projectMinDate == null &&
-      filtersProject.projectMaxDate == null
-    ) {
-      fetchAllProjects();
-    }
-  }, [submitFilterProject]);
-
+  // ── Projects: server-paginated load ───────────────────────────────────────
   useEffect(() => {
-    async function fetchFilteredProducts() {
-      await axios
-        .post(`${endpoints.product.getFiltered}`, filtersProduct)
-        .then((res) => {
-          setAllItemsProduct(res.data);
-        })
-        .catch((error) => {
-          console.log("Error fetching data : ", error);
-        });
+    let cancelled = false;
+
+    async function loadProjects() {
+      try {
+        // Frontend page 1 -> backend page 0, etc.
+        const backendPage = projectPage - 1;
+        const response = await fetchProjectsPage(backendPage);
+
+        if (cancelled) return;
+
+        setAllItemsProject(
+          Array.isArray(response.items) ? response.items : [],
+        );
+
+        setProjectTotal(
+          typeof response.totalItems === "number" ? response.totalItems : 0,
+        );
+      } catch (error) {
+        if (cancelled) return;
+
+        console.log("Error fetching data : ", error);
+        setAllItemsProject([]);
+        setProjectTotal(0);
+      }
     }
 
-    async function fetchAllProducts() {
-      await axios
-        .get(`${endpoints.product.getAll}`)
-        .then((res) => {
-          setAllItemsProduct(res.data);
-        })
-        .catch((error) => {
-          console.log("Error fetching data : ", error);
-        });
-    }
+    loadProjects();
 
-    if (submitFilterProduct) {
-      fetchFilteredProducts();
-      setSubmitFilterProduct(false);
-    }
-
-    if (
-      !submitFilterProduct &&
-      filtersProduct.category === "all" &&
-      filtersProduct.minPrice == null &&
-      filtersProduct.maxPrice == null
-    ) {
-      fetchAllProducts();
-    }
-  }, [submitFilterProduct]);
-
-  useEffect(() => setProductPage(1), [allItemsProduct]);
-  useEffect(() => setProjectPage(1), [allItemsProject]);
+    return () => {
+      cancelled = true;
+    };
+  }, [projectPage]);
 
   const productTotalPages = Math.max(
     1,
-    Math.ceil(allItemsProduct.length / PAGE_SIZE),
+    Math.ceil(productTotal / PAGE_SIZE),
   );
   const projectTotalPages = Math.max(
     1,
-    Math.ceil(allItemsProject.length / PAGE_SIZE),
-  );
-  const pagedProducts = allItemsProduct.slice(
-    (productPage - 1) * PAGE_SIZE,
-    productPage * PAGE_SIZE,
-  );
-  const pagedProjects = allItemsProject.slice(
-    (projectPage - 1) * PAGE_SIZE,
-    projectPage * PAGE_SIZE,
+    Math.ceil(projectTotal / PAGE_SIZE),
   );
 
-  const applyProductCategory = (value: string) => {
-    setFiltersProduct((f) => ({ ...f, category: value }));
-    setSubmitFilterProduct(true);
+  // Category filtering is client-side over the currently loaded backend page
+  const pagedProducts =
+    productCategory === "all"
+      ? allItemsProduct
+      : allItemsProduct.filter((p) => p.category === productCategory);
+
+  // Category / property type / province filtering is client-side over the
+  // currently loaded backend page — same pattern as products.
+  const pagedProjects = allItemsProject.filter((p) => {
+    if (projectCategory !== "all" && p.category !== projectCategory) return false;
+    if (projectPropertyType !== "all" && p.propertyType !== projectPropertyType)
+      return false;
+    if (projectProvince !== "all" && p.province !== projectProvince) return false;
+    return true;
+  });
+
+  const applyProductCategory = (value: "all" | ProductCategory) => {
+    setProductCategory(value);
+    setProductPage(1);
   };
-  const applyProjectCategory = (value: string) => {
-    setFiltersProject((f) => ({ ...f, category: value }));
-    setSubmitFilterProject(true);
+  const applyProjectCategory = (value: "all" | ProjectCategory) => {
+    setProjectCategory(value);
+    setProjectPage(1);
+  };
+  const applyProjectPropertyType = (value: "all" | PropertyType) => {
+    setProjectPropertyType(value);
+    setProjectPage(1);
   };
   const applyProjectProvince = (value: string) => {
-    setFiltersProject((f) => ({ ...f, province: value === "all" ? null : value }));
-    setSubmitFilterProject(true);
+    setProjectProvince(value);
+    setProjectPage(1);
   };
 
   const clearProductFilters = () => {
-    setFiltersProduct({ category: "all", minPrice: null, maxPrice: null });
-    setSubmitFilterProduct(true);
+    setProductCategory("all");
+    setProductPage(1);
   };
   const clearProjectFilters = () => {
-    setFiltersProject({
-      category: "all",
-      province: null,
-      projectMinDate: null,
-      projectMaxDate: null,
-    });
-    setSubmitFilterProject(true);
+    setProjectCategory("all");
+    setProjectPropertyType("all");
+    setProjectProvince("all");
+    setProjectPage(1);
   };
 
-  const productFiltersActive =
-    filtersProduct.category !== "all" ||
-    filtersProduct.minPrice != null ||
-    filtersProduct.maxPrice != null;
+  const productFiltersActive = productCategory !== "all";
   const projectFiltersActive =
-    filtersProject.category !== "all" ||
-    (filtersProject.province != null && filtersProject.province !== "all") ||
-    filtersProject.projectMinDate != null ||
-    filtersProject.projectMaxDate != null;
+    projectCategory !== "all" ||
+    projectPropertyType !== "all" ||
+    projectProvince !== "all";
 
   const marqueeStyle = (
     <style>{`
@@ -710,13 +777,15 @@ export function Showcase() {
     <DetailView
       onBack={() => setSelectedProject(null)}
       backLabel="Back to Projects"
-      images={selectedProject.imageUrl ?? []}
-      badge={selectedProject.category}
+      images={selectedProject.images ?? []}
+      badge={formatProjectCategory(selectedProject.category)}
       title={selectedProject.projectName}
       meta={[
         { label: "Client", val: selectedProject.personName },
         { label: "Province", val: formatProvince(selectedProject.province) },
-        { label: "Category", val: selectedProject.category },
+        { label: "Location", val: selectedProject.location },
+        { label: "Category", val: formatProjectCategory(selectedProject.category) },
+        { label: "Property Type", val: formatPropertyType(selectedProject.propertyType) },
         { label: "Completed", val: formatDate(selectedProject.projectDate) },
       ]}
       description={selectedProject.projectDescription}
@@ -727,11 +796,11 @@ export function Showcase() {
     <DetailView
       onBack={() => setSelectedProduct(null)}
       backLabel="Back to Products"
-      images={selectedProduct.imageUrl ?? []}
-      badge={selectedProduct.category}
+      images={selectedProduct.images ?? []}
+      badge={formatProductCategory(selectedProduct.category)}
       title={selectedProduct.productName}
       meta={[
-        { label: "Category", val: selectedProduct.category },
+        { label: "Category", val: formatProductCategory(selectedProduct.category) },
         { label: "Price", val: formatCurrency(selectedProduct.productPrice) },
       ]}
       description={selectedProduct.productDescription}
@@ -755,16 +824,16 @@ export function Showcase() {
           className={`text-sm ${S.textSec}`}
           style={{ fontFamily: "Inter, sans-serif" }}
         >
-          {allItemsProduct.length} items
+          {productTotal} items
         </p>
       </div>
 
       <div className="flex flex-wrap items-center gap-2 mb-10">
-        {menuItemsProduct.map((c) => (
+        {productCategoryOptions.map((c) => (
           <FilterChip
             key={c.value}
             label={c.type}
-            active={filtersProduct.category === c.value}
+            active={productCategory === c.value}
             onClick={() => applyProductCategory(c.value)}
           />
         ))}
@@ -804,7 +873,7 @@ export function Showcase() {
               className={`text-left ${S.surface} border ${S.border} rounded-2xl overflow-hidden hover:border-(--accent) transition-all group`}
             >
               <img
-                src={p.imageUrl?.[0]?.imageUrl}
+                src={p.images?.[0]?.imageUrl}
                 alt={p.productName}
                 className="w-full h-28 sm:h-40 object-cover group-hover:scale-105 transition-transform duration-500"
               />
@@ -813,7 +882,7 @@ export function Showcase() {
                   className={`text-[9px] sm:text-[10px] uppercase tracking-widest ${S.textMuted}`}
                   style={{ fontFamily: "Inter, sans-serif" }}
                 >
-                  {p.category}
+                  {formatProductCategory(p.category)}
                 </p>
                 <h3
                   className={`text-xs sm:text-sm font-bold ${S.text} leading-snug group-hover:text-(--accent) transition-colors`}
@@ -871,8 +940,19 @@ export function Showcase() {
           className={`text-sm ${S.textSec}`}
           style={{ fontFamily: "Inter, sans-serif" }}
         >
-          {allItemsProject.length} projects
+          {projectTotal} projects
         </p>
+      </div>
+
+      <div className="flex flex-wrap items-center gap-2 mb-6">
+        {projectCategoryOptions.map((c) => (
+          <FilterChip
+            key={c.value}
+            label={c.type}
+            active={projectCategory === c.value}
+            onClick={() => applyProjectCategory(c.value)}
+          />
+        ))}
       </div>
 
       <div className="flex flex-wrap items-end gap-4 mb-10">
@@ -881,15 +961,17 @@ export function Showcase() {
             className={`block text-[11px] uppercase tracking-widest ${S.textMuted} mb-1.5`}
             style={{ fontFamily: "Inter, sans-serif" }}
           >
-            Category
+            Property Type
           </label>
           <select
-            value={filtersProject.category ?? "all"}
-            onChange={(e) => applyProjectCategory(e.target.value)}
+            value={projectPropertyType}
+            onChange={(e) =>
+              applyProjectPropertyType(e.target.value as "all" | PropertyType)
+            }
             className={`${S.surface} border ${S.border} rounded-lg px-4 py-2.5 text-sm ${S.text} focus:outline-none focus:border-(--accent)`}
             style={{ fontFamily: "Inter, sans-serif" }}
           >
-            {menuItemsProject.map((t) => (
+            {propertyTypeOptions.map((t) => (
               <option key={t.value} value={t.value}>
                 {t.type}
               </option>
@@ -904,7 +986,7 @@ export function Showcase() {
             Province
           </label>
           <select
-            value={filtersProject.province ?? "all"}
+            value={projectProvince}
             onChange={(e) => applyProjectProvince(e.target.value)}
             className={`${S.surface} border ${S.border} rounded-lg px-4 py-2.5 text-sm ${S.text} focus:outline-none focus:border-(--accent)`}
             style={{ fontFamily: "Inter, sans-serif" }}
@@ -953,7 +1035,7 @@ export function Showcase() {
             >
               <div className="relative">
                 <img
-                  src={p.imageUrl?.[0]?.imageUrl}
+                  src={p.images?.[0]?.imageUrl}
                   alt={p.projectName}
                   className="w-full h-28 sm:h-40 object-cover group-hover:scale-105 transition-transform duration-500"
                 />
@@ -961,7 +1043,7 @@ export function Showcase() {
                   className="absolute top-2 left-2 sm:top-3 sm:left-3 accent-gradient text-(--accent-fg) text-[9px] sm:text-[10px] font-semibold px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full"
                   style={{ fontFamily: "Inter, sans-serif" }}
                 >
-                  {p.category}
+                  {formatProjectCategory(p.category)}
                 </span>
               </div>
               <div className="p-3 sm:p-5">
