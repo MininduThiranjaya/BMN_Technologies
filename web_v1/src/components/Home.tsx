@@ -981,7 +981,7 @@ function FinalCTASection() {
           style={{ fontFamily: "Inter, sans-serif" }}
         >
           Join hundreds of satisfied customers who have cut their electricity
-          bills and gained energy independence with BMN-Technology.
+          bills and gained energy independence with BMN Technologies.
         </p>
         <div className="flex flex-wrap items-center justify-center gap-4">
           <button
