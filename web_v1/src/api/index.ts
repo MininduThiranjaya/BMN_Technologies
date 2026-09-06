@@ -4,11 +4,11 @@ const BACKEND_BASE_URL = "http://localhost:5000/bmn_tech/api/";
 export const endpoints = {
   product: {
     getFiltered: `${BACKEND_BASE_URL}auth/product/get/filter`,
-    getAll: `${BACKEND_BASE_URL}auth/product/get/all`
+    getAll: `${BACKEND_BASE_URL}common/product/get-all`
   },
   project: {
     getFiltered: `${BACKEND_BASE_URL}auth/project/get/filter`,
-    getAll: `${BACKEND_BASE_URL}auth/project/get/all`,
+    getAll: `${BACKEND_BASE_URL}common/project/get-all`,
   },
   testimonial: {
     get: `${BACKEND_BASE_URL}user/testimonial/get-top-five`,
