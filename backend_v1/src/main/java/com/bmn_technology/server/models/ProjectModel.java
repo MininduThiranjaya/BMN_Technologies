@@ -8,9 +8,9 @@ import java.util.List;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import com.bmn_technology.server.enums.PropertyType;
-
 import com.bmn_technology.server.enums.ProjectCategory;
+import com.bmn_technology.server.enums.PropertyType;
+import jakarta.persistence.OrderBy;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -23,7 +23,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -78,6 +77,7 @@ public class ProjectModel {
         orphanRemoval = true,
         fetch = FetchType.LAZY
     )
+    @OrderBy("id ASC")
     @Builder.Default
     private List<ProjectImageModel> images = new ArrayList<>();
 
@@ -88,4 +88,8 @@ public class ProjectModel {
     @UpdateTimestamp
     @Column(name = "updated_at", nullable = false, unique = false)
     private LocalDateTime updatedAt;
+
+    @Builder.Default
+    @Column(name = "is_available", nullable = false, columnDefinition = "BOOLEAN DEFAULT TRUE")
+    private boolean isAvailable = true;
 }

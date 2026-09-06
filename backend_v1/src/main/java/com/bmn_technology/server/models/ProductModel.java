@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import jakarta.persistence.OrderBy;
 
 import com.bmn_technology.server.enums.ProductCategory;
 
@@ -21,7 +22,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -70,6 +70,7 @@ public class ProductModel {
         orphanRemoval = true,
         fetch = FetchType.LAZY
     )
+    @OrderBy("id ASC")
     @Builder.Default
     private List<ProductImageModel> images = new ArrayList<>();
 
@@ -80,4 +81,8 @@ public class ProductModel {
     @UpdateTimestamp
     @Column(name = "updated_at", nullable = false, unique = false)
     private LocalDateTime updatedAt;
+
+    @Builder.Default
+    @Column(name = "is_available", nullable = false, columnDefinition = "BOOLEAN DEFAULT TRUE")
+    private boolean isAvailable = true;
 }

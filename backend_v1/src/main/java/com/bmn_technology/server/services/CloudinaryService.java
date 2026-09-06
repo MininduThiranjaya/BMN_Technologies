@@ -12,11 +12,10 @@ import com.cloudinary.utils.ObjectUtils;
 
 import lombok.AllArgsConstructor;
 
-
 @Service
 @AllArgsConstructor
 public class CloudinaryService {
-    
+
     private final Cloudinary cloudinary;
 
     public CloudinaryUpload_res_dto uploadImageService(MultipartFile file, String destination) {
@@ -41,22 +40,31 @@ public class CloudinaryService {
         }
     }
 
-    // public Map<String, Boolean> deleteImagesFromCloudinary(List<String> imagePublicIdList) {
+    public void deleteImageService(String publicId) {
+        if (publicId == null || publicId.isBlank()) {
+            throw new IllegalArgumentException(
+                    "Cloudinary public ID cannot be null or empty");
+        }
+        try {
 
-    //     return imagePublicIdList.parallelStream()
-    //             .collect(Collectors.toConcurrentMap(
-    //                     publicId -> publicId,
-    //                     publicId -> {
-    //                         try {
-    //                             Map result = cloudinaryConfig.cloudinary().uploader().destroy(publicId,
-    //                                     ObjectUtils.emptyMap());
-    //                             Object status = result.get("result");
-    //                             return "ok".equals(status); // Cloudinary returns { result: "ok" } if successful
-    //                         } catch (Exception e) {
-    //                             System.err.println("Failed to delete: " + publicId);
-    //                             return false;
-    //                         }
-    //                     }));
-    // }
+            Map<?, ?> result = cloudinary
+                    .uploader()
+                    .destroy(
+                            publicId,
+                            ObjectUtils.emptyMap());
+            String status = String.valueOf(result.get("result"));
+            // "ok" -> successfully deleted
+            // "not found" -> already deleted / does not exist
+            if (!"ok".equalsIgnoreCase(status)
+                    && !"not found".equalsIgnoreCase(status)) {
+                throw new RuntimeException(
+                        "Failed to delete image from Cloudinary: " + publicId);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(
+                    "Failed to delete image from Cloudinary: " + publicId,
+                    e);
+        }
+    }
 
 }

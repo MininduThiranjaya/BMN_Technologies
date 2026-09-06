@@ -5,6 +5,7 @@ import com.bmn_technology.server.enums.InterestedSolution;
 import com.bmn_technology.server.enums.PropertyType;
 
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -42,7 +43,8 @@ public class UserSolarAssessment_req_dto {
     @NotNull(message = "Property type is required")
     private PropertyType propertyType;
 
-    private ElectricityBillRange monthlyElectricityBill;
+    @Min(value = 0, message = "Monthly electricity bill cannot be negative")
+    private Integer monthlyElectricityBill;
 
     @NotNull(message = "Interested solution is required")
     private InterestedSolution interestedSolution;

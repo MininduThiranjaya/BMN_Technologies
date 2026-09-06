@@ -9,14 +9,18 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
 import com.bmn_technology.server.services.auth.JwtService;
+
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.security.core.Authentication;
 import org.springframework.dao.DataAccessException;
+
 import com.bmn_technology.server.DTO.res_dto.UserTestimonial_res_dto;
 import com.bmn_technology.server.error.exception.UserNotFoundExc;
 import com.bmn_technology.server.error.exception.UserNotUpdatedExc;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -40,6 +44,9 @@ import com.bmn_technology.server.DTO.req_dto.ProjectCreate_req_dto;
 import com.bmn_technology.server.DTO.req_dto.SolarAssessmentAssignment_req_dto;
 import com.bmn_technology.server.DTO.req_dto.AdminChangePassword_req_dto;
 import com.bmn_technology.server.DTO.req_dto.AdminLogin_req_dto;
+import com.bmn_technology.server.DTO.req_dto.ProductEdit_req_dto;
+import com.bmn_technology.server.DTO.req_dto.ProjectEdit_req_dto;
+import com.bmn_technology.server.DTO.req_dto.ImageEdit_req_dto;
 import com.bmn_technology.server.DTO.res_dto.AdminReg_res_dto;
 import com.bmn_technology.server.DTO.res_dto.AdminUserProfile_res_dto;
 import com.bmn_technology.server.DTO.res_dto.CloudinaryUpload_res_dto;
@@ -61,6 +68,9 @@ import com.bmn_technology.server.models.SolarAssessmentAssignment;
 import com.bmn_technology.server.models.UserTestimonialModel;
 
 import lombok.RequiredArgsConstructor;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.ObjectMapper;
 
 @Service
 @RequiredArgsConstructor
@@ -75,6 +85,7 @@ public class AdminService {
         private final ProductRepo productRepo;
         private final CloudinaryService cloudinaryService;
         private final ProjectRepo projectRepo;
+        private final ObjectMapper objectMapper;
 
         // admin user associate services
         public AdminReg_res_dto adminUserRegisterService(AdminReg_req_dto data) {
@@ -130,6 +141,160 @@ public class AdminService {
                                 .build();
         }
 
+        public AdminUserProfile_res_dto makeAdminUserSuspendService(long id) {
+
+                AdminModel admin = adminRepo.findById(id)
+                                .orElseThrow(() -> new RuntimeException("Admin not found"));
+                admin.setSuspended(!admin.isSuspended());
+                try {
+                        AdminModel updatedAdmin = adminRepo.save(admin);
+                        return AdminUserProfile_res_dto.builder()
+                                        .userName(updatedAdmin.getUserName())
+                                        .email(updatedAdmin.getEmail())
+                                        .phoneNumber(updatedAdmin.getPhoneNumber())
+                                        .role(updatedAdmin.getRole())
+                                        .isSuspended(updatedAdmin.isSuspended())
+                                        .lastLogin(updatedAdmin.getLastLogin())
+                                        .createdAt(updatedAdmin.getCreatedAt())
+                                        .updatedAt(updatedAdmin.getUpdatedAt())
+                                        .build();
+                } catch (DataAccessException e) {
+                        throw new UserNotUpdatedExc(
+                                        "Make admin user suspention id: " + id + " updating error");
+                }
+
+        }
+
+        public AdminUserProfile_res_dto changeAdminUserRoleService(long id) {
+
+                AdminModel admin = adminRepo.findById(id)
+                                .orElseThrow(() -> new RuntimeException("Admin not found"));
+                if (admin.getRole() == AdminRoles.admin) {
+                        admin.setRole(AdminRoles.super_admin);
+                } else {
+                        admin.setRole(AdminRoles.admin);
+                }
+                try {
+                        AdminModel updatedAdmin = adminRepo.save(admin);
+                        return AdminUserProfile_res_dto.builder()
+                                        .userName(updatedAdmin.getUserName())
+                                        .email(updatedAdmin.getEmail())
+                                        .phoneNumber(updatedAdmin.getPhoneNumber())
+                                        .role(updatedAdmin.getRole())
+                                        .isSuspended(updatedAdmin.isSuspended())
+                                        .lastLogin(updatedAdmin.getLastLogin())
+                                        .createdAt(updatedAdmin.getCreatedAt())
+                                        .updatedAt(updatedAdmin.getUpdatedAt())
+                                        .build();
+                } catch (DataAccessException e) {
+                        throw new UserNotUpdatedExc(
+                                        "Admin user role id: " + id + " updating error");
+                }
+        }
+
+        public AdminUserProfile_res_dto adminUserDeleteService(long id) {
+
+                AdminModel admin = adminRepo.findById(id)
+                                .orElseThrow(() -> new RuntimeException("Admin not found"));
+                adminRepo.delete(admin);
+                return AdminUserProfile_res_dto.builder()
+                                .userName(admin.getUserName())
+                                .email(admin.getEmail())
+                                .phoneNumber(admin.getPhoneNumber())
+                                .role(admin.getRole())
+                                .isSuspended(admin.isSuspended())
+                                .lastLogin(admin.getLastLogin())
+                                .createdAt(admin.getCreatedAt())
+                                .updatedAt(admin.getUpdatedAt())
+                                .build();
+        }
+
+        public AdminUserProfile_res_dto adminPasswordChangeService(AdminChangePassword_req_dto data) {
+
+                Authentication authentication = SecurityContextHolder
+                                .getContext()
+                                .getAuthentication();
+                String email = authentication.getName();
+                AdminModel admin = adminRepo.findByEmail(email)
+                                .orElseThrow(() -> new RuntimeException("Admin not found"));
+                // Check current password
+                if (!passwordEncoder.matches(
+                                data.getCurrentPassword(),
+                                admin.getPassword())) {
+                        throw new RuntimeException(
+                                        "Current password is incorrect");
+                }
+                // Check new password is different
+                if (passwordEncoder.matches(
+                                data.getNewPassword(),
+                                admin.getPassword())) {
+                        throw new RuntimeException(
+                                        "New password must be different from current password");
+                }
+                // Encode new password
+                String encodedPassword = passwordEncoder.encode(
+                                data.getNewPassword());
+                admin.setPassword(encodedPassword);
+                try {
+                        AdminModel updatedAdmin = adminRepo.save(admin);
+                        return AdminUserProfile_res_dto.builder()
+                                        .userName(updatedAdmin.getUserName())
+                                        .email(updatedAdmin.getEmail())
+                                        .phoneNumber(updatedAdmin.getPhoneNumber())
+                                        .role(updatedAdmin.getRole())
+                                        .isSuspended(updatedAdmin.isSuspended())
+                                        .lastLogin(updatedAdmin.getLastLogin())
+                                        .createdAt(updatedAdmin.getCreatedAt())
+                                        .updatedAt(updatedAdmin.getUpdatedAt())
+                                        .build();
+                } catch (DataAccessException e) {
+                        throw new UserNotUpdatedExc(
+                                        "User password email: " + email + " updating error");
+                }
+        }
+
+        @Transactional(readOnly = true)
+        public Page_res_dto<FullAdminDetails_res_dto> getAllAdminUserService(
+                        int page,
+                        int size,
+                        String sortBy,
+                        String direction) {
+
+                if (page < 0) {
+                        throw new IllegalArgumentException("Page must be greater than or equal to 0");
+                }
+                if (size < 1 || size > 100) {
+                        throw new IllegalArgumentException("Size must be between 1 and 100");
+                }
+                Sort.Direction sortDirection = "desc".equalsIgnoreCase(direction)
+                                ? Sort.Direction.DESC
+                                : Sort.Direction.ASC;
+                Pageable pageable = PageRequest.of(
+                                page,
+                                size,
+                                Sort.by(sortDirection, sortBy));
+                Page<AdminModel> admins = adminRepo.findAll(pageable);
+                Page<FullAdminDetails_res_dto> mappedAdmins = admins.map(admin -> FullAdminDetails_res_dto.builder()
+                                .id(admin.getId())
+                                .userName(admin.getUserName())
+                                .email(admin.getEmail())
+                                .phoneNumber(admin.getPhoneNumber())
+                                .role(admin.getRole())
+                                .isSuspended(admin.isSuspended())
+                                .lastLogin(admin.getLastLogin())
+                                .createdAt(admin.getCreatedAt())
+                                .updatedAt(admin.getUpdatedAt())
+                                .build());
+                return Page_res_dto.<FullAdminDetails_res_dto>builder()
+                                .items(mappedAdmins.getContent())
+                                .currentPage(mappedAdmins.getNumber())
+                                .pageSize(mappedAdmins.getSize())
+                                .totalItems(mappedAdmins.getTotalElements())
+                                .totalPages(mappedAdmins.getTotalPages())
+                                .build();
+        }
+
+        // solar associate services
         public List<UserSolarAssessment_res_dto> getAllUserSolarAssessmentService() {
 
                 List<UserSolarAssessment_res_dto> allAssessment = solarAssessmentRepo.findAll()
@@ -221,118 +386,7 @@ public class AdminService {
                                 .build();
         }
 
-        public AdminUserProfile_res_dto adminPasswordChangeService(AdminChangePassword_req_dto data) {
-
-                Authentication authentication = SecurityContextHolder
-                                .getContext()
-                                .getAuthentication();
-                String email = authentication.getName();
-                AdminModel admin = adminRepo.findByEmail(email)
-                                .orElseThrow(() -> new RuntimeException("Admin not found"));
-                // Check current password
-                if (!passwordEncoder.matches(
-                                data.getCurrentPassword(),
-                                admin.getPassword())) {
-                        throw new RuntimeException(
-                                        "Current password is incorrect");
-                }
-                // Check new password is different
-                if (passwordEncoder.matches(
-                                data.getNewPassword(),
-                                admin.getPassword())) {
-                        throw new RuntimeException(
-                                        "New password must be different from current password");
-                }
-                // Encode new password
-                String encodedPassword = passwordEncoder.encode(
-                                data.getNewPassword());
-                admin.setPassword(encodedPassword);
-                try {
-                        AdminModel updatedAdmin = adminRepo.save(admin);
-                        return AdminUserProfile_res_dto.builder()
-                                        .userName(updatedAdmin.getUserName())
-                                        .email(updatedAdmin.getEmail())
-                                        .phoneNumber(updatedAdmin.getPhoneNumber())
-                                        .role(updatedAdmin.getRole())
-                                        .isSuspended(updatedAdmin.isSuspended())
-                                        .lastLogin(updatedAdmin.getLastLogin())
-                                        .createdAt(updatedAdmin.getCreatedAt())
-                                        .updatedAt(updatedAdmin.getUpdatedAt())
-                                        .build();
-                } catch (DataAccessException e) {
-                        throw new UserNotUpdatedExc(
-                                        "User password email: " + email + " updating error");
-                }
-        }
-
-        public AdminUserProfile_res_dto makeAdminUserSuspendService(long id) {
-
-                AdminModel admin = adminRepo.findById(id)
-                                .orElseThrow(() -> new RuntimeException("Admin not found"));
-                admin.setSuspended(!admin.isSuspended());
-                try {
-                        AdminModel updatedAdmin = adminRepo.save(admin);
-                        return AdminUserProfile_res_dto.builder()
-                                        .userName(updatedAdmin.getUserName())
-                                        .email(updatedAdmin.getEmail())
-                                        .phoneNumber(updatedAdmin.getPhoneNumber())
-                                        .role(updatedAdmin.getRole())
-                                        .isSuspended(updatedAdmin.isSuspended())
-                                        .lastLogin(updatedAdmin.getLastLogin())
-                                        .createdAt(updatedAdmin.getCreatedAt())
-                                        .updatedAt(updatedAdmin.getUpdatedAt())
-                                        .build();
-                } catch (DataAccessException e) {
-                        throw new UserNotUpdatedExc(
-                                        "Make admin user suspention id: " + id + " updating error");
-                }
-
-        }
-
-        public AdminUserProfile_res_dto changeAdminUserRoleService(long id) {
-
-                AdminModel admin = adminRepo.findById(id)
-                                .orElseThrow(() -> new RuntimeException("Admin not found"));
-                if (admin.getRole() == AdminRoles.admin) {
-                        admin.setRole(AdminRoles.super_admin);
-                } else {
-                        admin.setRole(AdminRoles.admin);
-                }
-                try {
-                        AdminModel updatedAdmin = adminRepo.save(admin);
-                        return AdminUserProfile_res_dto.builder()
-                                        .userName(updatedAdmin.getUserName())
-                                        .email(updatedAdmin.getEmail())
-                                        .phoneNumber(updatedAdmin.getPhoneNumber())
-                                        .role(updatedAdmin.getRole())
-                                        .isSuspended(updatedAdmin.isSuspended())
-                                        .lastLogin(updatedAdmin.getLastLogin())
-                                        .createdAt(updatedAdmin.getCreatedAt())
-                                        .updatedAt(updatedAdmin.getUpdatedAt())
-                                        .build();
-                } catch (DataAccessException e) {
-                        throw new UserNotUpdatedExc(
-                                        "Admin user role id: " + id + " updating error");
-                }
-        }
-
-        public AdminUserProfile_res_dto adminUserDeleteService(long id) {
-
-                AdminModel admin = adminRepo.findById(id)
-                                .orElseThrow(() -> new RuntimeException("Admin not found"));
-                adminRepo.delete(admin);
-                return AdminUserProfile_res_dto.builder()
-                                .userName(admin.getUserName())
-                                .email(admin.getEmail())
-                                .phoneNumber(admin.getPhoneNumber())
-                                .role(admin.getRole())
-                                .isSuspended(admin.isSuspended())
-                                .lastLogin(admin.getLastLogin())
-                                .createdAt(admin.getCreatedAt())
-                                .updatedAt(admin.getUpdatedAt())
-                                .build();
-        }
-
+        // testimonial associate services
         public UserTestimonial_res_dto changeTestimonialIsAvailableStateService(long id) {
 
                 UserTestimonialModel tempResponse = testimonialRepo.findById(id)
@@ -362,8 +416,7 @@ public class AdminService {
                         int page,
                         int size,
                         String sortBy,
-                        String direction
-        ) {
+                        String direction) {
 
                 if (page < 0) {
                         throw new IllegalArgumentException(
@@ -374,80 +427,39 @@ public class AdminService {
                                         "Size must be between 1 and 100");
                 }
                 Sort.Direction sortDirection = "desc".equalsIgnoreCase(direction)
-                        ? Sort.Direction.DESC
-                        : Sort.Direction.ASC;
+                                ? Sort.Direction.DESC
+                                : Sort.Direction.ASC;
                 Pageable pageable = PageRequest.of(
-                        page,
-                        size,
-                        Sort.by(sortDirection, sortBy));
+                                page,
+                                size,
+                                Sort.by(sortDirection, sortBy));
                 Page<UserTestimonialModel> testimonials = testimonialRepo.findAll(pageable);
                 Page<UserTestimonial_res_dto> mappedTestimonials = testimonials
-                        .map(testimonial -> UserTestimonial_res_dto.builder()
-                                .id(testimonial.getId())
-                                .userName(testimonial.getUserName())
-                                .company(testimonial.getCompany())
-                                .position(testimonial.getPosition())
-                                .email(testimonial.getEmail())
-                                .testimonial(testimonial.getTestimonial())
-                                .rating(testimonial.getRating())
-                                .createdAt(testimonial.getCreatedAt())
-                                .isAvailable(testimonial.isAvailable())
-                                .build());
+                                .map(testimonial -> UserTestimonial_res_dto.builder()
+                                                .id(testimonial.getId())
+                                                .userName(testimonial.getUserName())
+                                                .company(testimonial.getCompany())
+                                                .position(testimonial.getPosition())
+                                                .email(testimonial.getEmail())
+                                                .testimonial(testimonial.getTestimonial())
+                                                .rating(testimonial.getRating())
+                                                .createdAt(testimonial.getCreatedAt())
+                                                .isAvailable(testimonial.isAvailable())
+                                                .build());
 
                 return Page_res_dto.<UserTestimonial_res_dto>builder()
-                        .items(mappedTestimonials.getContent())
-                        .currentPage(mappedTestimonials.getNumber())
-                        .pageSize(mappedTestimonials.getSize())
-                        .totalItems(mappedTestimonials.getTotalElements())
-                        .totalPages(mappedTestimonials.getTotalPages())
-                        .build();
+                                .items(mappedTestimonials.getContent())
+                                .currentPage(mappedTestimonials.getNumber())
+                                .pageSize(mappedTestimonials.getSize())
+                                .totalItems(mappedTestimonials.getTotalElements())
+                                .totalPages(mappedTestimonials.getTotalPages())
+                                .build();
         }
 
-        @Transactional(readOnly = true)
-        public Page_res_dto<FullAdminDetails_res_dto> getAllAdminUserService(
-                int page,
-                int size,
-                String sortBy,
-                String direction
-        ) {
-
-                if (page < 0) {
-                        throw new IllegalArgumentException("Page must be greater than or equal to 0");
-                }
-                if (size < 1 || size > 100) {
-                        throw new IllegalArgumentException("Size must be between 1 and 100");
-                }
-                Sort.Direction sortDirection = "desc".equalsIgnoreCase(direction)
-                        ? Sort.Direction.DESC
-                        : Sort.Direction.ASC;
-                Pageable pageable = PageRequest.of(
-                        page,
-                        size,
-                        Sort.by(sortDirection, sortBy));
-                Page<AdminModel> admins = adminRepo.findAll(pageable);
-                Page<FullAdminDetails_res_dto> mappedAdmins = admins.map(admin -> FullAdminDetails_res_dto.builder()
-                        .id(admin.getId())
-                        .userName(admin.getUserName())
-                        .email(admin.getEmail())
-                        .phoneNumber(admin.getPhoneNumber())
-                        .role(admin.getRole())
-                        .isSuspended(admin.isSuspended())
-                        .lastLogin(admin.getLastLogin())
-                        .createdAt(admin.getCreatedAt())
-                        .updatedAt(admin.getUpdatedAt())
-                        .build());
-                return Page_res_dto.<FullAdminDetails_res_dto>builder()
-                        .items(mappedAdmins.getContent())
-                        .currentPage(mappedAdmins.getNumber())
-                        .pageSize(mappedAdmins.getSize())
-                        .totalItems(mappedAdmins.getTotalElements())
-                        .totalPages(mappedAdmins.getTotalPages())
-                        .build();
-        }
-
+        // product associate services
         public FullProduct_res_dto addNewProductService(ProductCreate_req_dto data) {
 
-                if (productRepo.findByProductId(data.getProductId())) {
+                if (productRepo.existsByProductId(data.getProductId())) {
                         throw new RuntimeException("Product ID already exists");
                 }
                 // Create product
@@ -496,10 +508,193 @@ public class AdminService {
                                 .build();
         }
 
+        @Transactional
+        public FullProduct_res_dto editProductService(
+                        long id,
+                        ProductEdit_req_dto data) {
+                // Find product
+                ProductModel product = productRepo.findById(id)
+                                .orElseThrow(() -> new RuntimeException("Product not found"));
+                // Update only fields actually sent by frontend
+                if (data.getProductName() != null) {
+                        product.setProductName(data.getProductName());
+                }
+
+                if (data.getProductDescription() != null) {
+                        product.setProductDescription(data.getProductDescription());
+                }
+
+                if (data.getProductPrice() != null) {
+                        product.setProductPrice(data.getProductPrice());
+                }
+
+                if (data.getCategory() != null) {
+                        product.setCategory(data.getCategory());
+                }
+                // Parse image operations
+                List<ImageEdit_req_dto> imageOperations = new ArrayList<>();
+                if (data.getImageOperations() != null &&
+                                !data.getImageOperations().isBlank()) {
+                        try {
+                                imageOperations = objectMapper.readValue(
+                                                data.getImageOperations(),
+                                                new TypeReference<List<ImageEdit_req_dto>>() {
+                                                });
+                        } catch (JacksonException e) {
+                                throw new RuntimeException(
+                                                "Invalid image operations format",
+                                                e);
+                        }
+                }
+                List<MultipartFile> uploadedFiles = data.getImages() != null
+                                ? data.getImages()
+                                : new ArrayList<>();
+                int fileIndex = 0;
+                // Process image operations
+                for (ImageEdit_req_dto operation : imageOperations) {
+                        String action = operation.getAction();
+                        if (action == null) {
+                                throw new RuntimeException("Image action cannot be null");
+                        }
+                        switch (action.toLowerCase()) {
+                                // REMOVE EXISTING IMAGE
+                                case "remove" -> {
+                                        if (operation.getId() == null) {
+                                                throw new RuntimeException(
+                                                                "Image ID is required for remove operation");
+                                        }
+                                        ProductImageModel existingImage = product.getImages()
+                                                        .stream()
+                                                        .filter(image -> image.getId().equals(operation.getId()))
+                                                        .findFirst()
+                                                        .orElseThrow(() -> new RuntimeException(
+                                                                        "Product image not found: "
+                                                                                        + operation.getId()));
+                                        // Delete image from Cloudinary
+                                        cloudinaryService.deleteImageService(
+                                                        existingImage.getCloudinaryPublicId());
+                                        // Remove from product image collection
+                                        product.getImages().remove(existingImage);
+                                }
+                                // REPLACE EXISTING IMAGE
+                                case "replace" -> {
+                                        if (operation.getId() == null) {
+                                                throw new RuntimeException(
+                                                                "Image ID is required for replace operation");
+                                        }
+                                        if (fileIndex >= uploadedFiles.size()) {
+                                                throw new RuntimeException(
+                                                                "Replacement image file is missing");
+                                        }
+                                        ProductImageModel existingImage = product.getImages()
+                                                        .stream()
+                                                        .filter(image -> image.getId().equals(operation.getId()))
+                                                        .findFirst()
+                                                        .orElseThrow(() -> new RuntimeException(
+                                                                        "Product image not found: "
+                                                                                        + operation.getId()));
+                                        MultipartFile newFile = uploadedFiles.get(fileIndex++);
+                                        // Delete old image from Cloudinary
+                                        cloudinaryService.deleteImageService(
+                                                        existingImage.getCloudinaryPublicId());
+                                        // Upload replacement image
+                                        CloudinaryUpload_res_dto uploadedImage = cloudinaryService.uploadImageService(
+                                                        newFile,
+                                                        "bmn_technologies/products");
+                                        // Update existing image record
+                                        existingImage.setImageUrl(
+                                                        uploadedImage.getImageUrl());
+                                        existingImage.setCloudinaryPublicId(
+                                                        uploadedImage.getPublicId());
+                                }
+                                // ADD NEW IMAGE
+                                case "add" -> {
+                                        if (fileIndex >= uploadedFiles.size()) {
+                                                throw new RuntimeException(
+                                                                "Image file is missing for add operation");
+                                        }
+                                        MultipartFile newFile = uploadedFiles.get(fileIndex++);
+                                        CloudinaryUpload_res_dto uploadedImage = cloudinaryService.uploadImageService(
+                                                        newFile,
+                                                        "bmn_technologies/products");
+                                        ProductImageModel newImage = ProductImageModel.builder()
+                                                        .imageUrl(
+                                                                        uploadedImage.getImageUrl())
+                                                        .cloudinaryPublicId(
+                                                                        uploadedImage.getPublicId())
+                                                        .product(product)
+                                                        .build();
+
+                                        product.getImages().add(newImage);
+                                }
+                                // INVALID ACTION
+                                default -> throw new RuntimeException(
+                                                "Invalid image action: " + action);
+                        }
+                }
+                // Prevent extra files not associated with an operation
+                if (fileIndex != uploadedFiles.size()) {
+                        throw new RuntimeException(
+                                        "Image files do not match image operations");
+                }
+                // Save product
+                ProductModel savedProduct = productRepo.save(product);
+                // Convert images to response DTO
+                List<ProductImage_res_dto> imageResponses = savedProduct.getImages()
+                                .stream()
+                                .map(image -> ProductImage_res_dto.builder()
+                                                .id(image.getId())
+                                                .imageUrl(image.getImageUrl())
+                                                .build())
+                                .toList();
+                // Build response
+                return FullProduct_res_dto.builder()
+                                .id(savedProduct.getId())
+                                .productId(savedProduct.getProductId())
+                                .productName(savedProduct.getProductName())
+                                .productDescription(savedProduct.getProductDescription())
+                                .productPrice(savedProduct.getProductPrice())
+                                .category(savedProduct.getCategory())
+                                .images(imageResponses)
+                                .createdAt(savedProduct.getCreatedAt())
+                                .updatedAt(savedProduct.getUpdatedAt())
+                                .build();
+        }
+
+        public FullProduct_res_dto availabilitySwapProductService(long id) {
+
+                if (!productRepo.existsById(id)) {
+                        throw new UserNotFoundExc("Product not found id: ", id);
+                }
+                ProductModel product = productRepo.findById(id)
+                                .orElseThrow(() -> new UserNotFoundExc("Product not found id: ", id));
+                List<ProductImage_res_dto> imageResponses = product.getImages()
+                                .stream()
+                                .map(image -> ProductImage_res_dto.builder()
+                                                .id(image.getId())
+                                                .imageUrl(image.getImageUrl())
+                                                .build())
+                                .toList();
+                product.setAvailable(!product.isAvailable());
+                ProductModel savedProduct = productRepo.save(product);
+                return FullProduct_res_dto.builder()
+                                .id(savedProduct.getId())
+                                .productId(savedProduct.getProductId())
+                                .productName(savedProduct.getProductName())
+                                .productDescription(savedProduct.getProductDescription())
+                                .productPrice(savedProduct.getProductPrice())
+                                .category(savedProduct.getCategory())
+                                .images(imageResponses)
+                                .createdAt(savedProduct.getCreatedAt())
+                                .updatedAt(savedProduct.getUpdatedAt())
+                                .build();
+        }
+
+        // project associate services
         public FullProject_res_dto addNewProjectService(ProjectCreate_req_dto data) {
 
                 // Check duplicate Project ID
-                if (projectRepo.findByProjectId(data.getProjectId())) {
+                if (projectRepo.existsByProjectId(data.getProjectId())) {
                         throw new RuntimeException("Project ID already exists");
                 }
                 // Create project
@@ -559,14 +754,261 @@ public class AdminService {
                                 .build();
         }
 
+        @Transactional
+        public FullProject_res_dto editProjectService(
+                        long id,
+                        ProjectEdit_req_dto data) {
+
+                // Find project
+                ProjectModel project = projectRepo.findById(id)
+                                .orElseThrow(() -> new RuntimeException("Project not found"));
+
+                // Update only fields actually sent by frontend
+                if (data.getProjectName() != null) {
+                        project.setProjectName(data.getProjectName());
+                }
+
+                if (data.getPersonName() != null) {
+                        project.setPersonName(data.getPersonName());
+                }
+
+                if (data.getProvince() != null) {
+                        project.setProvince(data.getProvince());
+                }
+
+                if (data.getLocation() != null) {
+                        project.setLocation(data.getLocation());
+                }
+
+                if (data.getProjectDescription() != null) {
+                        project.setProjectDescription(data.getProjectDescription());
+                }
+
+                if (data.getCategory() != null) {
+                        project.setCategory(data.getCategory());
+                }
+
+                if (data.getPropertyType() != null) {
+                        project.setPropertyType(data.getPropertyType());
+                }
+
+                if (data.getProjectDate() != null) {
+                        project.setProjectDate(data.getProjectDate());
+                }
+
+                // Parse image operations
+                List<ImageEdit_req_dto> imageOperations = new ArrayList<>();
+
+                if (data.getImageOperations() != null &&
+                                !data.getImageOperations().isBlank()) {
+
+                        try {
+
+                                imageOperations = objectMapper.readValue(
+                                                data.getImageOperations(),
+                                                new TypeReference<List<ImageEdit_req_dto>>() {
+                                                });
+
+                        } catch (JacksonException e) {
+
+                                throw new RuntimeException(
+                                                "Invalid image operations format",
+                                                e);
+                        }
+                }
+
+                List<MultipartFile> uploadedFiles = data.getImages() != null
+                                ? data.getImages()
+                                : new ArrayList<>();
+
+                int fileIndex = 0;
+
+                // Process image operations
+                for (ImageEdit_req_dto operation : imageOperations) {
+
+                        String action = operation.getAction();
+
+                        if (action == null) {
+                                throw new RuntimeException(
+                                                "Image action cannot be null");
+                        }
+
+                        switch (action.toLowerCase()) {
+
+                                // REMOVE EXISTING IMAGE
+                                case "remove" -> {
+
+                                        if (operation.getId() == null) {
+                                                throw new RuntimeException(
+                                                                "Image ID is required for remove operation");
+                                        }
+
+                                        ProjectImageModel existingImage = project.getImages()
+                                                        .stream()
+                                                        .filter(image -> image.getId()
+                                                                        .equals(operation.getId()))
+                                                        .findFirst()
+                                                        .orElseThrow(() -> new RuntimeException(
+                                                                        "Project image not found: "
+                                                                                        + operation.getId()));
+
+                                        // Delete image from Cloudinary
+                                        cloudinaryService.deleteImageService(
+                                                        existingImage.getCloudinaryPublicId());
+
+                                        // Remove from project image collection
+                                        project.getImages().remove(existingImage);
+                                }
+
+                                // REPLACE EXISTING IMAGE
+                                case "replace" -> {
+
+                                        if (operation.getId() == null) {
+                                                throw new RuntimeException(
+                                                                "Image ID is required for replace operation");
+                                        }
+
+                                        if (fileIndex >= uploadedFiles.size()) {
+                                                throw new RuntimeException(
+                                                                "Replacement image file is missing");
+                                        }
+
+                                        ProjectImageModel existingImage = project.getImages()
+                                                        .stream()
+                                                        .filter(image -> image.getId()
+                                                                        .equals(operation.getId()))
+                                                        .findFirst()
+                                                        .orElseThrow(() -> new RuntimeException(
+                                                                        "Project image not found: "
+                                                                                        + operation.getId()));
+
+                                        MultipartFile newFile = uploadedFiles.get(fileIndex++);
+
+                                        // Delete old image from Cloudinary
+                                        cloudinaryService.deleteImageService(
+                                                        existingImage.getCloudinaryPublicId());
+
+                                        // Upload replacement image
+                                        CloudinaryUpload_res_dto uploadedImage = cloudinaryService.uploadImageService(
+                                                        newFile,
+                                                        "bmn_technologies/projects");
+
+                                        // Update existing image record
+                                        existingImage.setImageUrl(
+                                                        uploadedImage.getImageUrl());
+
+                                        existingImage.setCloudinaryPublicId(
+                                                        uploadedImage.getPublicId());
+                                }
+
+                                // ADD NEW IMAGE
+                                case "add" -> {
+
+                                        if (fileIndex >= uploadedFiles.size()) {
+                                                throw new RuntimeException(
+                                                                "Image file is missing for add operation");
+                                        }
+
+                                        MultipartFile newFile = uploadedFiles.get(fileIndex++);
+
+                                        CloudinaryUpload_res_dto uploadedImage = cloudinaryService.uploadImageService(
+                                                        newFile,
+                                                        "bmn_technologies/projects");
+
+                                        ProjectImageModel newImage = ProjectImageModel.builder()
+                                                        .imageUrl(
+                                                                        uploadedImage.getImageUrl())
+                                                        .cloudinaryPublicId(
+                                                                        uploadedImage.getPublicId())
+                                                        .project(project)
+                                                        .build();
+
+                                        project.getImages().add(newImage);
+                                }
+
+                                // INVALID ACTION
+                                default -> throw new RuntimeException(
+                                                "Invalid image action: " + action);
+                        }
+                }
+
+                // Prevent extra files not associated with an operation
+                if (fileIndex != uploadedFiles.size()) {
+                        throw new RuntimeException(
+                                        "Image files do not match image operations");
+                }
+
+                // Save project
+                ProjectModel savedProject = projectRepo.save(project);
+
+                // Convert images to response DTO
+                List<ProjectImage_res_dto> imageResponses = savedProject.getImages()
+                                .stream()
+                                .map(image -> ProjectImage_res_dto.builder()
+                                                .id(image.getId())
+                                                .imageUrl(image.getImageUrl())
+                                                .build())
+                                .toList();
+
+                // Build response
+                return FullProject_res_dto.builder()
+                                .id(savedProject.getId())
+                                .projectId(savedProject.getProjectId())
+                                .projectName(savedProject.getProjectName())
+                                .personName(savedProject.getPersonName())
+                                .province(savedProject.getProvince())
+                                .location(savedProject.getLocation())
+                                .projectDescription(savedProject.getProjectDescription())
+                                .category(savedProject.getCategory())
+                                .propertyType(savedProject.getPropertyType())
+                                .projectDate(savedProject.getProjectDate())
+                                .images(imageResponses)
+                                .createdAt(savedProject.getCreatedAt())
+                                .updatedAt(savedProject.getUpdatedAt())
+                                .build();
+        }
+
+        public FullProject_res_dto availabilitySwapProjectService(long id) {
+
+                if (!productRepo.existsById(id)) {
+                        throw new UserNotFoundExc("Project not found id: ", id);
+                }
+                ProjectModel project = projectRepo.findById(id)
+                                .orElseThrow(() -> new UserNotFoundExc("Project not found id: ", id));
+                List<ProjectImage_res_dto> imageResponses = project.getImages()
+                                .stream()
+                                .map(image -> ProjectImage_res_dto.builder()
+                                                .id(image.getId())
+                                                .imageUrl(image.getImageUrl())
+                                                .build())
+                                .toList();
+                project.setAvailable(!project.isAvailable());
+                project = projectRepo.save(project);
+                return FullProject_res_dto.builder()
+                                .id(project.getId())
+                                .projectId(project.getProjectId())
+                                .projectName(project.getProjectName())
+                                .personName(project.getPersonName())
+                                .province(project.getProvince())
+                                .location(project.getLocation())
+                                .projectDescription(project.getProjectDescription())
+                                .category(project.getCategory())
+                                .propertyType(project.getPropertyType())
+                                .projectDate(project.getProjectDate())
+                                .images(imageResponses)
+                                .createdAt(project.getCreatedAt())
+                                .updatedAt(project.getUpdatedAt())
+                                .build();
+        }
+
         // get count of all
         public GetAllCount_res_dto getCountOfAllService() {
 
                 long admin = adminRepo.count();
-                long product = productRepo.count();
-                long project = projectRepo.count();
+                long product = productRepo.countByIsAvailableTrue();
+                long project = projectRepo.countByIsAvailableTrue();
                 long testimonial = testimonialRepo.count();
-                long assessment = solarAssessmentAssignmentRepo.count();
+                long assessment = solarAssessmentRepo.count();
 
                 return GetAllCount_res_dto.builder()
                                 .adminUserCount(admin)

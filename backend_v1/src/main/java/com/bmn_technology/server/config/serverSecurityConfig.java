@@ -35,6 +35,7 @@ public class serverSecurityConfig {
                     .requestMatchers(HttpMethod.POST, "/bmn_tech/api/admin/login").permitAll()
                     .requestMatchers(HttpMethod.POST, "/bmn_tech/api/user/**").permitAll()
                     .requestMatchers(HttpMethod.GET, "/bmn_tech/api/user/**").permitAll()
+                    .requestMatchers(HttpMethod.GET, "/bmn_tech/api/common/**").permitAll()
                     .anyRequest().authenticated()
             ).addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();

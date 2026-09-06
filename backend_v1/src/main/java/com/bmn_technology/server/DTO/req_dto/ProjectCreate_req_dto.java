@@ -1,6 +1,7 @@
 package com.bmn_technology.server.DTO.req_dto;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;
@@ -77,5 +78,6 @@ public class ProjectCreate_req_dto {
         max = 5,
         message = "Project must have between 1 and 5 images"
     )
-    private List<MultipartFile> images;
+    @Builder.Default
+    private List<MultipartFile> images = new ArrayList<>();
 }

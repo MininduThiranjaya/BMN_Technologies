@@ -68,14 +68,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class CommonService {
 
-    private final AdminRepo adminRepo;
-    private final PasswordEncoder passwordEncoder;
-    private final JwtService jwtService;
-    private final SolarAssessmentRepo solarAssessmentRepo;
-    private final SolarAssessmentAssignmentRepo solarAssessmentAssignmentRepo;
-    private final UserTestimonialRepo testimonialRepo;
     private final ProductRepo productRepo;
-    private final CloudinaryService cloudinaryService;
     private final ProjectRepo projectRepo;
 
     @Transactional(readOnly = true)
@@ -102,7 +95,7 @@ public class CommonService {
                 Sort.by(sortDirection, sortBy)
         );
         Page<ProductModel> products =
-                productRepo.findAll(pageable);
+                productRepo.findByIsAvailableTrue(pageable);
         Page<FullProduct_res_dto> mappedProducts =
                 products.map(this::mapToFullProductResponse);
         return Page_res_dto.<FullProduct_res_dto>builder()
@@ -165,7 +158,7 @@ public class CommonService {
                 Sort.by(sortDirection, sortBy)
         );
         Page<ProjectModel> projects =
-                projectRepo.findAll(pageable);
+                projectRepo.findByIsAvailableTrue(pageable);
         Page<FullProject_res_dto> mappedProjects =
                 projects.map(this::mapToFullProjectResponse);
         return Page_res_dto.<FullProject_res_dto>builder()
@@ -202,6 +195,5 @@ public class CommonService {
             .createdAt(project.getCreatedAt())
             .updatedAt(project.getUpdatedAt())
             .build();
-    }
-        
+    }      
 }

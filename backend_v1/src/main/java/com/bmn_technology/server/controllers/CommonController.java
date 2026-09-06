@@ -44,13 +44,13 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("bmn_tech/api/admin")
+@RequestMapping("bmn_tech/api/common")
 @RequiredArgsConstructor
 public class CommonController {
 
     private final CommonService service;
 
-    @GetMapping("get-product")
+    @GetMapping("product/get-all")
     public ResponseEntity<ApiResponse> getProductController(
         @RequestParam(defaultValue = "0")
         int page,
@@ -77,7 +77,7 @@ public class CommonController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping
+    @GetMapping("project/get-all")
     public ResponseEntity<ApiResponse> getProjectsController(
         @RequestParam(defaultValue = "0") int page,
         @RequestParam(defaultValue = "10") int size,

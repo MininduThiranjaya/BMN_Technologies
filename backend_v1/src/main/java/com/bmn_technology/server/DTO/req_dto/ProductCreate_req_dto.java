@@ -13,6 +13,7 @@ import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -49,5 +50,6 @@ public class ProductCreate_req_dto {
         max = 5,
         message = "Product must have between 1 and 5 images"
     )
-    private List<MultipartFile> images;
+    @Builder.Default
+    private List<MultipartFile> images = new ArrayList<>();
 }

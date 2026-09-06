@@ -14,6 +14,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PatchMapping;
 
 import com.bmn_technology.server.DTO.ApiResponse;
 import com.bmn_technology.server.DTO.req_dto.AdminChangePassword_req_dto;
@@ -22,6 +25,8 @@ import com.bmn_technology.server.DTO.req_dto.AdminReg_req_dto;
 import com.bmn_technology.server.DTO.req_dto.ProductCreate_req_dto;
 import com.bmn_technology.server.DTO.req_dto.ProjectCreate_req_dto;
 import com.bmn_technology.server.DTO.req_dto.SolarAssessmentAssignment_req_dto;
+import com.bmn_technology.server.DTO.req_dto.ProductEdit_req_dto;
+import com.bmn_technology.server.DTO.req_dto.ProjectEdit_req_dto;
 import com.bmn_technology.server.DTO.res_dto.AdminLogin_res_dto;
 import com.bmn_technology.server.DTO.res_dto.AdminReg_res_dto;
 import com.bmn_technology.server.DTO.res_dto.AdminUserProfile_res_dto;
@@ -83,7 +88,6 @@ public class AdminController {
         return ResponseEntity.ok(response);
     }
 
-    
     @GetMapping("auth/user-solar-assessment/get-all-assessment")
     public ResponseEntity<ApiResponse> getAllUserSolarAssessmentController() {
         
@@ -208,19 +212,7 @@ public class AdminController {
         return ResponseEntity.ok(response);
     }
 
-    // // testimonial operation associate controllers
-    // @GetMapping("auth/testimonial/count")
-    // public ResponseEntity<ApiResponse> countUserTestimonialController() {
-        
-    //     long res = service.countUserTestimonialService();
-    //     ApiResponse response = ApiResponse.builder()
-    //         .success(true)
-    //         .message("User testimonial count get successfully")
-    //         .data(res)
-    //         .build();
-    //     return ResponseEntity.ok(response);
-    // }
-
+    // testimonial associate controllers
     @PutMapping("auth/testimonial/change-state/{id}")
     public ResponseEntity<ApiResponse> changeTestimonialIsAvailableStateContoller(@PathVariable("id") long id) {
         
@@ -260,8 +252,11 @@ public class AdminController {
     }
 
     // product associate controllers
-    @PostMapping("auth/add-product")
-    public ResponseEntity<ApiResponse> addNewProductController(@RequestBody ProductCreate_req_dto data) {
+    @PostMapping( 
+        value = "auth/product/add-product",
+        consumes = MediaType.MULTIPART_FORM_DATA_VALUE
+    )
+    public ResponseEntity<ApiResponse> addNewProductController(@Valid @ModelAttribute ProductCreate_req_dto data) {
         
         FullProduct_res_dto res = service.addNewProductService(data);
         ApiResponse response = ApiResponse.builder()
@@ -272,42 +267,39 @@ public class AdminController {
         return ResponseEntity.ok(response);
     }
 
-    // @PutMapping("/edit/{id}")
-    // public void editProductInDatabase(@PathVariable("id") long id, @RequestBody ProductModel data) {
-    //     service.editProduct(id, data);
-    // }
-
-    // @GetMapping("/get/{category}")
-    // public List<ProductDTO> getProductsFromDatabase(@PathVariable("category") String category) {
-    //     return service.getProduct(category);
-    // }
+    @PatchMapping(
+        value = "auth/product/edit/{id}",
+        consumes = MediaType.MULTIPART_FORM_DATA_VALUE
+    )
+    public ResponseEntity<ApiResponse> editProductController(@PathVariable long id, @ModelAttribute ProductEdit_req_dto data) {
+        
+        FullProduct_res_dto res = service.editProductService(id, data);
+        ApiResponse response = ApiResponse.builder()
+            .success(true)
+            .message("Add new product successfully")
+            .data(res)
+            .build();
+        return ResponseEntity.ok(response);
+    }
     
-    // @PostMapping("/get/filter")
-    // public List<ProductModel> getFilteredProductsFromDatabase(@RequestBody ProductFilterDTO filters) {
-    //     return service.getFilteredProduct(filters);
-    // }
-
-    // @GetMapping("/count")
-    // public long countProductsInDatabase() {
-    //     return service.countProducts();
-    // }
-
-    // @DeleteMapping("/delete-by-id/{id}")
-    // public ResponseEntity<ApiResponseDTO> deleteProductFromDatabase(@PathVariable("id") long id) {
-    //     try{
-    //         ApiResponseDTO response = service.deleteProduct(id);
-    //         return ResponseEntity.ok(response);
-    //     }
-    //     catch(Exception e) {
-    //         return ResponseEntity
-    //             .status(500)
-    //             .body(new ApiResponseDTO(false, "Error deleting product: " + e.getMessage()));
-    //     }
-    // }
+    @DeleteMapping("auth/product/delete/{id}")
+    public ResponseEntity<ApiResponse> availabilitySwapProductController(@PathVariable("id") long id) {
+        
+        FullProduct_res_dto res = service.availabilitySwapProductService(id);
+        ApiResponse response = ApiResponse.builder()
+            .success(true)
+            .message("Change user testimonial available state successfully")
+            .data(res)
+            .build();
+        return ResponseEntity.ok(response);
+    }
 
     // project associate controllers
-    @PostMapping("auth/add-project")
-    public ResponseEntity<ApiResponse> addNewProjectController(@RequestBody ProjectCreate_req_dto data) {
+    @PostMapping(
+        value = "auth/project/add-project",
+        consumes = MediaType.MULTIPART_FORM_DATA_VALUE
+    )
+    public ResponseEntity<ApiResponse> addNewProjectController(@Valid @ModelAttribute ProjectCreate_req_dto data) {
         
         FullProject_res_dto res = service.addNewProjectService(data);
         ApiResponse response = ApiResponse.builder()
@@ -318,41 +310,31 @@ public class AdminController {
         return ResponseEntity.ok(response);
     }
 
-    // @PutMapping("/edit/{id}")
-    // public void editProjectInDatabase(@PathVariable("id") long id, @RequestBody ProjectModel data) {
-    //     service.editProject(id, data);
-    // }
+    @PatchMapping(
+        value = "auth/project/edit/{id}",
+        consumes = MediaType.MULTIPART_FORM_DATA_VALUE
+    )
+    public ResponseEntity<ApiResponse> editProjectController(@PathVariable long id, @ModelAttribute ProjectEdit_req_dto data) {
+        
+        FullProject_res_dto res = service.editProjectService(id, data);
+        ApiResponse response = ApiResponse.builder()
+            .success(true)
+            .message("Edit project successfully")
+            .data(res)
+            .build();
+        return ResponseEntity.ok(response);
+    }
 
-    // @GetMapping("/get/{category}")
-    // public List<ProjectDTO> getProjectsFromDatabase(@PathVariable("category") String category) {
-    //     return service.getProjects(category);
-    // }
+    @DeleteMapping("auth/project/delete/{id}")
+    public ResponseEntity<ApiResponse> availabilitySwapProjectController(@PathVariable("id") long id) {
+        
+        FullProject_res_dto res = service.availabilitySwapProjectService(id);
+        ApiResponse response = ApiResponse.builder()
+            .success(true)
+            .message("Change user testimonial available state successfully")
+            .data(res)
+            .build();
+        return ResponseEntity.ok(response);
+    }
 
-    // @PostMapping("/get/filter")
-    // public List<ProjectModel> getFilteredProductsFromDatabase(@RequestBody ProjectFilterDTO filters) {
-    //     return service.getFilteredProject(filters);
-    // }
-
-    // @GetMapping("/count")
-    // public long countProjectsInDatabase() {
-    //     return service.countProjects();
-    // }
-
-    // @GetMapping("/get/all")
-    // public List<ProjectModel> getProjectWithAllDetailsFromDatabase() {
-    //     return service.getProjectWithAllDetails();
-    // }
-
-    // @DeleteMapping("/delete-by-id/{id}")
-    // public ResponseEntity<ApiResponseDTO> deleteProductFromDatabase(@PathVariable("id") long id) {
-    //     try{
-    //         ApiResponseDTO response = service.deleteProject(id);
-    //         return ResponseEntity.ok(response);
-    //     }
-    //     catch(Exception e) {
-    //         return ResponseEntity
-    //             .status(500)
-    //             .body(new ApiResponseDTO(false, "Error deleting product: " + e.getMessage()));
-    //     }
-    // }
 }

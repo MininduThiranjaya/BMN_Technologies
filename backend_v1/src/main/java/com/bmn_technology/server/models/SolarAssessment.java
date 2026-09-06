@@ -53,9 +53,8 @@ public class SolarAssessment {
     @Column(name = "property_type", nullable = false, length = 50)
     private PropertyType propertyType;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "monthly_ele_bill", nullable = true, length = 50)
-    private ElectricityBillRange monthlyElectricityBill;
+    @Column(name = "monthly_ele_bill", nullable = true)
+    private Integer monthlyElectricityBill;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "interested_solution", nullable = false, length = 20)

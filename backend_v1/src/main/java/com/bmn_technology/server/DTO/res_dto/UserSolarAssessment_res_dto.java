@@ -25,7 +25,7 @@ public class UserSolarAssessment_res_dto {
     private String email;
     private String location;
     private PropertyType propertyType;
-    private ElectricityBillRange monthlyElectricityBill;
+    private Integer monthlyElectricityBill;
     private InterestedSolution interestedSolution;
     private String message;
     private boolean isRead;
