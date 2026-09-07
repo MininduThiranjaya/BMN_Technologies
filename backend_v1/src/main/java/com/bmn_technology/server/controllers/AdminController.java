@@ -22,10 +22,12 @@ import com.bmn_technology.server.DTO.ApiResponse;
 import com.bmn_technology.server.DTO.req_dto.AdminChangePassword_req_dto;
 import com.bmn_technology.server.DTO.req_dto.AdminLogin_req_dto;
 import com.bmn_technology.server.DTO.req_dto.AdminReg_req_dto;
+import com.bmn_technology.server.DTO.req_dto.ForgetPasswordChange_req_dto;
 import com.bmn_technology.server.DTO.req_dto.ForgetPasswordGetMail_req_dto;
 import com.bmn_technology.server.DTO.req_dto.ProductCreate_req_dto;
 import com.bmn_technology.server.DTO.req_dto.ProjectCreate_req_dto;
 import com.bmn_technology.server.DTO.req_dto.SolarAssessmentAssignment_req_dto;
+import com.bmn_technology.server.DTO.req_dto.VerifyCode_req_dto;
 import com.bmn_technology.server.DTO.req_dto.ProductEdit_req_dto;
 import com.bmn_technology.server.DTO.req_dto.ProjectEdit_req_dto;
 import com.bmn_technology.server.DTO.req_dto.ForgetPasswordSendMail_req_dto;
@@ -153,9 +155,29 @@ public class AdminController {
         return ResponseEntity.ok(response);
     }
 
-    // @PostMapping("forget-password/check-code")
-    // public ResponseEntity<ApiResponseDTO> verifyCode(@RequestBody VerifyCodeDTO data) {
-    // }
+    @PostMapping("forget-password/verify-code")
+    public ResponseEntity<ApiResponse> verifyCodeController(@Valid @RequestBody VerifyCode_req_dto data) {
+
+        String code = service.verifyCodeService(data);
+        ApiResponse response = ApiResponse.builder()
+                .success(true)
+                .message("Verification code verified successfully")
+                .data(code)
+                .build();
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("forget-password/change-password")
+    public ResponseEntity<ApiResponse> changeForgetPasswordController(@Valid @RequestBody ForgetPasswordChange_req_dto data) {
+
+        AdminReg_res_dto res = service.changeForgetPasswordService(data);
+        ApiResponse response = ApiResponse.builder()
+                .success(true)
+                .message("Password changed successfully")
+                .data(res)
+                .build();
+        return ResponseEntity.ok(response);
+    }
     
     @GetMapping("auth/get-all-admins")
     public ResponseEntity<ApiResponse> getAllAdminUserConroller(

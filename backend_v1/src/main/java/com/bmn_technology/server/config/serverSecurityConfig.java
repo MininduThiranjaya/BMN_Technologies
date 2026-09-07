@@ -33,6 +33,9 @@ public class serverSecurityConfig {
                 auth
                     .requestMatchers(HttpMethod.POST, "/bmn_tech/api/admin/register").permitAll()
                     .requestMatchers(HttpMethod.POST, "/bmn_tech/api/admin/login").permitAll()
+                    .requestMatchers(HttpMethod.POST, "/bmn_tech/api/admin/forget-password/send-mail").permitAll()
+                    .requestMatchers(HttpMethod.POST, "/bmn_tech/api/admin/forget-password/verify-code").permitAll()
+                    .requestMatchers(HttpMethod.POST, "/bmn_tech/api/admin/forget-password/change-password").permitAll()
                     .requestMatchers(HttpMethod.POST, "/bmn_tech/api/user/**").permitAll()
                     .requestMatchers(HttpMethod.GET, "/bmn_tech/api/user/**").permitAll()
                     .requestMatchers(HttpMethod.GET, "/bmn_tech/api/common/**").permitAll()

@@ -7,6 +7,7 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.springframework.stereotype.Service;
+
 import com.bmn_technology.server.models.AdminModel;
 import com.bmn_technology.server.repos.AdminRepo;
 
@@ -27,7 +28,7 @@ public class VerificationCodeService {
     }
 
     public String generateCode() {
-        int code = 10000 + random.nextInt(90000);
+        int code = 100000 + random.nextInt(90000);
         return String.valueOf(code);
     }
 
@@ -39,6 +40,10 @@ public class VerificationCodeService {
         CodeData stored = codeStorage.get(email);
         if (stored == null || Instant.now().isAfter(stored.expiry)) return false;
         return stored.code.equals(code);
+    }
+
+    public void removeCode(String email) {
+        codeStorage.remove(email);
     }
 
     private static class CodeData {
