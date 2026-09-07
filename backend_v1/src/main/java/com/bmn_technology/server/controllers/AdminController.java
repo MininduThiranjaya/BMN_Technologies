@@ -22,11 +22,13 @@ import com.bmn_technology.server.DTO.ApiResponse;
 import com.bmn_technology.server.DTO.req_dto.AdminChangePassword_req_dto;
 import com.bmn_technology.server.DTO.req_dto.AdminLogin_req_dto;
 import com.bmn_technology.server.DTO.req_dto.AdminReg_req_dto;
+import com.bmn_technology.server.DTO.req_dto.ForgetPasswordGetMail_req_dto;
 import com.bmn_technology.server.DTO.req_dto.ProductCreate_req_dto;
 import com.bmn_technology.server.DTO.req_dto.ProjectCreate_req_dto;
 import com.bmn_technology.server.DTO.req_dto.SolarAssessmentAssignment_req_dto;
 import com.bmn_technology.server.DTO.req_dto.ProductEdit_req_dto;
 import com.bmn_technology.server.DTO.req_dto.ProjectEdit_req_dto;
+import com.bmn_technology.server.DTO.req_dto.ForgetPasswordSendMail_req_dto;
 import com.bmn_technology.server.DTO.res_dto.AdminLogin_res_dto;
 import com.bmn_technology.server.DTO.res_dto.AdminReg_res_dto;
 import com.bmn_technology.server.DTO.res_dto.AdminUserProfile_res_dto;
@@ -39,6 +41,7 @@ import com.bmn_technology.server.DTO.res_dto.SolarAssessmentAssignment_res_dto;
 import com.bmn_technology.server.DTO.res_dto.UserSolarAssessment_res_dto;
 import com.bmn_technology.server.DTO.res_dto.UserTestimonial_res_dto;
 import com.bmn_technology.server.services.AdminService;
+import com.bmn_technology.server.services.CommonService;
 import com.bmn_technology.server.services.auth.AdminUserDetails;
 
 import jakarta.validation.Valid;
@@ -50,6 +53,7 @@ import lombok.RequiredArgsConstructor;
 public class AdminController {
 
     private final AdminService service;
+    private final CommonService commonService;
     
     // admin user associate controller
     @PostMapping("register")
@@ -137,6 +141,22 @@ public class AdminController {
         return ResponseEntity.ok(response);
     }
 
+    @PostMapping("forget-password/send-mail")
+    public ResponseEntity<ApiResponse> sendMailController(@Valid @RequestBody ForgetPasswordGetMail_req_dto data) {
+
+        AdminReg_res_dto res = service.sendForgetPasswordSendMailService(data);
+        ApiResponse response = ApiResponse.builder()
+            .success(true)
+            .message("Send mail successfully")
+            .data(res)
+            .build();
+        return ResponseEntity.ok(response);
+    }
+
+    // @PostMapping("forget-password/check-code")
+    // public ResponseEntity<ApiResponseDTO> verifyCode(@RequestBody VerifyCodeDTO data) {
+    // }
+    
     @GetMapping("auth/get-all-admins")
     public ResponseEntity<ApiResponse> getAllAdminUserConroller(
         @RequestParam(defaultValue = "0")
@@ -281,7 +301,35 @@ public class AdminController {
             .build();
         return ResponseEntity.ok(response);
     }
-    
+   
+    @GetMapping("auth/product/get-deleted")
+    public ResponseEntity<ApiResponse> getDeletedProductController(
+        @RequestParam(defaultValue = "0")
+        int page,
+        @RequestParam(defaultValue = "12")
+        int size,
+        @RequestParam(defaultValue = "createdAt")
+        String sortBy,
+        @RequestParam(defaultValue = "desc")
+        String direction
+    ) {
+        
+        Page_res_dto<FullProduct_res_dto> res =
+                commonService.getProductService(
+                        page,
+                        size,
+                        sortBy,
+                        direction,
+                        "deleted"
+                );
+        ApiResponse response = ApiResponse.builder()
+            .success(true)
+            .message("Get deleted product successfully page = " + page)
+            .data(res)
+            .build();
+        return ResponseEntity.ok(response);
+    }
+   
     @DeleteMapping("auth/product/delete/{id}")
     public ResponseEntity<ApiResponse> availabilitySwapProductController(@PathVariable("id") long id) {
         
@@ -320,6 +368,30 @@ public class AdminController {
         ApiResponse response = ApiResponse.builder()
             .success(true)
             .message("Edit project successfully")
+            .data(res)
+            .build();
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("auth/project/get-deleted")
+    public ResponseEntity<ApiResponse> getDeletedProjectsController(
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "10") int size,
+        @RequestParam(defaultValue = "createdAt") String sortBy,
+        @RequestParam(defaultValue = "desc") String direction
+    ) {
+
+        Page_res_dto<FullProject_res_dto> res =
+                commonService.getProjectService(
+                        page,
+                        size,
+                        sortBy,
+                        direction,
+                        "deleted"
+                );
+        ApiResponse response = ApiResponse.builder()
+            .success(true)
+            .message("Get deleted project successfully page = " + page)
             .data(res)
             .build();
         return ResponseEntity.ok(response);

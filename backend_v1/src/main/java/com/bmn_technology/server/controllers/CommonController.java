@@ -67,7 +67,8 @@ public class CommonController {
                         page,
                         size,
                         sortBy,
-                        direction
+                        direction,
+                        "not-deleted"
                 );
         ApiResponse response = ApiResponse.builder()
             .success(true)
@@ -90,11 +91,12 @@ public class CommonController {
                         page,
                         size,
                         sortBy,
-                        direction
+                        direction,
+                        "not-deleted"
                 );
         ApiResponse response = ApiResponse.builder()
             .success(true)
-            .message("Get product successfully page = " + page)
+            .message("Get project successfully page = " + page)
             .data(res)
             .build();
         return ResponseEntity.ok(response);

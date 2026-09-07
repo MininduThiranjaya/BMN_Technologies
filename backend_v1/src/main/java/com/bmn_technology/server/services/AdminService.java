@@ -47,6 +47,8 @@ import com.bmn_technology.server.DTO.req_dto.AdminLogin_req_dto;
 import com.bmn_technology.server.DTO.req_dto.ProductEdit_req_dto;
 import com.bmn_technology.server.DTO.req_dto.ProjectEdit_req_dto;
 import com.bmn_technology.server.DTO.req_dto.ImageEdit_req_dto;
+import com.bmn_technology.server.DTO.req_dto.ForgetPasswordSendMail_req_dto;
+import com.bmn_technology.server.DTO.req_dto.ForgetPasswordGetMail_req_dto;
 import com.bmn_technology.server.DTO.res_dto.AdminReg_res_dto;
 import com.bmn_technology.server.DTO.res_dto.AdminUserProfile_res_dto;
 import com.bmn_technology.server.DTO.res_dto.CloudinaryUpload_res_dto;
@@ -67,6 +69,8 @@ import com.bmn_technology.server.models.SolarAssessment;
 import com.bmn_technology.server.models.SolarAssessmentAssignment;
 import com.bmn_technology.server.models.UserTestimonialModel;
 
+import lk.bmn_technologies.backend.services.VerificationCodeService;
+import lk.bmn_technologies.backend.services.EmailService;
 import lombok.RequiredArgsConstructor;
 import tools.jackson.core.JacksonException;
 import tools.jackson.core.type.TypeReference;
@@ -86,6 +90,8 @@ public class AdminService {
         private final CloudinaryService cloudinaryService;
         private final ProjectRepo projectRepo;
         private final ObjectMapper objectMapper;
+        private final EmailService mailService;
+        private final VerificationCodeService verificationCodeService;
 
         // admin user associate services
         public AdminReg_res_dto adminUserRegisterService(AdminReg_req_dto data) {
@@ -251,6 +257,45 @@ public class AdminService {
                         throw new UserNotUpdatedExc(
                                         "User password email: " + email + " updating error");
                 }
+        }
+
+        public AdminReg_res_dto sendForgetPasswordSendMailService(
+                        ForgetPasswordGetMail_req_dto data) {
+
+                AdminModel admin = adminRepo.findByEmail(data.getMail())
+                        .orElseThrow(() -> new RuntimeException("Admin account not found"));
+                String verificationCode = verificationCodeService.generateCode();
+                String emailBody =
+                        "<div style='font-family: Arial, sans-serif; max-width: 480px; margin: auto; padding: 24px; border: 1px solid #eee; border-radius: 8px;'>" +
+                                "<h2 style='color: #1a1a1a;'>Password Reset Request</h2>" +
+                                "<p style='color: #444; font-size: 14px;'>Hello "+ admin.getUserName() +", We received a request to reset the password for your account associated with this email address.</p>" +
+                                "<p style='color: #444; font-size: 14px;'>Use the code below to reset your password:</p>" +
+                                "<div style='background: #f4f4f4; padding: 14px; text-align: center; font-size: 22px; font-weight: bold; letter-spacing: 4px; border-radius: 6px; margin: 20px 0;'>" +
+                                verificationCode +
+                                "</div>" +
+                                "<p style='color: #888; font-size: 13px;'>This code will expire in 10 minutes.</p>" +
+                                "<p style='color: #888; font-size: 13px;'>If you did not request this, you can safely ignore this email or contact our support team.</p>" +
+                                "<p style='color: #444; font-size: 14px; margin-top: 24px;'>Thank you,<br/>BMN Technologies</p>" +
+                        "</div>";
+                verificationCodeService.storeCode(
+                        admin.getEmail(),
+                        verificationCode);
+                ForgetPasswordSendMail_req_dto mailData = ForgetPasswordSendMail_req_dto.builder()
+                        .to(admin.getEmail())
+                        .subject("Password Reset Verification Code")
+                        .body(emailBody)
+                        .build();
+                boolean isSent = mailService.sendEmail(mailData);
+                if (!isSent) {
+                        throw new RuntimeException(
+                                        "Failed to send verification code email");
+                }
+                return AdminReg_res_dto.builder()
+                        .userName(admin.getUserName())
+                        .email(admin.getEmail())
+                        .role(admin.getRole())
+                        .phone(admin.getPhoneNumber())
+                        .build();
         }
 
         @Transactional(readOnly = true)

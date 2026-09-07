@@ -11,5 +11,6 @@ public interface ProjectRepo extends JpaRepository<ProjectModel, Long>{
     boolean findByProjectId(String id);
     boolean existsByProjectId(String id);
     Page<ProjectModel> findByIsAvailableTrue(Pageable pageable);
+    Page<ProjectModel> findByIsAvailableFalse(Pageable pageable);
     long countByIsAvailableTrue();
 }

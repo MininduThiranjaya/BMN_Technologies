@@ -76,7 +76,8 @@ public class CommonService {
         int page,
         int size,
         String sortBy,
-        String direction
+        String direction,
+        String type
     ) {
 
         if (page < 0) {
@@ -94,8 +95,12 @@ public class CommonService {
                 size,
                 Sort.by(sortDirection, sortBy)
         );
-        Page<ProductModel> products =
-                productRepo.findByIsAvailableTrue(pageable);
+        Page<ProductModel> products;
+        if(type.equals("deleted")){
+            products = productRepo.findByIsAvailableFalse(pageable);
+        } else {
+            products = productRepo.findByIsAvailableTrue(pageable);
+        }
         Page<FullProduct_res_dto> mappedProducts =
                 products.map(this::mapToFullProductResponse);
         return Page_res_dto.<FullProduct_res_dto>builder()
@@ -135,7 +140,8 @@ public class CommonService {
             int page,
             int size,
             String sortBy,
-            String direction
+            String direction,
+            String type
     ) {
 
         if (page < 0) {
@@ -157,8 +163,12 @@ public class CommonService {
                 size,
                 Sort.by(sortDirection, sortBy)
         );
-        Page<ProjectModel> projects =
-                projectRepo.findByIsAvailableTrue(pageable);
+        Page<ProjectModel> projects;
+        if(type.equals("deleted")){
+            projects = projectRepo.findByIsAvailableFalse(pageable);
+        } else {
+            projects = projectRepo.findByIsAvailableTrue(pageable);
+        }
         Page<FullProject_res_dto> mappedProjects =
                 projects.map(this::mapToFullProjectResponse);
         return Page_res_dto.<FullProject_res_dto>builder()
