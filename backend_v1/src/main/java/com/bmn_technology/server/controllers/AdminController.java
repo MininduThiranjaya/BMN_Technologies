@@ -31,6 +31,7 @@ import com.bmn_technology.server.DTO.req_dto.VerifyCode_req_dto;
 import com.bmn_technology.server.DTO.req_dto.ProductEdit_req_dto;
 import com.bmn_technology.server.DTO.req_dto.ProjectEdit_req_dto;
 import com.bmn_technology.server.DTO.req_dto.ForgetPasswordSendMail_req_dto;
+import com.bmn_technology.server.DTO.res_dto.AdminList_res_dto;
 import com.bmn_technology.server.DTO.res_dto.AdminLogin_res_dto;
 import com.bmn_technology.server.DTO.res_dto.AdminReg_res_dto;
 import com.bmn_technology.server.DTO.res_dto.AdminUserProfile_res_dto;
@@ -42,6 +43,7 @@ import com.bmn_technology.server.DTO.res_dto.Page_res_dto;
 import com.bmn_technology.server.DTO.res_dto.SolarAssessmentAssignment_res_dto;
 import com.bmn_technology.server.DTO.res_dto.UserSolarAssessment_res_dto;
 import com.bmn_technology.server.DTO.res_dto.UserTestimonial_res_dto;
+import com.bmn_technology.server.DTO.res_dto.AdminForAssignment_res_dto;
 import com.bmn_technology.server.services.AdminService;
 import com.bmn_technology.server.services.CommonService;
 import com.bmn_technology.server.services.auth.AdminUserDetails;
@@ -95,29 +97,43 @@ public class AdminController {
     }
 
     @GetMapping("auth/user-solar-assessment/get-all-assessment")
-    public ResponseEntity<ApiResponse> getAllUserSolarAssessmentController() {
+    public ResponseEntity<ApiResponse> getAllUserSolarAssessmentController(
+        @RequestParam(defaultValue = "0")
+        int page,
+        @RequestParam(defaultValue = "12")
+        int size,
+        @RequestParam(defaultValue = "createdAt")
+        String sortBy,
+        @RequestParam(defaultValue = "desc")
+        String direction
+    ) {
         
-        List<UserSolarAssessment_res_dto> res = service.getAllUserSolarAssessmentService();
+        Page_res_dto<UserSolarAssessment_res_dto> res = service.getAllUserSolarAssessmentService(
+            page,
+            size,
+            sortBy,
+            direction
+        );
         ApiResponse response = ApiResponse.builder()
             .success(true)
-            .message("User solar assessment fetch successfully")
+            .message("User solar assessment fetched successfully")
             .data(res)
             .build();
         return ResponseEntity.ok(response);
     }
 
-    @PutMapping("auth/user-solar-assessment/mark-as-read")
-    public ResponseEntity<ApiResponse> userSolarAssessmentMarkAsReadController(@RequestBody Map<String, Long> body) {
+    // @PutMapping("auth/user-solar-assessment/mark-as-read")
+    // public ResponseEntity<ApiResponse> userSolarAssessmentMarkAsReadController(@RequestBody Map<String, Long> body) {
         
-        long id  = body.get("id");
-        UserSolarAssessment_res_dto res = service.userSolarAssessmentMarkAsReadService(id);
-        ApiResponse response = ApiResponse.builder()
-            .success(true)
-            .message("User solar assessment mark as read successfully")
-            .data(res)
-            .build();
-        return ResponseEntity.ok(response);
-    }
+    //     long id  = body.get("id");
+    //     UserSolarAssessment_res_dto res = service.userSolarAssessmentMarkAsReadService(id);
+    //     ApiResponse response = ApiResponse.builder()
+    //         .success(true)
+    //         .message("User solar assessment mark as read successfully")
+    //         .data(res)
+    //         .build();
+    //     return ResponseEntity.ok(response);
+    // }
 
     @PostMapping("auth/user-solar-assessment/assign")
     public ResponseEntity<ApiResponse> userSolarAssessmentAssignController(@Valid @RequestBody SolarAssessmentAssignment_req_dto data) {
@@ -199,7 +215,7 @@ public class AdminController {
         );
         ApiResponse response = ApiResponse.builder()
             .success(true)
-            .message("User suspend successfully")
+            .message("Admin User fetched successfully")
             .data(res)
             .build();
         return ResponseEntity.ok(response);
@@ -239,6 +255,31 @@ public class AdminController {
             .data(res)
             .build();
         return ResponseEntity.ok(response); 
+    }
+
+
+    @GetMapping("auth/get-all-admins-list")
+    public ResponseEntity<ApiResponse> getAllAdminsListController() {
+        
+        List<AdminList_res_dto> res = service.getAllAdminsListService();
+        ApiResponse response = ApiResponse.builder()
+            .success(true)
+            .message("Get all admin users successfully")
+            .data(res)
+            .build();
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("auth/get-admin/{id}")
+    public ResponseEntity<ApiResponse> getAdminForAssignmentByIdController(@PathVariable("id") long id) {
+        
+        AdminForAssignment_res_dto res = service.getAdminForAssignmentByIdService(id);
+        ApiResponse response = ApiResponse.builder()
+            .success(true)
+            .message("Get admin user by id successfully")
+            .data(res)
+            .build();
+        return ResponseEntity.ok(response);
     }
 
     // get count of all

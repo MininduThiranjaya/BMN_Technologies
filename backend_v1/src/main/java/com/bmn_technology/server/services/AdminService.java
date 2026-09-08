@@ -67,7 +67,9 @@ import com.bmn_technology.server.DTO.res_dto.ProductImage_res_dto;
 import com.bmn_technology.server.DTO.res_dto.ProjectImage_res_dto;
 import com.bmn_technology.server.DTO.res_dto.SolarAssessmentAssignment_res_dto;
 import com.bmn_technology.server.DTO.res_dto.UserSolarAssessment_res_dto;
+import com.bmn_technology.server.DTO.res_dto.AdminForAssignment_res_dto;
 import com.bmn_technology.server.enums.AdminRoles;
+import com.bmn_technology.server.DTO.res_dto.AdminList_res_dto;
 import com.bmn_technology.server.DTO.res_dto.AdminLogin_res_dto;
 import com.bmn_technology.server.repos.SolarAssessmentRepo;
 import com.bmn_technology.server.repos.UserTestimonialRepo;
@@ -216,6 +218,35 @@ public class AdminService {
                                 .lastLogin(admin.getLastLogin())
                                 .createdAt(admin.getCreatedAt())
                                 .updatedAt(admin.getUpdatedAt())
+                                .build();
+        }
+
+        @Transactional(readOnly = true)
+        public List<AdminList_res_dto> getAllAdminsListService() {
+
+                return adminRepo.findAll()
+                                .stream()
+                                .filter(admin -> admin.getRole() != null &&
+                                                admin.getRole().name().equalsIgnoreCase("admin") &&
+                                                !admin.isSuspended())
+                                .map(admin -> AdminList_res_dto.builder()
+                                                .id(admin.getId())
+                                                .userName(admin.getUserName())
+                                                .build())
+                                .toList();
+        }
+
+        @Transactional(readOnly = true)
+        public AdminForAssignment_res_dto getAdminForAssignmentByIdService(long id) {
+
+                AdminModel admin = adminRepo.findById(id)
+                                .orElseThrow(() -> new IllegalArgumentException("Admin user not found with id: " + id));
+
+                return AdminForAssignment_res_dto.builder()
+                                .id(admin.getId())
+                                .userName(admin.getUserName())
+                                .email(admin.getEmail())
+                                .phoneNumber(admin.getPhoneNumber())
                                 .build();
         }
 
@@ -386,11 +417,34 @@ public class AdminService {
         }
 
         // solar associate services
-        public List<UserSolarAssessment_res_dto> getAllUserSolarAssessmentService() {
+        @Transactional(readOnly = true)
+        public Page_res_dto<UserSolarAssessment_res_dto> getAllUserSolarAssessmentService(
+                        int page,
+                        int size,
+                        String sortBy,
+                        String direction) {
 
-                List<UserSolarAssessment_res_dto> allAssessment = solarAssessmentRepo.findAll()
-                                .stream()
-                                .map(assessment -> UserSolarAssessment_res_dto.builder()
+                if (page < 0) {
+                        throw new IllegalArgumentException("Page must be greater than or equal to 0");
+                }
+
+                if (size < 1 || size > 100) {
+                        throw new IllegalArgumentException("Size must be between 1 and 100");
+                }
+
+                Sort.Direction sortDirection = "desc".equalsIgnoreCase(direction)
+                                ? Sort.Direction.DESC
+                                : Sort.Direction.ASC;
+
+                Pageable pageable = PageRequest.of(
+                                page,
+                                size,
+                                Sort.by(sortDirection, sortBy));
+
+                Page<SolarAssessment> assessments = solarAssessmentRepo.findByIsReadFalse(pageable);
+
+                Page<UserSolarAssessment_res_dto> mappedAssessments = assessments.map(
+                                assessment -> UserSolarAssessment_res_dto.builder()
                                                 .id(assessment.getId())
                                                 .userName(assessment.getUserName())
                                                 .phoneNumber(assessment.getPhoneNumber())
@@ -403,55 +457,77 @@ public class AdminService {
                                                 .isRead(assessment.isRead())
                                                 .createdAt(assessment.getCreatedAt())
                                                 .updatedAt(assessment.getUpdatedAt())
-                                                .build())
-                                .toList();
-                return allAssessment;
-        }
+                                                .build());
 
-        public UserSolarAssessment_res_dto userSolarAssessmentMarkAsReadService(long id) {
-
-                SolarAssessment assessment = solarAssessmentRepo.findById(id)
-                                .orElseThrow(() -> new UserNotFoundExc("User assesment not found id: ", id));
-                assessment.setRead(!assessment.isRead());
-                SolarAssessment savedAssessment = solarAssessmentRepo.save(assessment);
-                UserSolarAssessment_res_dto response = UserSolarAssessment_res_dto.builder()
-                                .id(savedAssessment.getId())
-                                .userName(savedAssessment.getUserName())
-                                .phoneNumber(savedAssessment.getPhoneNumber())
-                                .email(savedAssessment.getEmail())
-                                .location(savedAssessment.getLocation())
-                                .propertyType(savedAssessment.getPropertyType())
-                                .monthlyElectricityBill(savedAssessment.getMonthlyElectricityBill())
-                                .interestedSolution(savedAssessment.getInterestedSolution())
-                                .message(savedAssessment.getMessage())
-                                .isRead(savedAssessment.isRead())
-                                .createdAt(savedAssessment.getCreatedAt())
-                                .updatedAt(savedAssessment.getUpdatedAt())
+                return Page_res_dto.<UserSolarAssessment_res_dto>builder()
+                                .items(mappedAssessments.getContent())
+                                .currentPage(mappedAssessments.getNumber())
+                                .pageSize(mappedAssessments.getSize())
+                                .totalItems(mappedAssessments.getTotalElements())
+                                .totalPages(mappedAssessments.getTotalPages())
                                 .build();
-                return response;
         }
 
+        // public UserSolarAssessment_res_dto userSolarAssessmentMarkAsReadService(long
+        // id) {
+
+        // SolarAssessment assessment = solarAssessmentRepo.findById(id)
+        // .orElseThrow(() -> new UserNotFoundExc("User assesment not found id: ", id));
+        // assessment.setRead(!assessment.isRead());
+        // SolarAssessment savedAssessment = solarAssessmentRepo.save(assessment);
+        // UserSolarAssessment_res_dto response = UserSolarAssessment_res_dto.builder()
+        // .id(savedAssessment.getId())
+        // .userName(savedAssessment.getUserName())
+        // .phoneNumber(savedAssessment.getPhoneNumber())
+        // .email(savedAssessment.getEmail())
+        // .location(savedAssessment.getLocation())
+        // .propertyType(savedAssessment.getPropertyType())
+        // .monthlyElectricityBill(savedAssessment.getMonthlyElectricityBill())
+        // .interestedSolution(savedAssessment.getInterestedSolution())
+        // .message(savedAssessment.getMessage())
+        // .isRead(savedAssessment.isRead())
+        // .createdAt(savedAssessment.getCreatedAt())
+        // .updatedAt(savedAssessment.getUpdatedAt())
+        // .build();
+        // return response;
+        // }
+
+        @Transactional
         public SolarAssessmentAssignment_res_dto userSolarAssessmentAssignService(
                         SolarAssessmentAssignment_req_dto data) {
 
-                // Get currently logged-in admin from JWT
-                Authentication authentication = SecurityContextHolder
-                                .getContext()
-                                .getAuthentication();
-                String email = authentication.getName();
-                // Admin who is assigning
-                AdminModel assignedBy = adminRepo.findByEmail(email)
-                                .orElseThrow(() -> new RuntimeException("Assigning admin not found"));
-                // Assessment being assigned
+                // Check first whether assessment has already been assigned
+                boolean alreadyAssigned = solarAssessmentAssignmentRepo
+                                .existsBySolarAssessment_Id(data.getSolarAssessmentId());
+
+                if (alreadyAssigned) {
+                        throw new RuntimeException(
+                                        "This solar assessment has already been assigned");
+                }
+
+                // Get assessment
                 SolarAssessment assessment = solarAssessmentRepo
                                 .findById(data.getSolarAssessmentId())
                                 .orElseThrow(() -> new RuntimeException("Solar assessment not found"));
+
+                // Get currently logged-in admin
+                Authentication authentication = SecurityContextHolder
+                                .getContext()
+                                .getAuthentication();
+
+                String email = authentication.getName();
+
+                // Admin who is assigning
+                AdminModel assignedBy = adminRepo.findByEmail(email)
+                                .orElseThrow(() -> new RuntimeException("Assigning admin not found"));
+
                 // Admin receiving the assessment
                 AdminModel assignedTo = adminRepo
                                 .findByIdAndRole(
                                                 data.getAssignedToAdminId(),
                                                 AdminRoles.admin)
                                 .orElseThrow(() -> new RuntimeException("Assigned admin not found"));
+
                 // Create assignment
                 SolarAssessmentAssignment assignment = SolarAssessmentAssignment.builder()
                                 .solarAssessment(assessment)
@@ -460,9 +536,13 @@ public class AdminService {
                                 .note(data.getNote())
                                 .isActive(true)
                                 .build();
-                // Save
+
                 SolarAssessmentAssignment savedAssignment = solarAssessmentAssignmentRepo.save(assignment);
-                // Return the saved assignment
+
+                // Mark assessment as read
+                assessment.setRead(true);
+                solarAssessmentRepo.save(assessment);
+
                 return SolarAssessmentAssignment_res_dto.builder()
                                 .id(savedAssignment.getId())
                                 .solarAssessmentId(savedAssignment.getSolarAssessment().getId())
