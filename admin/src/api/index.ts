@@ -4,7 +4,8 @@ export const endpoints = {
   user: {
     login: `${BACKEND_BASE_URL}admin/login`,
     userReg:  `${BACKEND_BASE_URL}admin/register`,
-    getMe:`${BACKEND_BASE_URL}admin/auth/me`, 
+    getMe:`${BACKEND_BASE_URL}admin/auth/me`,
+    getCount: `${BACKEND_BASE_URL}admin/auth/get-all-count`,
     fogetPasswordSendEmail: `${BACKEND_BASE_URL}verification-code/forget-password/send-mail`,
     verifyCode: `${BACKEND_BASE_URL}verification-code/check-code`,
     forgetPassword_changePassword: `${BACKEND_BASE_URL}admin/auth/password/change-password`,

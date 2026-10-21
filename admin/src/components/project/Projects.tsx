@@ -6,11 +6,11 @@ import {
   ProjectType,
   ProjectPropsType,
   ProjectFilter,
-} from "../interfaces/Project_Interfaces";
-import { endpoints } from "../api";
+} from "../../interfaces/Project_Interfaces";
+import { endpoints } from "../../api";
 import ProjectManagement from "./ProjectManagement";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthProvider";
+import { useAuth } from "../../context/AuthProvider";
 
 interface ProjectsProps extends ProjectPropsType {
   darkMode?: boolean;

@@ -11,8 +11,8 @@ import {
   ImageType,
   ProductImage,
   ProductImages,
-} from "../interfaces/Product_Interfaces";
-import { endpoints } from "../api";
+} from "../../interfaces/Product_Interfaces";
+import { endpoints } from "../../api";
 const options = {
   maxSizeMB: 1,
   maxWidthOrHeight: 800,

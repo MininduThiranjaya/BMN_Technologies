@@ -21,8 +21,8 @@ import {
   ImageType,
   ProjectImages,
   ProjectImage
-} from "../interfaces/Project_Interfaces";
-import { endpoints } from "../api";
+} from "../..//interfaces/Project_Interfaces";
+import { endpoints } from "../../api/index";
 
 const options = {
   maxSizeMB: 1,
@@ -126,7 +126,7 @@ export default function AddProject({
 
   const handleInputChange = (e: any) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
+    setFormData((prev:any) => ({
       ...prev,
       [name]: value,
     }));

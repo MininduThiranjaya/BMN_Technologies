@@ -2,9 +2,9 @@ import { useEffect, useState } from "react";
 import { User, Search } from "lucide-react";
 import { toast } from "react-toastify";
 import axios from "axios";
-import { endpoints } from "../api";
-import { AdminUser } from "../interfaces/Common_Interfaces";
-import { useAuth } from "../context/AuthProvider";
+import { endpoints } from "../../api";
+import { AdminUser } from "../../interfaces/Common_Interfaces";
+import { useAuth } from "../../context/AuthProvider";
 import { useNavigate } from "react-router-dom";
 
 interface AdminUserManagementProps {
@@ -161,33 +161,6 @@ export default function AdminUserManagement({ darkMode = false }: AdminUserManag
         toast.error("Delete user not success...");
       });
   };
-  
-  const fetchUser = async () => {
-    const token = localStorage.getItem("accessToken");
-    if (!token) {
-      return;
-    }
-    try {
-      const res = await axios.get(endpoints.user.dashboardUserProfile, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (!res.data.success && !res.data.object.suspended == false) {
-        logout();
-        navigate("/");
-      }
-      fetchAllUsers();
-    } catch (err) {
-      logout(); // Ensure to log out if fetching fails
-      navigate("/");
-    }
-  };
-
-  useEffect(() => {
-    fetchUser();
-  }, []);
 
   function searchForUsers(char: string) {
     if(!char) {

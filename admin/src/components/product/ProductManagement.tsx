@@ -9,11 +9,11 @@ import {
 import {
   ProductDetailsProps,
   ProductType,
-} from "../interfaces/Product_Interfaces";
+} from "../../interfaces/Product_Interfaces";
 import AddProduct from "./AddProduct";
-import DeleteConfirmation from "./DeleteConfirmation";
+import DeleteConfirmation from "../DeleteConfirmation";
 import axios from "axios";
-import { endpoints } from "../api";
+import { endpoints } from "../../api";
 import { toast } from "react-toastify";
 import { BeatLoader } from "react-spinners";
 

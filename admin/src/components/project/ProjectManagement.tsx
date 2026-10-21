@@ -7,12 +7,12 @@ import {
   ChevronRight,
   Folder,
 } from "lucide-react";
-import DeleteConfirmation from "./DeleteConfirmation";
+import DeleteConfirmation from "../DeleteConfirmation";
 import axios from "axios";
-import { endpoints } from "../api";
+import { endpoints } from "../../api";
 import { toast } from "react-toastify";
 import AddProject from "./AddProject";
-import { ProjectDetailsProps, ProjectType } from "../interfaces/Project_Interfaces";
+import { ProjectDetailsProps, ProjectType } from "../../interfaces/Project_Interfaces";
 import { BeatLoader } from "react-spinners";
 
 const ProjectManagement = ({

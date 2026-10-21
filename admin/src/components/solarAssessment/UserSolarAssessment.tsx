@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { User, Search, CheckCircle2 } from "lucide-react";
 import { toast } from "react-toastify";
 import axios from "axios";
-import { endpoints } from "../api";
+import { endpoints } from "../../api";
 
 export interface SolarAssessment {
   id: number;

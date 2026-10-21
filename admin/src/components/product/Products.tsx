@@ -2,10 +2,10 @@ import { Plus, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import AddProduct from "./AddProduct";
 import axios from "axios";
-import { ProductFilter, ProductPropsType, ProductType } from "../interfaces/Product_Interfaces"
+import { ProductFilter, ProductPropsType, ProductType } from "../../interfaces/Product_Interfaces"
 import ProductManagement from "./ProductManagement";
-import { endpoints } from "../api";
-import { useAuth } from "../context/AuthProvider";
+import { endpoints } from "../../api";
+import { useAuth } from "../../context/AuthProvider";
 import { useNavigate } from "react-router-dom";
 
 interface ProductsProps extends ProductPropsType {

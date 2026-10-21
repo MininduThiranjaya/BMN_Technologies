@@ -2,10 +2,10 @@ import { useEffect, useState } from "react";
 import { User, Mail, Lock, Phone, Shield, Eye, EyeOff } from "lucide-react";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { FormData, FormErrors } from "../interfaces/User_Interface"
-import { useAuth } from "../context/AuthProvider";
+import { FormData, FormErrors } from "../../interfaces/User_Interface"
+import { useAuth } from "../../context/AuthProvider";
 import { useNavigate } from "react-router-dom";
-import { endpoints } from "../api";
+import { endpoints } from "../../api";
 
 interface AdminUserRegistrationProps {
   darkMode?: boolean;
@@ -15,33 +15,6 @@ export default function AdminUserRegistration({ darkMode = false }: AdminUserReg
 
   const navigate = useNavigate();
   const { logout } = useAuth();
-
-  const fetchUser = async () => {
-    const token = localStorage.getItem("accessToken");
-    if (!token) {
-      return;
-    }
-    try {
-      const res = await axios.get(endpoints.user.dashboardUserProfile, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (!res.data.success && !res.data.object.suspended == false) {
-        logout();
-        navigate("/");
-      }
-    } catch (err) {
-      logout(); // Ensure to log out if fetching fails
-      navigate("/");
-    }
-  };
-
-  useEffect(() => {
-    fetchUser();
-  },[]);
-
 
   const [formData, setFormData] = useState<FormData>({
     username: "",

@@ -2,10 +2,10 @@ import { useEffect, useState } from "react";
 import { User } from "lucide-react";
 import { toast } from "react-toastify";
 import axios from "axios";
-import { endpoints } from "../api";
-import { Testimonial } from "../interfaces/Testimonial";
+import { endpoints } from "../../api";
+import { Testimonial } from "../../interfaces/Testimonial";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthProvider";
+import { useAuth } from "../../context/AuthProvider";
 
 interface CustomerTestimonialsProps {
   darkMode?: boolean;
@@ -73,33 +73,6 @@ export default function CustomerTestimonials({
       console.error("Failed to fetch count details", err);
     }
   };
-
-  const fetchUser = async () => {
-    const token = localStorage.getItem("accessToken");
-    if (!token) {
-      return;
-    }
-    try {
-      const res = await axios.get(endpoints.user.dashboardUserProfile, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (!res.data.success && !res.data.object.suspended == false) {
-        logout();
-        navigate("/");
-      }
-      fetchUserTestimonial();
-    } catch (err) {
-      logout(); // Ensure to log out if fetching fails
-      navigate("/");
-    }
-  };
-
-  useEffect(() => {
-    fetchUser();
-  }, []);
 
   const makeTestimonialEnableDisable = async (id: number) => {
     let fromData = { id: id };
