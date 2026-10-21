@@ -82,7 +82,8 @@ import { Showcase } from "../components/Showcase";
 import { AboutUs } from "../components/AboutUs";
 import { Contact } from "../components/Contact";
 import { Footer } from "../components/Footer";
-import { FloatingAIChat } from "../components/FloatingAIChat";
+// import { FloatingAIChat } from "../components/FloatingAIChat";
+import { Partners } from "../components/Partners";
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // ROOT
@@ -148,6 +149,10 @@ export default function HomePage() {
         <Services />
       </section>
 
+      <section id="partners">
+        <Partners />
+      </section>
+
       <section id="showcase">
         <Showcase />
       </section>
@@ -161,7 +166,7 @@ export default function HomePage() {
       </section>
 
       <Footer />
-      <FloatingAIChat />
+      {/* <FloatingAIChat /> */}
     </div>
   );
 }

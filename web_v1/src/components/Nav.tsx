@@ -34,21 +34,22 @@ export function Navbar({
     else scrollToSection("home");
   };
 
-  const links = [
-    { label: "Home", id: "home" },
-    { label: "Solutions", id: "solutions" },
-    { label: "Services", id: "services" },
-    { label: "Showcase", id: "showcase" },
-    { label: "About Us", id: "about" },
-    { label: "Contact", id: "contact" },
-  ];
+ const links = [
+  { label: "Home", id: "home" },
+  { label: "Solutions", id: "solutions" },
+  { label: "Services", id: "services" },
+  // { label: "Partnerships", id: "partners" },
+  { label: "Showcase", id: "showcase" },
+  { label: "About Us", id: "about" },
+  { label: "Contact", id: "contact" },
+];
 
   return (
     <nav
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 backdrop-blur-xl border-b ${S.border} ${scrolled ? "shadow-lg" : ""}`}
       style={{ backgroundColor: "var(--nav-bg)" }}
     >
-      <div className="max-w-7xl mx-auto px-6 lg:px-12 flex items-center justify-between py-4">
+      <div className="w-auto px-6 lg:px-12 flex items-center justify-between py-4">
         <button
           onClick={() => navigate("home")}
           className="flex items-center gap-3"
@@ -57,7 +58,7 @@ export function Navbar({
             className="font-black text-xl tracking-tight"
             style={{ fontFamily: "Outfit, sans-serif" }}
           >
-            BMN<span className="text-(--accent)">-</span>Technology
+            BMN{" "}Technologies
           </span>
         </button>
 

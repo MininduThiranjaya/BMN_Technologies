@@ -13,7 +13,7 @@ import {
   X,
   Check,
   Star,
-  Loader2
+  Loader2,
 } from "lucide-react";
 import { endpoints } from "../api";
 import type { Testimonial } from "../interfaces/Testimonial";
@@ -62,12 +62,12 @@ function HeroSection() {
             </h1>
 
             <p
-              className={`text-lg ${S.textSec} leading-relaxed max-w-lg`}
+              className={`text-lg ${S.textSec} leading-relaxed max-w-lg text-justify`}
               style={{ fontFamily: "Inter, sans-serif" }}
             >
-              BMN-Technology engineers precision solar solutions from
-              individual rooftops to commercial installations. We design,
-              supply, and commission systems built for maximum yield and lasting
+              BMN Technology engineers precision solar solutions from individual
+              rooftops to commercial installations. We design, supply, and
+              commission systems built for maximum yield and lasting
               performance.
             </p>
 
@@ -180,7 +180,7 @@ function WhySolarSection() {
     {
       icon: Leaf,
       title: "Clean & Renewable Energy",
-      desc: "Generate electricity from sunlight — zero emissions, zero fuel, and no pollution.",
+      desc: "Generate electricity from sunlight - zero emissions, zero fuel, and no pollution.",
     },
     {
       icon: TrendingUp,
@@ -224,7 +224,7 @@ function WhySolarSection() {
                 {b.title}
               </h3>
               <p
-                className={`text-sm ${S.textSec} leading-relaxed`}
+                className={`text-sm ${S.textSec} leading-relaxed `}
                 style={{ fontFamily: "Inter, sans-serif" }}
               >
                 {b.desc}
@@ -280,7 +280,7 @@ function WhyChooseUsSection() {
               <span className="text-(--accent)">BMN Technologies?</span>
             </h2>
             <p
-              className={`${S.textSec} leading-relaxed mb-8`}
+              className={`${S.textSec} leading-relaxed mb-8 text-justify`}
               style={{ fontFamily: "Inter, sans-serif" }}
             >
               We are not just solar installers. We are your long-term energy
@@ -289,7 +289,7 @@ function WhyChooseUsSection() {
             </p>
             <div className="relative rounded-2xl overflow-hidden border border-(--border)">
               <img
-                src="https://images.unsplash.com/photo-1658298775754-5839ffd434cc?w=600&h=380&fit=crop&auto=format"
+                src="/bmn_technologies.png"
                 alt="Professional solar installation team"
                 className="w-full h-64 object-cover"
               />
@@ -311,7 +311,7 @@ function WhyChooseUsSection() {
                     {r.title}
                   </h4>
                   <p
-                    className={`text-sm ${S.textSec} leading-relaxed`}
+                    className={`text-sm ${S.textSec} leading-relaxed text-justify`}
                     style={{ fontFamily: "Inter, sans-serif" }}
                   >
                     {r.desc}
@@ -379,8 +379,8 @@ function ProcessSection() {
             className={`mt-4 ${S.textSec} max-w-xl mx-auto`}
             style={{ fontFamily: "Inter, sans-serif" }}
           >
-            From first call to commissioned system a clear, professional
-            process every step of the way.
+            From first call to commissioned system a clear, professional process
+            every step of the way.
           </p>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-5">
@@ -491,7 +491,9 @@ function TestimonialsSection({
 
   useEffect(() => {
     if (canAutoAdvance) start();
-    return () => { if (intervalRef.current) clearInterval(intervalRef.current); };
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [testimonials.length]);
 
@@ -530,7 +532,10 @@ function TestimonialsSection({
   const [errors, setErrors] = useState<FormTestimonialErrors>({});
 
   // Banner shown on the testimonials section itself, after the modal closes.
-  const [sectionNotice, setSectionNotice] = useState<{ type: "success" | "error"; message: string } | null>(null);
+  const [sectionNotice, setSectionNotice] = useState<{
+    type: "success" | "error";
+    message: string;
+  } | null>(null);
   const noticeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const showSectionNotice = (type: "success" | "error", message: string) => {
@@ -539,10 +544,22 @@ function TestimonialsSection({
     noticeTimeoutRef.current = setTimeout(() => setSectionNotice(null), 6000);
   };
 
-  useEffect(() => () => { if (noticeTimeoutRef.current) clearTimeout(noticeTimeoutRef.current); }, []);
+  useEffect(
+    () => () => {
+      if (noticeTimeoutRef.current) clearTimeout(noticeTimeoutRef.current);
+    },
+    [],
+  );
 
   const resetForm = () => {
-    setForm({ userName: "", company: "", position: "", email: "", testimonial: "", rating: 0 });
+    setForm({
+      userName: "",
+      company: "",
+      position: "",
+      email: "",
+      testimonial: "",
+      rating: 0,
+    });
     setHoverRating(0);
     setErrors({});
   };
@@ -593,14 +610,20 @@ function TestimonialsSection({
         setSubmitted(true);
         setTimeout(() => {
           handleClose();
-          showSectionNotice("success", "Thank you! Your testimonial has been submitted and will appear here soon.");
+          showSectionNotice(
+            "success",
+            "Thank you! Your testimonial has been submitted and will appear here soon.",
+          );
         }, 2000);
       })
       .catch((err) => {
         console.error(err);
         setIsSubmitting(false);
         handleClose();
-        showSectionNotice("error", "Something went wrong submitting your testimonial. Please try again.");
+        showSectionNotice(
+          "error",
+          "Something went wrong submitting your testimonial. Please try again.",
+        );
       });
   };
 
@@ -653,7 +676,12 @@ function TestimonialsSection({
                 ? "border-(--accent)"
                 : "border-red-400"
             }`}
-            style={{ background: sectionNotice.type === "success" ? "var(--accent-glow)" : "rgba(239,68,68,0.08)" }}
+            style={{
+              background:
+                sectionNotice.type === "success"
+                  ? "var(--accent-glow)"
+                  : "rgba(239,68,68,0.08)",
+            }}
           >
             {sectionNotice.type === "success" ? (
               <Check size={18} className="text-(--accent) shrink-0 mt-0.5" />
@@ -671,9 +699,14 @@ function TestimonialsSection({
 
         {/* ── Loading state ── */}
         {isLoading && (
-          <div className={`${S.surface} border ${S.border} rounded-2xl p-16 flex flex-col items-center justify-center gap-4`}>
+          <div
+            className={`${S.surface} border ${S.border} rounded-2xl p-16 flex flex-col items-center justify-center gap-4`}
+          >
             <Loader2 size={32} className="text-(--accent) animate-spin" />
-            <p className={`text-sm ${S.textSec}`} style={{ fontFamily: "Inter, sans-serif" }}>
+            <p
+              className={`text-sm ${S.textSec}`}
+              style={{ fontFamily: "Inter, sans-serif" }}
+            >
               Loading testimonials...
             </p>
           </div>
@@ -681,11 +714,19 @@ function TestimonialsSection({
 
         {/* ── Error / empty state ── */}
         {!isLoading && (hasError || !hasTestimonials) && (
-          <div className={`${S.surface} border ${S.border} rounded-2xl p-16 flex flex-col items-center justify-center text-center gap-2`}>
-            <p className={`text-base font-semibold ${S.text}`} style={{ fontFamily: "Outfit, sans-serif" }}>
+          <div
+            className={`${S.surface} border ${S.border} rounded-2xl p-16 flex flex-col items-center justify-center text-center gap-2`}
+          >
+            <p
+              className={`text-base font-semibold ${S.text}`}
+              style={{ fontFamily: "Outfit, sans-serif" }}
+            >
               {hasError ? "Couldn't load testimonials" : "No testimonials yet"}
             </p>
-            <p className={`text-sm ${S.textSec} max-w-sm`} style={{ fontFamily: "Inter, sans-serif" }}>
+            <p
+              className={`text-sm ${S.textSec} max-w-sm`}
+              style={{ fontFamily: "Inter, sans-serif" }}
+            >
               {hasError
                 ? "Something went wrong while fetching customer stories. Please check back shortly."
                 : "Be the first to share your experience with BMN-Technology."}
@@ -702,8 +743,18 @@ function TestimonialsSection({
                 aria-label="Previous testimonial"
                 className={`absolute left-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 sm:w-12 sm:h-12 ${S.surface} border ${S.border} rounded-full flex items-center justify-center ${S.textSec} hover:text-(--accent) hover:border-(--accent) transition-all shadow-sm`}
               >
-                <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M10 12l-4-4 4-4" strokeLinecap="round" strokeLinejoin="round" />
+                <svg
+                  width="16"
+                  height="16"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
+                  <path
+                    d="M10 12l-4-4 4-4"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
                 </svg>
               </button>
             )}
@@ -714,8 +765,18 @@ function TestimonialsSection({
                 aria-label="Next testimonial"
                 className={`absolute right-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 sm:w-12 sm:h-12 ${S.surface} border ${S.border} rounded-full flex items-center justify-center ${S.textSec} hover:text-(--accent) hover:border-(--accent) transition-all shadow-sm`}
               >
-                <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M6 12l4-4-4-4" strokeLinecap="round" strokeLinejoin="round" />
+                <svg
+                  width="16"
+                  height="16"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
+                  <path
+                    d="M6 12l4-4-4-4"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
                 </svg>
               </button>
             )}
@@ -724,7 +785,9 @@ function TestimonialsSection({
               <div
                 key={animKey}
                 className={`${S.surface} border ${S.border} rounded-2xl p-8 lg:p-12 relative overflow-hidden ${
-                  direction === 1 ? "testimonial-card-next" : "testimonial-card-prev"
+                  direction === 1
+                    ? "testimonial-card-next"
+                    : "testimonial-card-prev"
                 }`}
               >
                 <div
@@ -735,16 +798,20 @@ function TestimonialsSection({
                 </div>
 
                 <div className="flex items-center gap-1 mb-6">
-                  {t.rating && [...Array(t.rating)].map((_, i) => (
-                    <svg key={i} width="16" height="16" viewBox="0 0 24 24">
-                      <path
-                        d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
-                        fill="var(--accent)"
-                      />
-                    </svg>
-                  ))}
+                  {t.rating &&
+                    [...Array(t.rating)].map((_, i) => (
+                      <svg key={i} width="16" height="16" viewBox="0 0 24 24">
+                        <path
+                          d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
+                          fill="var(--accent)"
+                        />
+                      </svg>
+                    ))}
                 </div>
-                <p className={`${S.text} text-xl lg:text-2xl leading-relaxed mb-8 italic`} style={{ fontFamily: "Inter, sans-serif" }}>
+                <p
+                  className={`${S.text} text-xl lg:text-2xl leading-relaxed mb-8 italic`}
+                  style={{ fontFamily: "Inter, sans-serif" }}
+                >
                   "{t.testimonial}"
                 </p>
                 <div className="flex items-center gap-4">
@@ -755,10 +822,25 @@ function TestimonialsSection({
                     {getInitials(t.userName)}
                   </div>
                   <div>
-                    <div className={`font-bold ${S.text}`} style={{ fontFamily: "Outfit, sans-serif" }}>{t.userName}</div>
-                    <div className={`text-sm ${S.textSec}`} style={{ fontFamily: "Inter, sans-serif" }}>{t.position}</div>
+                    <div
+                      className={`font-bold ${S.text}`}
+                      style={{ fontFamily: "Outfit, sans-serif" }}
+                    >
+                      {t.userName}
+                    </div>
+                    <div
+                      className={`text-sm ${S.textSec}`}
+                      style={{ fontFamily: "Inter, sans-serif" }}
+                    >
+                      {t.position}
+                    </div>
                     {t.company && (
-                      <div className={`text-xs text-(--accent) mt-0.5`} style={{ fontFamily: "Inter, sans-serif" }}>{t.company}</div>
+                      <div
+                        className={`text-xs text-(--accent) mt-0.5`}
+                        style={{ fontFamily: "Inter, sans-serif" }}
+                      >
+                        {t.company}
+                      </div>
                     )}
                   </div>
                 </div>
@@ -778,7 +860,8 @@ function TestimonialsSection({
                 style={{
                   width: i === active ? "24px" : "8px",
                   height: "8px",
-                  background: i === active ? "var(--accent)" : "var(--border-strong)",
+                  background:
+                    i === active ? "var(--accent)" : "var(--border-strong)",
                 }}
               />
             ))}
@@ -802,12 +885,12 @@ function TestimonialsSection({
       {modalOpen && (
         <div
           onClick={handleClose}
-          className="share-overlay absolute inset-0 z-40 flex items-center justify-center p-4"
+          className="share-overlay absolute inset-0 z-40 flex items-center justify-center p-3 sm:p-4"
           style={{ background: "rgba(0,0,0,0.6)" }}
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            className={`share-modal ${S.surface} border ${S.border} rounded-2xl p-8 max-w-md w-full relative`}
+            className={`share-modal ${S.surface} border ${S.border} rounded-2xl p-5 sm:p-6 w-full max-w-2xl relative`}
           >
             <button
               onClick={handleClose}
@@ -822,69 +905,132 @@ function TestimonialsSection({
                 <div className="w-14 h-14 accent-gradient rounded-full flex items-center justify-center mx-auto mb-5">
                   <Check size={26} className="text-(--accent-fg)" />
                 </div>
-                <h3 className={`text-xl font-black mb-2 ${S.text}`} style={{ fontFamily: "Outfit, sans-serif" }}>Thank You!</h3>
-                <p className={`text-sm ${S.textSec}`} style={{ fontFamily: "Inter, sans-serif" }}>
-                  Your experience has been submitted. We appreciate you sharing it with us.
+                <h3
+                  className={`text-xl font-black mb-2 ${S.text}`}
+                  style={{ fontFamily: "Outfit, sans-serif" }}
+                >
+                  Thank You!
+                </h3>
+                <p
+                  className={`text-sm ${S.textSec}`}
+                  style={{ fontFamily: "Inter, sans-serif" }}
+                >
+                  Your experience has been submitted. We appreciate you sharing
+                  it with us.
                 </p>
               </div>
             ) : (
-              <form onSubmit={handleSubmit} className="flex flex-col gap-4 max-h-[80vh] overflow-y-auto pr-1">
-                <h3 className={`text-xl font-black ${S.text}`} style={{ fontFamily: "Outfit, sans-serif" }}>Share Your Experience</h3>
+              <form
+                onSubmit={handleSubmit}
+                className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-3 max-h-[85vh] overflow-y-auto pr-1"
+              >
+                <h3
+                  className={`sm:col-span-2 text-xl font-black pr-8 ${S.text}`}
+                  style={{ fontFamily: "Outfit, sans-serif" }}
+                >
+                  Share Your Experience
+                </h3>
 
-                <div className="flex flex-col gap-2">
-                  <label className={`text-xs font-medium ${S.textSec}`} style={{ fontFamily: "Inter, sans-serif" }}>Your Name *</label>
+                <div className="flex flex-col gap-1.5">
+                  <label
+                    className={`text-xs font-medium ${S.textSec}`}
+                    style={{ fontFamily: "Inter, sans-serif" }}
+                  >
+                    Your Name *
+                  </label>
                   <input
                     value={form.userName}
-                    onChange={(e) => setForm((p) => ({ ...p, userName: e.target.value }))}
+                    onChange={(e) =>
+                      setForm((p) => ({ ...p, userName: e.target.value }))
+                    }
                     placeholder="Your full name"
-                    className={`${S.surface2} border ${errors.name ? "border-red-500" : S.border} rounded-lg px-4 py-2.5 text-sm ${S.text} focus:outline-none`}
+                    className={`${S.surface2} border ${errors.name ? "border-red-500" : S.border} rounded-lg px-4 py-2 text-sm ${S.text} focus:outline-none`}
                     style={{ fontFamily: "Inter, sans-serif" }}
                   />
                   {errors.name && (
-                    <span className="text-xs text-red-500" style={{ fontFamily: "Inter, sans-serif" }}>{errors.name}</span>
+                    <span
+                      className="text-xs text-red-500"
+                      style={{ fontFamily: "Inter, sans-serif" }}
+                    >
+                      {errors.name}
+                    </span>
                   )}
                 </div>
 
-                <div className="flex flex-col gap-2">
-                  <label className={`text-xs font-medium ${S.textSec}`} style={{ fontFamily: "Inter, sans-serif" }}>Company</label>
+                <div className="flex flex-col gap-1.5">
+                  <label
+                    className={`text-xs font-medium ${S.textSec}`}
+                    style={{ fontFamily: "Inter, sans-serif" }}
+                  >
+                    Company
+                  </label>
                   <input
                     value={form.company}
-                    onChange={(e) => setForm((p) => ({ ...p, company: e.target.value }))}
+                    onChange={(e) =>
+                      setForm((p) => ({ ...p, company: e.target.value }))
+                    }
                     placeholder="Your company name"
-                    className={`${S.surface2} border ${S.border} rounded-lg px-4 py-2.5 text-sm ${S.text} focus:outline-none`}
+                    className={`${S.surface2} border ${S.border} rounded-lg px-4 py-2 text-sm ${S.text} focus:outline-none`}
                     style={{ fontFamily: "Inter, sans-serif" }}
                   />
                 </div>
 
-                <div className="flex flex-col gap-2">
-                  <label className={`text-xs font-medium ${S.textSec}`} style={{ fontFamily: "Inter, sans-serif" }}>Position</label>
+                <div className="flex flex-col gap-1.5">
+                  <label
+                    className={`text-xs font-medium ${S.textSec}`}
+                    style={{ fontFamily: "Inter, sans-serif" }}
+                  >
+                    Position
+                  </label>
                   <input
                     value={form.position}
-                    onChange={(e) => setForm((p) => ({ ...p, position: e.target.value }))}
+                    onChange={(e) =>
+                      setForm((p) => ({ ...p, position: e.target.value }))
+                    }
                     placeholder="e.g. Homeowner, Facility Manager"
-                    className={`${S.surface2} border ${S.border} rounded-lg px-4 py-2.5 text-sm ${S.text} focus:outline-none`}
+                    className={`${S.surface2} border ${S.border} rounded-lg px-4 py-2 text-sm ${S.text} focus:outline-none`}
                     style={{ fontFamily: "Inter, sans-serif" }}
                   />
                 </div>
 
-                <div className="flex flex-col gap-2">
-                  <label className={`text-xs font-medium ${S.textSec}`} style={{ fontFamily: "Inter, sans-serif" }}>Email *</label>
+                <div className="flex flex-col gap-1.5">
+                  <label
+                    className={`text-xs font-medium ${S.textSec}`}
+                    style={{ fontFamily: "Inter, sans-serif" }}
+                  >
+                    Email *
+                  </label>
                   <input
                     type="email"
                     value={form.email}
-                    onChange={(e) => setForm((p) => ({ ...p, email: e.target.value }))}
+                    onChange={(e) =>
+                      setForm((p) => ({ ...p, email: e.target.value }))
+                    }
                     placeholder="you@example.com"
-                    className={`${S.surface2} border ${errors.email ? "border-red-500" : S.border} rounded-lg px-4 py-2.5 text-sm ${S.text} focus:outline-none`}
+                    className={`${S.surface2} border ${errors.email ? "border-red-500" : S.border} rounded-lg px-4 py-2 text-sm ${S.text} focus:outline-none`}
                     style={{ fontFamily: "Inter, sans-serif" }}
                   />
                   {errors.email && (
-                    <span className="text-xs text-red-500" style={{ fontFamily: "Inter, sans-serif" }}>{errors.email}</span>
+                    <span
+                      className="text-xs text-red-500"
+                      style={{ fontFamily: "Inter, sans-serif" }}
+                    >
+                      {errors.email}
+                    </span>
                   )}
                 </div>
 
-                <div className="flex flex-col gap-2">
-                  <label className={`text-xs font-medium ${S.textSec}`} style={{ fontFamily: "Inter, sans-serif" }}>Rating *</label>
-                  <div className="flex items-center gap-1" onMouseLeave={() => setHoverRating(0)}>
+                <div className="sm:col-span-2 flex flex-col gap-1.5">
+                  <label
+                    className={`text-xs font-medium ${S.textSec}`}
+                    style={{ fontFamily: "Inter, sans-serif" }}
+                  >
+                    Rating *
+                  </label>
+                  <div
+                    className="flex items-center gap-1"
+                    onMouseLeave={() => setHoverRating(0)}
+                  >
                     {[1, 2, 3, 4, 5].map((star) => (
                       <button
                         key={star}
@@ -896,40 +1042,70 @@ function TestimonialsSection({
                       >
                         <Star
                           size={24}
-                          fill={(hoverRating || form.rating) >= star ? "var(--accent)" : "none"}
-                          stroke={(hoverRating || form.rating) >= star ? "var(--accent)" : "var(--border-strong)"}
+                          fill={
+                            (hoverRating || form.rating) >= star
+                              ? "var(--accent)"
+                              : "none"
+                          }
+                          stroke={
+                            (hoverRating || form.rating) >= star
+                              ? "var(--accent)"
+                              : "var(--border-strong)"
+                          }
                           strokeWidth={2}
                         />
                       </button>
                     ))}
                     {form.rating > 0 && (
-                      <span className={`text-xs ml-2 ${S.textSec}`} style={{ fontFamily: "Inter, sans-serif" }}>{form.rating} / 5</span>
+                      <span
+                        className={`text-xs ml-2 ${S.textSec}`}
+                        style={{ fontFamily: "Inter, sans-serif" }}
+                      >
+                        {form.rating} / 5
+                      </span>
                     )}
                   </div>
                   {errors.rating && (
-                    <span className="text-xs text-red-500" style={{ fontFamily: "Inter, sans-serif" }}>{errors.rating}</span>
+                    <span
+                      className="text-xs text-red-500"
+                      style={{ fontFamily: "Inter, sans-serif" }}
+                    >
+                      {errors.rating}
+                    </span>
                   )}
                 </div>
 
-                <div className="flex flex-col gap-2">
-                  <label className={`text-xs font-medium ${S.textSec}`} style={{ fontFamily: "Inter, sans-serif" }}>Your Experience *</label>
+                <div className="sm:col-span-2 flex flex-col gap-1.5">
+                  <label
+                    className={`text-xs font-medium ${S.textSec}`}
+                    style={{ fontFamily: "Inter, sans-serif" }}
+                  >
+                    Your Experience *
+                  </label>
                   <textarea
-                    rows={4}
+                    rows={3}
                     value={form.testimonial}
-                    onChange={(e) => setForm((p) => ({ ...p, testimonial: e.target.value }))}
+                    onChange={(e) =>
+                      setForm((p) => ({ ...p, testimonial: e.target.value }))
+                    }
                     placeholder="Tell us about your solar installation experience..."
-                    className={`${S.surface2} border ${errors.testimonial ? "border-red-500" : S.border} rounded-lg px-4 py-2.5 text-sm ${S.text} focus:outline-none resize-none`}
+                    className={`${S.surface2} border ${errors.testimonial ? "border-red-500" : S.border} rounded-lg px-4 py-2 text-sm ${S.text} focus:outline-none resize-none`}
                     style={{ fontFamily: "Inter, sans-serif" }}
                   />
                   {errors.testimonial && (
-                    <span className="text-xs text-red-500" style={{ fontFamily: "Inter, sans-serif" }}>{errors.testimonial}</span>
+                    <span
+                      className="text-xs text-red-500"
+                      style={{ fontFamily: "Inter, sans-serif" }}
+                    >
+                      {errors.testimonial}
+                    </span>
                   )}
                 </div>
 
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="accent-gradient text-(--accent-fg) font-semibold py-3 rounded-lg hover:opacity-90 transition-all text-sm disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  className="sm:col-span-2 accent-gradient text-(--accent-fg) font-semibold py-2.5 rounded-lg hover:opacity-90 transition-all text-sm disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                   style={{ fontFamily: "Inter, sans-serif" }}
                 >
                   {isSubmitting ? (
@@ -974,7 +1150,8 @@ function FinalCTASection() {
           className={`text-4xl lg:text-5xl font-black ${S.text} mb-5`}
           style={{ fontFamily: "Outfit, sans-serif" }}
         >
-          Ready to Switch to <span className="text-(--accent)">Solar? Bg image ekak danna</span>
+          Ready to Switch to{" "}
+          <span className="text-(--accent)">Solar? Bg image ekak danna</span>
         </h2>
         <p
           className={`${S.textSec} text-lg leading-relaxed mb-10`}

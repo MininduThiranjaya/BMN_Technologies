@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { S, scrollToSection, SectionLabel } from "../utils/utils";
+import { S, SectionLabel } from "../utils/utils";
 import axios from "axios";
 import { endpoints } from "../api";
 import type {
@@ -99,9 +99,7 @@ const propertyTypeOptions: {
 const formatPropertyType = (value: string) =>
   propertyTypeOptions.find((t) => t.value === value)?.type ?? value;
 
-async function fetchProductsPage(
-  page: number,
-): Promise<ProductsPageResponse> {
+async function fetchProductsPage(page: number): Promise<ProductsPageResponse> {
   const params = new URLSearchParams({
     page: String(page),
     size: String(PAGE_SIZE),
@@ -116,9 +114,7 @@ async function fetchProductsPage(
   return res.data.data;
 }
 
-async function fetchProjectsPage(
-  page: number,
-): Promise<ProjectsPageResponse> {
+async function fetchProjectsPage(page: number): Promise<ProjectsPageResponse> {
   const params = new URLSearchParams({
     page: String(page),
     size: String(PAGE_SIZE),
@@ -173,8 +169,18 @@ function ImageGallery({
               aria-label="Previous image"
               className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-black/50 text-white flex items-center justify-center hover:bg-black/70 transition-colors"
             >
-              <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M9 11L5 7l4-4" strokeLinecap="round" strokeLinejoin="round" />
+              <svg
+                width="14"
+                height="14"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
+                <path
+                  d="M9 11L5 7l4-4"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
               </svg>
             </button>
             <button
@@ -182,8 +188,18 @@ function ImageGallery({
               aria-label="Next image"
               className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-black/50 text-white flex items-center justify-center hover:bg-black/70 transition-colors"
             >
-              <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M5 3l4 4-4 4" strokeLinecap="round" strokeLinejoin="round" />
+              <svg
+                width="14"
+                height="14"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
+                <path
+                  d="M5 3l4 4-4 4"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
               </svg>
             </button>
             <span
@@ -220,13 +236,7 @@ function ImageGallery({
   );
 }
 
-function MiniProductCard({
-  p,
-  onClick,
-}: {
-  p: Product;
-  onClick: () => void;
-}) {
+function MiniProductCard({ p, onClick }: { p: Product; onClick: () => void }) {
   const firstImage = p.images?.[0]?.imageUrl;
   return (
     <button
@@ -530,8 +540,7 @@ function DetailView({
   badge,
   title,
   meta,
-  description,
-  ctaLabel = "Get a Similar Quote →",
+  description
 }: {
   onBack: () => void;
   backLabel: string;
@@ -620,13 +629,14 @@ export function Showcase() {
   const [allItemsProject, setAllItemsProject] = useState<ProjectItemType[]>([]);
   const [projectTotal, setProjectTotal] = useState(0);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-  const [selectedProject, setSelectedProject] = useState<ProjectItemType | null>(null);
-  const [productCategory, setProductCategory] = useState<"all" | ProductCategory>(
-    "all",
-  );
-  const [projectCategory, setProjectCategory] = useState<"all" | ProjectCategory>(
-    "all",
-  );
+  const [selectedProject, setSelectedProject] =
+    useState<ProjectItemType | null>(null);
+  const [productCategory, setProductCategory] = useState<
+    "all" | ProductCategory
+  >("all");
+  const [projectCategory, setProjectCategory] = useState<
+    "all" | ProjectCategory
+  >("all");
   const [projectPropertyType, setProjectPropertyType] = useState<
     "all" | PropertyType
   >("all");
@@ -649,9 +659,7 @@ export function Showcase() {
         const response = page;
         if (cancelled) return;
 
-        setAllItemsProduct(
-          Array.isArray(response.items) ? response.items : [],
-        );
+        setAllItemsProduct(Array.isArray(response.items) ? response.items : []);
 
         setProductTotal(
           typeof response.totalItems === "number" ? response.totalItems : 0,
@@ -684,9 +692,7 @@ export function Showcase() {
 
         if (cancelled) return;
 
-        setAllItemsProject(
-          Array.isArray(response.items) ? response.items : [],
-        );
+        setAllItemsProject(Array.isArray(response.items) ? response.items : []);
 
         setProjectTotal(
           typeof response.totalItems === "number" ? response.totalItems : 0,
@@ -707,14 +713,8 @@ export function Showcase() {
     };
   }, [projectPage]);
 
-  const productTotalPages = Math.max(
-    1,
-    Math.ceil(productTotal / PAGE_SIZE),
-  );
-  const projectTotalPages = Math.max(
-    1,
-    Math.ceil(projectTotal / PAGE_SIZE),
-  );
+  const productTotalPages = Math.max(1, Math.ceil(productTotal / PAGE_SIZE));
+  const projectTotalPages = Math.max(1, Math.ceil(projectTotal / PAGE_SIZE));
 
   // Category filtering is client-side over the currently loaded backend page
   const pagedProducts =
@@ -725,10 +725,12 @@ export function Showcase() {
   // Category / property type / province filtering is client-side over the
   // currently loaded backend page — same pattern as products.
   const pagedProjects = allItemsProject.filter((p) => {
-    if (projectCategory !== "all" && p.category !== projectCategory) return false;
+    if (projectCategory !== "all" && p.category !== projectCategory)
+      return false;
     if (projectPropertyType !== "all" && p.propertyType !== projectPropertyType)
       return false;
-    if (projectProvince !== "all" && p.province !== projectProvince) return false;
+    if (projectProvince !== "all" && p.province !== projectProvince)
+      return false;
     return true;
   });
 
@@ -784,8 +786,14 @@ export function Showcase() {
         { label: "Client", val: selectedProject.personName },
         { label: "Province", val: formatProvince(selectedProject.province) },
         { label: "Location", val: selectedProject.location },
-        { label: "Category", val: formatProjectCategory(selectedProject.category) },
-        { label: "Property Type", val: formatPropertyType(selectedProject.propertyType) },
+        {
+          label: "Category",
+          val: formatProjectCategory(selectedProject.category),
+        },
+        {
+          label: "Property Type",
+          val: formatPropertyType(selectedProject.propertyType),
+        },
         { label: "Completed", val: formatDate(selectedProject.projectDate) },
       ]}
       description={selectedProject.projectDescription}
@@ -800,7 +808,10 @@ export function Showcase() {
       badge={formatProductCategory(selectedProduct.category)}
       title={selectedProduct.productName}
       meta={[
-        { label: "Category", val: formatProductCategory(selectedProduct.category) },
+        {
+          label: "Category",
+          val: formatProductCategory(selectedProduct.category),
+        },
         { label: "Price", val: formatCurrency(selectedProduct.productPrice) },
       ]}
       description={selectedProduct.productDescription}
@@ -1082,20 +1093,22 @@ export function Showcase() {
       <div className={`py-24 ${S.ground} overflow-hidden`}>
         {marqueeStyle}
         <div className="max-w-7xl mx-auto px-6 lg:px-12 mb-12">
-          <SectionLabel label="Showcase" />
-          <h1
-            className={`text-5xl lg:text-6xl font-black ${S.text}`}
-            style={{ fontFamily: "Outfit, sans-serif" }}
-          >
-            Products & <span className="text-(--accent)">Projects</span>
-          </h1>
-          <p
-            className={`mt-4 ${S.textSec} max-w-2xl text-lg`}
-            style={{ fontFamily: "Inter, sans-serif" }}
-          >
-            A glimpse of our equipment range and completed installations —
-            browse the full catalogue any time.
-          </p>
+          <div className="text-center mb-16">
+            <SectionLabel label="Showcase" />
+            <h1
+              className={`text-5xl lg:text-6xl font-black ${S.text}`}
+              style={{ fontFamily: "Outfit, sans-serif" }}
+            >
+              Products & <span className="text-(--accent)">Projects</span>
+            </h1>
+            <p
+              className={`mt-5 ${S.textSec} max-w-2xl mx-auto text-lg`}
+              style={{ fontFamily: "Inter, sans-serif" }}
+            >
+              A glimpse of our equipment range and completed installations -
+              browse the full catalogue any time.
+            </p>
+          </div>
         </div>
 
         {/* Products marquee — left to right */}

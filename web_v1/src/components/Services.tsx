@@ -103,7 +103,7 @@ export function Services() {
             className={`mt-5 ${S.textSec} max-w-2xl mx-auto text-lg`}
             style={{ fontFamily: "Inter, sans-serif" }}
           >
-            End-to-end solar services — from the very first conversation to
+            End to end solar services from the very first conversation to
             decades of ongoing support.
           </p>
         </div>

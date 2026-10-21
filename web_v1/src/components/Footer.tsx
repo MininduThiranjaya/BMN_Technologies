@@ -70,28 +70,49 @@ export function Footer() {
               </span>
             </button>
             <p
-              className={`text-sm ${S.textSec} leading-relaxed max-w-xs`}
+              className={`text-sm ${S.textSec} leading-relaxed max-w-xs text-justify`}
               style={{ fontFamily: "Inter, sans-serif" }}
             >
               Professional solar energy solutions for homes, businesses, and
               communities across Sri Lanka.
             </p>
+
             <div className="flex flex-col gap-2">
               {[
-                { icon: Phone, val: "+94 76 233 9108" },
-                { icon: Mail, val: "technologiesbmn@gmail.com" },
-                { icon: MessageCircle, val: "WhatsApp: +94 76 233 9108" },
+                {
+                  icon: Phone,
+                  val: "+94 76 233 9108",
+                  href: "tel:+94762339108",
+                },
+                {
+                  icon: MessageCircle,
+                  val: "WhatsApp: +94 76 233 9108",
+                  href: "https://wa.me/94762339108",
+                },
+                {
+                  icon: Mail,
+                  val: "technologiesbmn@gmail.com",
+                  href: "mailto:technologiesbmn@gmail.com",
+                }
               ].map((c) => (
-                <div
+                <a
                   key={c.val}
-                  className={`flex items-center gap-2 text-xs ${S.textSec}`}
+                  href={c.href}
+                  target={c.href.startsWith("https://") ? "_blank" : undefined}
+                  rel={
+                    c.href.startsWith("https://")
+                      ? "noopener noreferrer"
+                      : undefined
+                  }
+                  className={`flex items-center gap-2 text-xs ${S.textSec} hover:text-(--accent) transition-colors`}
                   style={{ fontFamily: "Inter, sans-serif" }}
                 >
-                  <c.icon size={14} className="text-(--accent)" />
-                  {c.val}
-                </div>
+                  <c.icon size={14} className="text-(--accent) shrink-0" />
+                  <span>{c.val}</span>
+                </a>
               ))}
             </div>
+
             <div className="flex items-center gap-3">
               {["facebook", "linkedin"].map((s) => (
                 <div

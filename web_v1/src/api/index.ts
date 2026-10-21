@@ -1,5 +1,5 @@
 // const BACKEND_BASE_URL = import.meta.env.VITE_BACKEND_BASE_URL;
-const BACKEND_BASE_URL = "http://localhost:5000/bmn_tech/api/";
+const BACKEND_BASE_URL = "https://barbara-oxford-furnished-definitions.trycloudflare.com/bmn_tech/api/";
 
 export const endpoints = {
   product: {
